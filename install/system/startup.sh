@@ -1,14 +1,8 @@
 loadfont -s /system/res/fonts/8x8/default.fnt
-;type /system/res/docs/logo.txt
-;echo \x10\x06[CLi\xfd] Command Line Interface II for WildCommander v0.18a
-;echo \x10\x072012,2016 \x7f Breeze\\Fishbone Crew
-;echo
-;echo \x10\x0dType \x14 help \x14 to display the full list of commands.
-echo  ______ _____   _______ ______ 
-echo |      |     | |_     _|__    | \x10\x06[CLi\xfd] Command Line Interface II v0.18a
-echo |   |__|     |_ _|   |_ __|   | \x10\x072012,2016 \x7f Breeze\\Fishbone Crew
-echo |      |       |       |    __|
-echo |______|_______|_______|______| \x10\x0dType \x14 help \x14 to display the full list of commands
+echo \x10\x06[CLi\xfd] Command Line Interface II v0.20    ‹‹‹‹‹‹  ‹‹€ﬂﬂ€‹  ‹ﬂ‹   ‹‹  ‹€ﬂ€‹ ‹‹‹‹‹
+echo \x10\x072012,2016 \x7f Breeze\\Fishbone Crew            ‹‹‹  €ﬂ   ‹€ﬂ € ‹ﬂ  ‹‹  ﬂﬂ ‹€ﬂ ‹‹‹
+echo                                              ‹‹ €€     ‹ €‹ﬂ  ‹€ﬂ    ‹€ﬂ  ‹‹
+echo \x10\x0dType \x14 help \x14 to display list of commands          ﬂ€‹‹€ﬂ  ﬂ‹€ﬂ ﬂ‹‹ﬂ ‹€ﬂ‹‹€‹
 echo \x10\x10
 ;keyscan
 ;nvram -s #f0,#02 -g #f0 -g #f0 -g #f0 -g #f0

@@ -30,6 +30,18 @@ printClear	xor	a
 		ret
 
 ;---------------------------------------
+_printStringLen	ld	(pslCurrent+1),a			; печать строки определённой длины, не ожидая #00 в конце!
+pslCurrent	ld	a,#00
+		push	af
+		ld	a,(hl)
+		call	printSChar
+		pop	af
+		dec	a
+		cp	#00
+		jp	z,printSExit
+		jr	_printStringLen
+;---------------
+
 _printCodeDisable
 		ld	a,b
 		ld	(printFixCode+1),a			; запретить (1), разрешить (0) печать управляющих символов (кроме #0d #0a)
@@ -88,7 +100,10 @@ printFixSkip	cp	#0D					; Управляющий код: 13 - new line (enter) w
 		cp	#0A					; Управляющий код: 10 - new line (enter) unix
 		jp	z,codeEnter
 
-printS		push	hl
+printS		call	printSChar
+		jp	printSLoop
+
+printSChar	push	hl
 		call	printChar
 		
 		ld	a,(strLen)
@@ -104,7 +119,7 @@ printS		push	hl
 
 		pop	hl
 		inc	hl
-		jp	printSLoop
+		ret
 
 printSExit	ld	hl,bufer256
 		ld	a,#01

@@ -37,9 +37,13 @@ cmdTable
 	db	"*"
 	dw	_dir
 
-	db	"loadres"
+; 	db	"loadres"
+; 	db	"*"
+; 	dw	_loadRes
+
+	db	"locale"
 	db	"*"
-	dw	_loadRes
+	dw	_locale
 
 ;--- M ---
 ;--- N ---

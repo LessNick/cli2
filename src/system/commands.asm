@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) parser & commands
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; Command line parser
 ;---------------------------------------
@@ -34,6 +34,20 @@ _parseLine	call	_checkIsExec				; ./filename
 		jp	_printErrorString
 
 ;---------------------------------------
+_upperCase	cp	"a"					; Делает символ большим
+		ret	c
+		cp	"z"
+		ret	nc
+		sub	32
+		ret
+
+_lowerCase	cp	"A"					; Делает символ маленьким
+		ret	c
+		cp	"Z"
+		ret	nc
+		add	32
+		ret
+;---------------------------------------
 _parser		call	_eatSpaces
 		ld	(storeAddr),de
 
@@ -49,11 +63,7 @@ parse_start	ld      a,(de)
 		cp	" "				; space means end of command
 		jp	z,end_of_command
 
-		cp	"A"
-		jr	c,parse_skip
-		cp	"Z"
-		jr	nc,parse_skip
-		add	32
+		call	_lowerCase
 
 parse_skip	cp	(hl)				; Compare a with first character in command table
 		jp	nz,next_command			; Move HL to point to the first character of the next command in the table
@@ -597,14 +607,14 @@ entrySkip	cp	#00
 		jr	entryLoop
 
 ;---------------------------------------
-_loadRes	ld	a,loadResident				; hl params
-		ex	de,hl
-		call	_resApi
-		cp	#ff
-		ret	nz
-		ld	hl,wrongResMsg
-		ld	b,a				; #ff
-		jp	_printErrorString
+; _loadRes	ld	a,loadResident				; hl params
+; 		ex	de,hl
+; 		call	_resApi
+; 		cp	#ff
+; 		ret	nz
+; 		ld	hl,wrongResMsg
+; 		ld	b,a				; #ff
+; 		jp	_printErrorString
 
 ;---------------------------------------
 _changeDirCmd	call	_changeDir
@@ -887,4 +897,28 @@ _scopeBinaryErr	ld	hl,errorBinMgs
 		ld	b,#ff
 		jp	_printErrorString
 
+;---------------------------------------
+_locale		ex	de,hl
+		ld	a,(hl)
+		cp	#00
+		jr	z,_showLocale
+
+		ld	de,sysLocale
+		call	_upperCase
+		ld	(de),a
+		inc	hl
+		inc	de
+		ld	a,(hl)
+		call	_upperCase
+		ld	(de),a
+		ret
+
+_showLocale	call	_getLocale
+		push	hl
+		ld	a,h
+		call	printSChar
+		pop	hl
+		ld	a,l
+		call	printSChar
+		jp	_printReturn
 ;---------------------------------------

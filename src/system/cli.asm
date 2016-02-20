@@ -1,13 +1,13 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) main code
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 
 coldStart	jp	_coldStart				; #8000: Первая точка входа
 cliApi		jp	_cliApi					; #8003: Точка входа для вызова функций API
 driversApi	jp	_driversApi				; #8006: Точка входа для вызова функций драйверов
 gliApi		jp	_gliApi					; #8009: Точка входа для вызова функций графической библиотеки
-resApi		jp	_resApi					; #800c: Точка входа для вызова функций резидентов
+resApi		jp	_reserved ;_resApi			; #800c: Точка входа для вызова функций резидентов
 
 _coldStart	ld	(storeIx),ix				; Сохраняем значение IX для WildCommander
 		call	_storeWcInt				; Сохраняем INT WildCommander'а

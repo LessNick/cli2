@@ -1,8 +1,8 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2014,2015 © breeze/fishbone crew
+; 2014,2016 © breeze/fishbone crew
 ;---------------------------------------
-; Test Resident
+; Test Resident 1
 ;---------------------------------------
 		org	#c000-(resInstall-resStart)
 
@@ -13,9 +13,11 @@
 ;---------------
 resStart	
 		db	#7f,"RES"				; Идентификатор приложения RES (Resident)
-		db	"testres1"				; Название резидента 8 символов
+		db	"test1  "				; Название резидента 8 символов
 		dw	resInstall				; адрес вызова при установке
 		dw	resUninstall				; адрес вызова при удалении
+		dw	resSleep				; адрес вызова при запрете резидентов
+		dw	resWakeup				; адрес вызова при разрешении резидентов
 		dw	resInt					; адрес вызова по прерыванию
 		dw	resGet					; адрес вызова получить данные от резидента
 		dw	resSet					; адрес вызова передать данные резиденту
@@ -27,6 +29,12 @@ resInstall
 resUninstall
 		ret
 
+;---------------
+resSleep
+		ret
+;---------------
+resWakeup
+		ret		
 ;---------------		
 resInt		ld	bc,#0faf				; TS Border
 		ld	hl,#6003
@@ -45,4 +53,4 @@ resSet
 ;---------------		
 resEnd	nop
 
-		SAVEBIN "install/system/resident/testres1.res", resStart, resEnd-resStart
+		SAVEBIN "install/system/resident/test1.res", resStart, resEnd-resStart

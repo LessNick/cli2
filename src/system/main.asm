@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) main block
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 		org	#be00
 edit256		ds	128," "				; 128 bytes ascii
@@ -38,6 +38,8 @@ sCliKernel
 		include "tsconf.h.asm"
 
 eCliKernel	nop
+	DISPLAY "-------------------------------------"
 	DISPLAY "kernel size",/A,eCliKernel-sCliKernel
 	DISPLAY "kernel end",/A,eCliKernel
+	DISPLAY "-------------------------------------"
 	SAVEBIN "install/system/kernel.sys", sCliKernel, eCliKernel-sCliKernel

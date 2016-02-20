@@ -10,14 +10,14 @@
 ;|  _/ _||_ \_  |  «we do what we can because we must»
 ;  |  //\/\\  |    Copyright © 1995,1996 Spectrum Warriors corp. All right reserved
 ;  |=| \  / |=|    Copyright © 1997,2000 Ascendancy Cr.Lb. All right reserved
-;  |_ \_\/_/ _|    Copyright © 2001,2016 Fishbone Crew All right reserved
+;  |_ \_\/_/ _|    Copyright © 2001,2016 Fishbone Crew. All right reserved
 ;|   \_ || _/   |  Written by breeze/fishbone crew | http://fishbone.untergrund.net/
 ;|_____----_____|  fishbone@speccy.su
 
 
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2012,2015 © breeze/fishbone crew
+; 2012,2016 © breeze/fishbone crew
 ;---------------------------------------
 
 	DEVICE ZXSPECTRUM128
@@ -46,7 +46,7 @@
 ; 	define buildDisk2trd				; Сборка приложения disk2trd
 ; 	define buildLoadres				; Сборка приложения loadres
 	
-; 	define buildResTest1				; Сборка резидента restest1
+; 	define buildResTest1				; Сборка резидента test1
 
 ;-------------------------------------------------------------------------
 	ifdef buildLoader	
@@ -65,7 +65,7 @@
 	include "system/main.asm" 			; CLi² Kernel
 	include "drivers/main.asm"			; CLi² Drivers
 	include "libs/gli.asm"				; CLi² Graphics Library
-	include "libs/res.asm"				; CLi² Programms residents
+; 	include "libs/res.asm"				; CLi² Programms residents
 
 ;-------------------------------------------------------------------------
 	; Используется, если собирается только система (без приложения)
@@ -73,7 +73,7 @@
 	include "system/api.h.asm"
 	include "drivers/drivers.h.asm"
 	include "libs/gli.h.asm"
-	include "libs/res.h.asm"
+; 	include "libs/res.h.asm"
 ;-------------------------------------------------------------------------
 	endif
 
@@ -218,11 +218,11 @@
 	 	include "app/loadres.asm"
 		endif
 
-		ifdef buildResTest1
-		; CLi² restest1 resident
-		DISPLAY "Start build: restest1..."
-	 	include "residents/restest1.asm"
-		endif
+; 		ifdef buildResTest1
+; 		; CLi² test1 resident
+; 		DISPLAY "Start build: resident test1..."
+; 	 	include "residents/test1.asm"
+; 		endif
 
 	endif
 	

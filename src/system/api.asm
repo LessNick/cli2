@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) API
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 _cliApi		cp	#00
 		jp	z,_initSystem				; #00
@@ -192,14 +192,19 @@ _cliApi		cp	#00
 		jp	z,_waitAnyKey				; #52
 
 		dec	a
-		jp	z,_enableRes				; #53			; Разрешить вызов обработчика резидентов
+; 		jp	z,_enableRes				; #53			; Разрешить вызов обработчика резидентов
+		jp	z,_reserved
 		dec	a
-		jp	z,_disableRes				; #54			; Запретить вызов обработчика резидентов
+; 		jp	z,_disableRes				; #54			; Запретить вызов обработчика резидентов
+		jp	z,_reserved
 
 		dec	a
 		jp	z,_enableNvram				; #55
 		dec	a
 		jp	z,_disableNvram				; #56
+
+		dec	a
+		jp	z,_getLocale				; #57
 
 _reserved	ret
 
@@ -251,14 +256,16 @@ _initSystem_00a	call	_loadGli				; Загрузить /system/gli.sys
 		ld	hl,gliPath
 		jr	_initSystem_03
 
-_initSystem_00b	call	_loadSysRes				; Загрузить /system/res.sys
-		cp	#ff
-		jr	nz,_initSystem_00c
-		ld	hl,resPath
-		jr	_initSystem_03
+_initSystem_00b	
+; 		call	_loadSysRes				; Загрузить /system/res.sys
+; 		cp	#ff
+; 		jr	nz,_initSystem_00c
+; 		ld	hl,resPath
+; 		jr	_initSystem_03
 
-_initSystem_00c	ld	a,initResidents				; инициализация системы резидентов
-		call	_resApi
+_initSystem_00c	
+; 		ld	a,initResidents				; инициализация системы резидентов
+; 		call	_resApi
 
 		call	_scopeBinary				; Собрать список доступных комманд из /bin/*
 		cp	#ff
@@ -646,12 +653,12 @@ disableKeyboard	ld	a,#00
 
 skipKeyboard	call	updateDrivers
 		
-disableResident ld	a,#00
- 		cp	#01
- 		jr	z,skipResident
+; disableResident ld	a,#00
+;  		cp	#01
+;  		jr	z,skipResident
 
-		ld	a,callResidentMain
-		call	_resApi
+; 		ld	a,callResidentMain
+; 		call	_resApi
 
 skipResident	pop	af,bc,de,hl		
 		exx
@@ -1375,23 +1382,23 @@ _gliApi		push	af
 		ret
 
 ;---------------------------------------
-_resApi		push	af
+; _resApi		push	af
 
-		ld	a,resBank
-		call	switchMemBank
-		pop	af
+; 		ld	a,resBank
+; 		call	switchMemBank
+; 		pop	af
 
-		call	resAddr
+; 		call	resAddr
 
-		push	af
-		call	restoreMemBank
-		pop	af
-		ret
+; 		push	af
+; 		call	restoreMemBank
+; 		pop	af
+; 		ret
 
 ;---------------------------------------
-_loadSysRes	ld	hl,resPath
-		ld	a,resBank				; Указываем страницу для загрузки  res.sys с #c000
-		jr	loadDmaPath
+; _loadSysRes	ld	hl,resPath
+; 		ld	a,resBank				; Указываем страницу для загрузки  res.sys с #c000
+; 		jr	loadDmaPath
 
 ;---------------------------------------
 _loadGli	ld	hl,gliPath
@@ -1419,14 +1426,14 @@ restorePage3	ld	a,#00
 		ret
 
 ;---------------------------------------
-_enableRes	push 	af
-		xor	a					; Разрешить вызов обработчика резидентов
-		jr	_disableRes1
-_disableRes	push	af
-		ld	a,#01					; Запретить вызов обработчика резидентов
-_disableRes1	ld	(disableResident+1),a
-		pop	af
-		ret
+; _enableRes	push 	af
+; 		xor	a					; Разрешить вызов обработчика резидентов
+; 		jr	_disableRes1
+; _disableRes	push	af
+; 		ld	a,#01					; Запретить вызов обработчика резидентов
+; _disableRes1	ld	(disableResident+1),a
+; 		pop	af
+; 		ret
 ;---------------------------------------
 _enableNvram	push 	af
  		call	_nvRamOpen
@@ -1445,7 +1452,7 @@ _disableNvram	push	af
 _driversApi	push	af,bc
 		ld	a,#01
 		ld	(disableDrivers+1),a
-		call	_disableRes
+; 		call	_disableRes
 
 		ld	a,driversBank				; Включаем страницу для drivers.sys с #0000
 		call	_setRamPage3
@@ -1460,7 +1467,7 @@ _driversApi	push	af,bc
 		
 		xor	a
 		ld	(disableDrivers+1),a
-		call	_enableRes
+; 		call	_enableRes
 		pop	af	
 		ret
 
@@ -1936,6 +1943,14 @@ storeBank	ld	a,#00
 		pop	af
 		ret
 ;---------------------------------------
+_getLocale	ld	hl,sysLocale
+		ld	a,(hl)
+		inc	hl
+		ld	l,(hl)
+		ld	h,a
+		ret
+
+;---------------------------------------
 
 
 
@@ -2008,10 +2023,11 @@ _openStream	ld	d,#00				; окрываем поток с устройством 
 		jp	wcKernel
 
 ;---------------------------------------
-_load512bytes	call	_disableRes	
+_load512bytes	
+; 		call	_disableRes	
 		ld	a,_LOAD512
-		call	wcKernel
-		jp	_enableRes
+		jp	wcKernel
+; 		jp	_enableRes
 
 ;---------------------------------------
 _setFileBegin	ld	a,_GFILE

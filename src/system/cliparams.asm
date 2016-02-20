@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) parameters
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 storeIx		db	#00					; Значение IX для WildCommander
 loadFileBlocks	dw	#0000					; Размер загружаемого файла в блоках
@@ -100,7 +100,7 @@ rootSearch	db	flagDir,".",#00
 rootPath	db	"/",#00
 binPath		db	"/bin",#00
 
-resPath		db	"/system/res.sys",#00
+; resPath		db	"/system/res.sys",#00
 gliPath		db	"/system/gli.sys",#00
 driversPath	db	"/system/drivers.sys",#00
 startUpPath	db	"/system/startup.sh",#00
@@ -301,3 +301,11 @@ fKeys		db	"help\n"				; F1
 		ds	13,#00
 		db	"pwd\n"					; F11
 		ds	12,#00
+
+sysLocale	db	"EN"					; System Locale:
+								; EN - English
+								; RU - Russian
+								; PL - Polish
+								; DE - German
+								; FR - French
+								; etc

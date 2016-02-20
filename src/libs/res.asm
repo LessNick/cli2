@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2014 © breeze/fishbone crew
+; 2014,2016 © breeze/fishbone crew
 ;---------------------------------------------
 ; Resident programms
 ;---------------------------------------------
@@ -29,6 +29,11 @@ sRes		cp	#00
 		jp	z,_sentToResident			; #07
 		dec	a
 		jp	z,_getFromResident			; #08
+
+		dec	a
+		jp	z,_sleepAllResidents			; #09
+		dec	a
+		jp	z,_wakeupAllResidents			; #0A
 
 resNop		ret
 
@@ -135,9 +140,11 @@ _loadResident02	ld	b,c
 
 
 		xor	a
+		
 _loadResidentExit
 		jp	_enableRes
 
+;---------------
 wrongFile	ld	a,#ff
 		jr	_loadResidentExit
 ;---------------
@@ -162,6 +169,14 @@ _getFromResident
 ;---------------
 _getVerResidents
 		ld	hl,(resVersion)
+		ret
+
+;---------------
+_sleepAllResidents
+		ret
+
+;---------------
+_wakeupAllResidents
 		ret
 
 ;---------------------------------------

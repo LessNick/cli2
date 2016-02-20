@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) constants
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 wcKernel	equ	#6006				; WildCommander API
 
@@ -37,8 +37,8 @@ driversAddr	equ	#c000				; Адрес для загрузки drivers.sys
 gliBank		equ	#07				; Банка и
 gliAddr		equ	#c000				; Адрес для загрузки gli.sys
 
-resBank		equ	#08				; Банка и
-resAddr		equ	#c000				; Адрес для загрузки res.sys
+; resBank		equ	#08				; Банка и
+; resAddr		equ	#c000				; Адрес для загрузки res.sys
 
 sprBank		equ	#09				; Банка и
 sprAddr		equ	#c000				; Адрес для загрузки спрайтов
