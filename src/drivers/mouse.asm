@@ -16,7 +16,7 @@ _mouseInit	ld	(mouseIsRight+1),hl
 		ld	(mouseIsDown+1),de
 		ld	hl,mouseRawDataX
 		ld	de,mouseRawDataX+1
-		ld	bc,mouse_B-mouseRawDataX
+		ld	bc,mouseEnd-mouseRawDataX
 		xor	a
 		ld	(hl),a
 		ldir
@@ -229,3 +229,5 @@ mouse_Y		dw	#0000			; текущая координата Y
 mouse_W		dw	#0000			; текущая значение W
 
 mouse_B		db	#00			; текущее состяние кнопок
+
+mouseEnd	nop

@@ -212,7 +212,9 @@ _cliApi		cp	#00
 _reserved	ret
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-_initSystem	call	_ps2Init
+_initSystem	xor	a
+		ld	(_driversLoaded+1),a
+		call	_ps2Init
 
 		call	_moveScreenInit
 		
@@ -252,7 +254,10 @@ _initSystem_00	call	_loadDrivers				; Загрузить /system/drivers.sys
 		ld	hl,driversPath
 		jr	_initSystem_03
 
-_initSystem_00a	call	_loadGli				; Загрузить /system/gli.sys
+_initSystem_00a	ld	a,#01					; Пометить, что драйвера успешно загружены
+		ld	(_driversLoaded+1),a
+
+		call	_loadGli				; Загрузить /system/gli.sys
 		cp	#ff
 		jr	nz,_initSystem_00b
 		
@@ -474,6 +479,7 @@ _setGR_2	ld	a,(pGfxScreen2)
 		or	c
 		ld	(pGfxScreen2),a
 		ret
+
 _setGR_3	ld	a,(pGfxScreen3)
 		and	%00000011
 		or	c
@@ -644,6 +650,9 @@ _cliInt		push	hl,de,bc,af				;==================================================
 		ld	hl,(intCounter)
 		inc	hl
 		ld	(intCounter),hl
+		
+		call	updateDrivers
+		call	_updateCursor
 
 disableKeyboard	ld	a,#00
  		cp	#01
@@ -662,9 +671,8 @@ disableKeyboard	ld	a,#00
 
  		call	_actionInsOver
 
-skipKeyboard	call	updateDrivers
-		
-		call	_updateCursor	
+skipKeyboard	;call	updateDrivers
+		;call	_updateCursor	
 
 ; disableResident ld	a,#00
 ;  		cp	#01
@@ -833,16 +841,16 @@ lcr_page	ld	a,#00
 ;---------------
 _updateCursor	ld	a,getMouseX
 		call	_driversApi
-		
-		ld	a,l
+		ex	de,hl
+		ld	a,getMouseY
+		call	_driversApi
+
+_updateCursor2	ld	a,e
 		ld	(cursorSFileX),a
-		ld	a,h
+		ld	a,d
 		and	%00000001
 		or	%00100010
 		ld	(cursorSFileX+1),a
-	
-		ld	a,getMouseY
-		call	_driversApi
 
 		ld	a,l
 		ld	(cursorSFile),a
@@ -2198,11 +2206,64 @@ _setVideoBuffer	;push	af					; #00 - 0й текстовый                     
 		ld	bc,tsVpage
 		out	(c),a
 		ret
+
 ;---------------------------------------
 _setVideoMode	
 		ld	bc,tsVConfig				; Временный fix из-за отключенных прерываний WC
 		out	(c),a
+		
+		push	af
+_driversLoaded	ld	a,#00
+		cp	#00
+		jr	nz,_slm
+		pop	af
 		ret
+
+_slm		pop	af
+;---------------
+_setLimitMouse	push	af					; На входе в A - параметры для граф режима (_setVideoMode) 
+		and	%00000011
+		cp	%00000011
+		jr	nz,_svm_00
+
+		pop	af
+
+		ld	hl,319					; перерасчитанное TXT->GFX разрешение
+		ld	de,239
+		jr	_svm
+
+_svm_00		pop	af
+		and	%11000000
+
+		cp	%00000000				; %00 - 256x192
+		jr	nz,_svm_01
+		ld	hl,255
+		ld	de,191
+		jr	_svm
+
+_svm_01		cp	%01000000				; %01 - 320x200
+		jr	nz,_svm_10
+		ld	hl,319
+		ld	de,199
+		jr	_svm
+
+_svm_10		cp	%10000000				; %10 - 320x240
+		jr	nz,_svm_11
+		ld	hl,319
+		ld	de,239
+		jr	_svm
+
+_svm_11		cp	%11000000				; %11 - 360x288
+		ret	nz
+
+		ld	hl,359
+		ld	de,287
+_svm 		ld	a,mouseInit
+		call	cliDrivers
+
+		ld	hl,#0000
+		ld	de,#0000
+		jp	_updateCursor2
 
 ; 		ex	af,af'					; включение видео режима (разрешение+тип)
 ; 								; i:A' - видео режим

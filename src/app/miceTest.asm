@@ -298,19 +298,20 @@ setTracker	ld	hl,(timeCount)
 		jp	cliKernel
 
 ;---------------------------------------------
-miceCallBack	cp	#00					; активирован текстовый режим?
-		jr	nz,miceCallGfx
-		ld	hl,319					; да
-		ld	de,239
-		jr	miceCallUpdate
+miceCallBack	ret
+; 		cp	#00					; активирован текстовый режим?
+; 		jr	nz,miceCallGfx
+; 		ld	hl,319					; да
+; 		ld	de,239
+; 		jr	miceCallUpdate
 
-miceCallGfx	ld	hl,359					; нет, графический
-		ld	de,287
+; miceCallGfx	ld	hl,359					; нет, графический
+; 		ld	de,287
 
-miceCallUpdate	ld	a,mouseInit
-		call	cliDrivers
-; 		jp	updateCursor
-		ret
+; miceCallUpdate	ld	a,mouseInit
+; 		call	cliDrivers
+; ; 		jp	updateCursor
+; 		ret
 
 ;---------------------------------------------
 miceStop	ld	a,editInit
