@@ -61,6 +61,11 @@ _getMouseButtons
 		ld	a,(mouse_B)
 		ret
 ;---------------------------------------
+_resetMouseWheel
+		ld	hl,#0000
+		jp	mouseWStore
+
+;---------------------------------------
 mouseButtons	ld	bc,mBPort		; порт кнопок
 		in	a,(c)			; читаем значение		
 		cpl				; инвертируем значение

@@ -105,7 +105,7 @@ checkMouseWheel	ld	a,getMouseW
 		jr	nc,cmw_down_loop
 
 		xor	a			; сброс флагов
-zzz		ld	hl,(cliWheelPos)
+		ld	hl,(cliWheelPos)
 		ld	de,(cmw_end+1)
 		sbc	hl,de
 
@@ -372,9 +372,18 @@ rightStop	pop	hl
 		pop	af
 		xor	a
 		ret
-
+;---------------
+resetWheel	push	hl
+		ld	hl,#0000				; сброс прокрутки мышом
+		ld	(cliWheelPos),hl
+		ld	a,resetMouseWheel
+		call	cliDrivers
+		pop	hl
+		ret
 ;---------------------------------------
-enterKey	call	_getFullColor
+enterKey	call	resetWheel
+
+		call	_getFullColor
 		ld	(currentColor),a
 		ld	a,(storeKey)
 		call	printEChar

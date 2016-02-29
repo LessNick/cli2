@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) Drivers
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 		org	#c000
 
@@ -37,10 +37,8 @@ sCliDrivers	cp	#00
 		jp	z,_getMouseW			; #0D
  		dec	a
  		jp	z,_getMouseDeltaW		; #0E
-; 		dec	a
-; 		jp	z,				; #0F
-
-		sbc	#01				; reserved (1 команда)
+ 		dec	a
+ 		jp	z,_resetMouseWheel		; #0F
 
 ;---------------------------------------
 ; NeoGS (General Sound) driver
