@@ -30,17 +30,17 @@ sCliDrivers	cp	#00
 		dec	a
 		jp	z,_getMouseRawY			; #0A
 		dec	a
-		jp	z,_getMouseWheel		; #0B
+		jp	z,_getMouseRawW			; #0B
 		dec	a
 		jp	z,_getMouseButtons		; #0C
-; 		dec	a
-; 		jp	z,				; #0D
-; 		dec	a
-; 		jp	z,				; #0E
+		dec	a
+		jp	z,_getMouseW			; #0D
+ 		dec	a
+ 		jp	z,_getMouseDeltaW		; #0E
 ; 		dec	a
 ; 		jp	z,				; #0F
 
-		sbc	#03				; reserved (3 команды)
+		sbc	#01				; reserved (1 команда)
 
 ;---------------------------------------
 ; NeoGS (General Sound) driver

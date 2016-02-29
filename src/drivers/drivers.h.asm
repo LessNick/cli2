@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface) Drivers Header
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 cliDrivers		equ	#8006			; Точка входа в Drivers
 
@@ -35,7 +35,7 @@ getMouseRawX		equ	#09			; Получить RAW данные с порта X
 getMouseRawY		equ	#0A			; Получить RAW данные с порта Y
 							; o: H=0, L - RAW Y (8bit)
 
-getMouseWheel		equ	#0B			; Получить данные с порта колёсика
+getMouseRawW		equ	#0B			; Получить данные с порта колёсика
 							; o: H=0, L - RAW Y (8bit) от 0 до 15
 
 getMouseButtons		equ	#0C			; Получить состояние кнопок мыши
@@ -44,6 +44,13 @@ getMouseButtons		equ	#0C			; Получить состояние кнопок м
  							;    bit1: правая кнопка (1=нажата)
  							;    bit2: средняя кнопка (1=нажата)
  							;    bit3: зарезервировано
+
+getMouseW		equ	#0D			; Получить положение колёсика мыши
+							; o: HL - данные Wheel (16bit)
+
+getMouseDeltaW		equ	#0E			; Получить дельту смещения колёсика мыши
+							; o: HL - дельта (16bit)
+
 ;---------------------------------------
 gsInit			equ	#10			; Инициализация NeoGS (reset)
 							; i: нет параметров

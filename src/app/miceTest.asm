@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; micetest - application for test kempstone mouse
 ;---------------------------------------
@@ -28,10 +28,10 @@ appStart
 		ld	a,mouseInit
 		call	cliDrivers
 
-		call	prepareCursor
+; 		call	prepareCursor
 
 miceLoop	halt
-		call	updateCursor
+; 		call	updateCursor
 
 		ld	a,getKeyWithShift
 		call	cliKernel
@@ -50,57 +50,57 @@ miceLoop	halt
 		jp	miceLoop
 
 ;---------------------------------------------
-prepareCursor	ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
-		ld	a,sprBank
-		out	(c),a
+; prepareCursor	ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
+; 		ld	a,sprBank
+; 		out	(c),a
 
-		ld	hl,#0000
-		ld	de,#0001
-		ld	bc,#3fff
-		xor	a
-		ld	(hl),a
-		ldir
+; 		ld	hl,#0000
+; 		ld	de,#0001
+; 		ld	bc,#3fff
+; 		xor	a
+; 		ld	(hl),a
+; 		ldir
 
-		ld	hl,miceCursor
-		ld	de,#0000
-		ld	b,11
-prepareLoop	push	bc
-		ld	bc,6
-		ldir
-		ex	de,hl
-		ld	bc,250
-		add	hl,bc
-		ex	de,hl
-		pop	bc
-		djnz	prepareLoop
+; 		ld	hl,miceCursor
+; 		ld	de,#0000
+; 		ld	b,11
+; prepareLoop	push	bc
+; 		ld	bc,6
+; 		ldir
+; 		ex	de,hl
+; 		ld	bc,250
+; 		add	hl,bc
+; 		ex	de,hl
+; 		pop	bc
+; 		djnz	prepareLoop
 
-		ld	bc,tsSGPage				; Указываем страницу для спрайтов
-		ld	a,sprBank
-		out	(c),a
+; 		ld	bc,tsSGPage				; Указываем страницу для спрайтов
+; 		ld	a,sprBank
+; 		out	(c),a
 
-		ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
-		ld	a,(_PAGE0)				; Восстанавливаем банку для WildCommander
-		out	(c),a
+; 		ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
+; 		ld	a,(_PAGE0)				; Восстанавливаем банку для WildCommander
+; 		out	(c),a
 
-updateCursor	ld	bc,tsFMAddr
-		ld 	a,%00010000				; Разрешить приём данных (?) Bit 4 - FM_EN установлен
-		out	(c),a
+; updateCursor	ld	bc,tsFMAddr
+; 		ld 	a,%00010000				; Разрешить приём данных (?) Bit 4 - FM_EN установлен
+; 		out	(c),a
 
-		ld	hl,cursorSFile
-		ld 	de,#0000+512				; Память с палитрой замапливается на адрес #0000
-		ld	bc,6
-		ldir
+; 		ld	hl,cursorSFile
+; 		ld 	de,#0000+512				; Память с палитрой замапливается на адрес #0000
+; 		ld	bc,6
+; 		ldir
 
-		ld	bc,tsFMAddr
-		xor	a					; Запретить, Bit 4 - FM_EN сброшен
-		out	(c),a
+; 		ld	bc,tsFMAddr
+; 		xor	a					; Запретить, Bit 4 - FM_EN сброшен
+; 		out	(c),a
 
-		ld	bc,tsConfig				; Включаем отображение спрайта
-			  ;76543210
-		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
-		out	(c),a
+; 		ld	bc,tsConfig				; Включаем отображение спрайта
+; 			  ;76543210
+; 		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
+; 		out	(c),a
 
-		ret
+; 		ret
 
 ;---------------------------------------------
 setMicePos	ld	a,getMouseDeltaX
@@ -163,11 +163,41 @@ micePlusYSkip	ld	de,rawYMsg
 		ld	a,char2str
 		call	cliKernel
 ;---------------
-		ld	a,getMouseWheel
+; 		ld	a,getMouseWheel
+; 		call	cliDrivers
+
+; 		ld	de,posWheelMsg
+; 		ld	a,fourbit2str
+; 		call	cliKernel
+;---------------
+		ld	a,getMouseDeltaW
 		call	cliDrivers
 
-		ld	de,posWheelMsg
-		ld	a,fourbit2str
+		ld	b,"+"
+		ld	c,"-"
+
+		bit	7,h
+		ld	a,b
+		ld	(rawWMsg-1),a
+		jr	z,micePlusWSkip
+		ld	a,c
+
+		ld	(rawWMsg-1),a
+		ld	h,#00
+		ld	a,255
+		sub	l
+		and	%01111111
+		ld	l,a
+
+micePlusWSkip	ld	de,rawWMsg
+		ld	a,char2str
+		call	cliKernel
+;---------------		
+		ld	a,getMouseRawW
+		call	cliDrivers
+		
+		ld	de,rawWMsg+4
+		ld	a,char2str
 		call	cliKernel
 ;---------------
 		ld	a,getMouseButtons
@@ -193,22 +223,45 @@ miceLSet	ld	(leftButtonMsg),a
 miceRSet	ld	(rightButtonMsg),a
 
 		pop	af
+		push	af
 		and	%00000100
 		cp	%00000100
 		ld	a,b
 		jr	nz,miceMSet
 		ld	a,c
 miceMSet	ld	(middleButtonMsg),a
+		pop	af
+		
+		bit	0,a
+		jr	z,cursorType_2
+		ld	a,1
+		jr	newCursorSet
+
+cursorType_2	bit	1,a
+		jr	z,cursorType_3
+		ld	a,2
+		jr	newCursorSet
+
+cursorType_3	bit	2,a
+		jr	z,cursorType_0
+		ld	a,3
+		jr	newCursorSet
+
+cursorType_0	xor	a
+newCursorSet	ex	af,af'
+		ld	a,setMouseCursor
+		call	cliKernel
+
 ;---------------
 		ld	a,getMouseX
 		call	cliDrivers
 		
-		ld	a,l
-		ld	(cursorSFileX),a
-		ld	a,h
-		and	%00000001
-		or	%00100010
-		ld	(cursorSFileX+1),a
+; 		ld	a,l
+; 		ld	(cursorSFileX),a
+; 		ld	a,h
+; 		and	%00000001
+; 		or	%00100010
+; 		ld	(cursorSFileX+1),a
 
 		ld	de,posXMsg
 		ld	a,int2str
@@ -217,14 +270,22 @@ miceMSet	ld	(middleButtonMsg),a
 		ld	a,getMouseY
 		call	cliDrivers
 
-		ld	a,l
-		ld	(cursorSFile),a
-		ld	a,h
-		and	%00000001
-		or	%00100010
-		ld	(cursorSFile+1),a
+; 		ld	a,l
+; 		ld	(cursorSFile),a
+; 		ld	a,h
+; 		and	%00000001
+; 		or	%00100010
+; 		ld	(cursorSFile+1),a
 
 		ld	de,posYMsg
+		ld	a,int2str
+		call	cliKernel
+
+;---------------		
+		ld	a,getMouseW
+		call	cliDrivers
+
+		ld	de,posWMsg
 		ld	a,int2str
 		jp	cliKernel
 
@@ -248,10 +309,15 @@ miceCallGfx	ld	hl,359					; нет, графический
 
 miceCallUpdate	ld	a,mouseInit
 		call	cliDrivers
-		jp	updateCursor
+; 		jp	updateCursor
+		ret
 
 ;---------------------------------------------
 miceStop	ld	a,editInit
+		call	cliKernel
+
+		ld	hl,micePosMsg
+		ld	a,printString
 		call	cliKernel
 
 		ld	hl,miceExitMsg
@@ -280,31 +346,46 @@ miceTestVer	ld	hl,miceVersionMsg
 		jp	cliKernel
 		
 ;---------------------------------------------
-miceVersionMsg	db	"Kempstone mouse test v0.12",#00
-miceCopyRMsg	db	"2013,2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+miceVersionMsg	db	"Kempstone mouse test v0.14",#00
+miceCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 
 miceRunMsg	db	15,6
 		db	"(\\\\/)",#0d
 		db	" \\\\/\\\\",#0d
 		db	" /__)",#0d
-		db	"   (_  Move your mouse...",#0d,#0d
+		db	"   (_  Click, Scroll & Move your mouse...",#0d,#0d
+		db	15,17
+		db	#da
+		ds	13,#c4
+		db	" Raw Data "
+		ds	14,#c4
+		db	#bf
+		db	15,12
+		db	#da
+		ds	10,#c4
+		db	" Real Data "
+		ds	10,#c4
+		db	#bf
+		db	15,5,#da
+		db	"Timer"
+		db	#bf,#0d
 		db	16,16
 		db	#00
 
-miceExitMsg	db	15,5,"Exit.",#0d
+miceExitMsg	db	#0d,#0d,15,5,"Exit.",#0d
 		db	16,16
 		db	#00
 
-micePosMsg	db	15,5,"Raw: X=",16,16,"+"
+micePosMsg	db	15,5," X=",16,16,"+"
 rawXMsg		db	"---[---]"
 
 		db	15,17,", ",15,5,"Y=",16,16,"+"
 rawYMsg		db	"---[---]"
 
-		db	15,17,", ",15,5,"wheel=",16,16
-posWheelMsg	db	"--"
+		db	15,17,", ",15,5,"W=",16,16,"+"
+rawWMsg		db	"---[---]"
 
-		db	15,17," | "
+		db	15,15,"  ["
 		db	15
 leftButtonMsg	db	15,"L"
 		db	15
@@ -312,58 +393,61 @@ middleButtonMsg	db	15,"M"
 		db	15
 rightButtonMsg	db	15,"B"
 
-		db	15,17," | ",15,5,"Pos: X=",16,16
+		db	15,15,"] ",15,5,"X=",16,16
 posXMsg		db	"-----"
 
 		db	15,17,", ",15,5,"Y=",16,16
 posYMsg		db	"-----"
+
+		db	15,17,", ",15,5,"W=",16,16
+posWMsg		db	"-----"
 		
-		db	15,17," | ",15,5,"T=",16,16
+		db	15,17,"  ",16,16
 timeCountMsg	db	"-----"
 		db	#00
 ;---------------------------------------------
 timeCount	dw	#0000
 ;---------------------------------------------
-cursorSFile	db	#00			; Y0-7     | 8 bit младшие даные Y координаты (0-255px)
-			;FLAR S Y8
-		db	%00100010		; Y8       | 0й бит - старшие данные Y координаты (256px >)
-						; YS       | 1,2,3 бит - высота в блоках по 8 px
-						; RESERVED | 4й бит - зарезервирован
-						; ACT      | 5й бит - спрайт активен (показывается)
-						; LEAP     | 6й бит - указывает, что данный спрайт последний в текущем слое. (для перехода по слоям)
-						; YF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по вертикали
+; cursorSFile	db	#00			; Y0-7     | 8 bit младшие даные Y координаты (0-255px)
+; 			;FLAR S Y8
+; 		db	%00100010		; Y8       | 0й бит - старшие данные Y координаты (256px >)
+; 						; YS       | 1,2,3 бит - высота в блоках по 8 px
+; 						; RESERVED | 4й бит - зарезервирован
+; 						; ACT      | 5й бит - спрайт активен (показывается)
+; 						; LEAP     | 6й бит - указывает, что данный спрайт последний в текущем слое. (для перехода по слоям)
+; 						; YF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по вертикали
 		
-cursorSFileX	db	#00			; X0-7     | 8 bit младшие даные X координаты (0-255px)
-			;F  R S X8
-		db	%00000010		; X8       | 0й бит - старшие данные X координаты (256px >)
-						; XS       | 1,2,3 бит - ширина в блоках по 8 px
-						; RESERVED | 4й бит - зарезервирован
-						; -        | 5,6й бит - не используются
-						; XF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по горизонтали
-			;TNUM
-		db	%00000000		; TNUM	   | Номер тайла для левого верхнего угла.
-						;          | 0,1,2,3,4,5й бит - Х координата в битмап
-			;SPALTNUM		;          | 6,7й бит +
-; 		db	%00010000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
-		db	%00000000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
-						; SPAL     | 4,5,6,7й биты номер палитры (?)
+; cursorSFileX	db	#00			; X0-7     | 8 bit младшие даные X координаты (0-255px)
+; 			;F  R S X8
+; 		db	%00000010		; X8       | 0й бит - старшие данные X координаты (256px >)
+; 						; XS       | 1,2,3 бит - ширина в блоках по 8 px
+; 						; RESERVED | 4й бит - зарезервирован
+; 						; -        | 5,6й бит - не используются
+; 						; XF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по горизонтали
+; 			;TNUM
+; 		db	%00000000		; TNUM	   | Номер тайла для левого верхнего угла.
+; 						;          | 0,1,2,3,4,5й бит - Х координата в битмап
+; 			;SPALTNUM		;          | 6,7й бит +
+; ; 		db	%00010000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
+; 		db	%00000000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
+; 						; SPAL     | 4,5,6,7й биты номер палитры (?)
 ;---------------------------------------------
-miceCursor	db	#be,#00,#00,#00,#00,#00
-		db	#1b,#ee,#00,#00,#00,#00
-		db	#01,#bb,#ee,#00,#00,#00
-		db	#01,#bb,#bb,#ee,#00,#00
-		db	#00,#1b,#bb,#bb,#ee,#00
-		db	#00,#1b,#bb,#bb,#bb,#00
-		db	#00,#01,#bb,#be,#00,#00
-		db	#00,#01,#bb,#1b,#e0,#00
-		db	#00,#00,#1b,#01,#be,#00
-		db	#00,#00,#1b,#00,#1b,#e0
-		db	#00,#00,#00,#00,#01,#b0
-		db	#00,#00,#00,#00,#00,#00
- 		db	#00,#00,#00,#00,#00,#00
- 		db	#00,#00,#00,#00,#00,#00
- 		db	#00,#00,#00,#00,#00,#00
- 		db	#00,#00,#00,#00,#00,#00
+; miceCursor	db	#be,#00,#00,#00,#00,#00
+; 		db	#1b,#ee,#00,#00,#00,#00
+; 		db	#01,#bb,#ee,#00,#00,#00
+; 		db	#01,#bb,#bb,#ee,#00,#00
+; 		db	#00,#1b,#bb,#bb,#ee,#00
+; 		db	#00,#1b,#bb,#bb,#bb,#00
+; 		db	#00,#01,#bb,#be,#00,#00
+; 		db	#00,#01,#bb,#1b,#e0,#00
+; 		db	#00,#00,#1b,#01,#be,#00
+; 		db	#00,#00,#1b,#00,#1b,#e0
+; 		db	#00,#00,#00,#00,#01,#b0
+; 		db	#00,#00,#00,#00,#00,#00
+;  		db	#00,#00,#00,#00,#00,#00
+;  		db	#00,#00,#00,#00,#00,#00
+;  		db	#00,#00,#00,#00,#00,#00
+;  		db	#00,#00,#00,#00,#00,#00
 
 appEnd	nop
 

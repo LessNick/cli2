@@ -15,5 +15,6 @@ echo \x10\x10
 ;loadsxg /test.sxg
 ;cd /demo/bramble/art/
 ;pwd
+;micetest
 
 

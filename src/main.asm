@@ -241,3 +241,8 @@
 ;    	DISPLAY "cibParams",/A,cibParams
 ;    	DISPLAY "appParams",/A,appParams
 ;    	DISPLAY "_restoreHomePath",/A,_restoreHomePath
+;    	DISPLAY "_loadCursorsRes",/A,_loadCursorsRes
+;    	DISPLAY "_setCursorPhase",/A,_setCursorPhase
+;    	DISPLAY "checkMouseWheel",/A,checkMouseWheel
+;    	DISPLAY "mouseGetW",/A,mouseGetW
+;    	DISPLAY "zzz",/A,zzz

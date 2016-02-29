@@ -42,8 +42,10 @@ mainLoop	halt						; Главный цикл (опрос клавиатуры)
 
 		call	_printWW
 
+		call	checkMouseWheel
+
  		call	_checkKeyAltL
- 		jr	nz,altMode
+ 		jp	nz,altMode
 
 		call	_getKeyWithShift
 
@@ -79,8 +81,63 @@ mainLoop	halt						; Главный цикл (опрос клавиатуры)
 
 mainLoopSkip	cp	#20				; если код клавиши НЕ меньше #20 то в печать
 		call	nc,_printKey
-
 		jr	mainLoop
+
+;---------------------------------------
+checkMouseWheel	ld	a,getMouseW
+		call	cliDrivers
+
+		srl	h
+		rr	l
+		srl	h
+		rr	l
+		srl	h
+		rr	l
+		srl	h
+		rr	l
+		
+		ld	(cmw_end+1),hl
+
+		ld	de,(cliWheelPos)
+		
+		sbc	hl,de
+		ret	z
+		jr	nc,cmw_down_loop
+
+		xor	a			; сброс флагов
+zzz		ld	hl,(cliWheelPos)
+		ld	de,(cmw_end+1)
+		sbc	hl,de
+
+		push	hl
+		pop	bc
+
+cmw_up_loop	push	bc
+		ld	a,#02
+		call	PR_POZ
+		pop	bc
+		dec	bc
+		ld	a,b
+		or	c
+		jr	z,cmw_end
+		jr	cmw_up_loop
+
+cmw_down_loop	push	hl
+		pop	bc
+
+		push	bc
+		ld	a,#01
+		call	PR_POZ
+		pop	bc
+		dec	bc
+		ld	a,b
+		or	c
+		jr	z,cmw_end		
+		jr	cmw_down_loop
+
+cmw_end		ld	hl,#0000
+		ld	(cliWheelPos),hl
+		ret
 
 ;---------------------------------------
 checkFkeys	sub	aF1

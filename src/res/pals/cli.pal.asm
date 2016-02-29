@@ -30,12 +30,12 @@ bPal1		dw	%0000000000000000		; 0.black
 		;         RRrrrGGgggBBbbb
 		dw	%0100001000010000		; 8.silver
 		dw	%0000000000011000		; 9.blue
-		dw	%0110000000000000		;10.red
-		dw	%0110000100001000		;11.dark pink
-		dw	%0000001100000000		;12.lime
-		dw	%0000001000011000		;13.teal
-		dw	%0110001100010000		;14.light yellow
-		dw	%0110001100011000		;15.white
+		dw	%0110000000000000		;10.red			A
+		dw	%0110000100001000		;11.dark pink		B
+		dw	%0000001100000000		;12.lime		C
+		dw	%0000001000011000		;13.teal		D
+		dw	%0110001100010000		;14.light yellow	E
+		dw	%0110001100011000		;15.white		F
 ePal1
 
 	SAVEBIN "install/system/res/pals/default.pal", sPal1, ePal1-sPal1

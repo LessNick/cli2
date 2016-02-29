@@ -206,6 +206,9 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_getLocale				; #57
 
+		dec	a
+		jp	z,_setMouseCursor			; #58
+
 _reserved	ret
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,9 +266,17 @@ _initSystem_00b
 ; 		ld	hl,resPath
 ; 		jr	_initSystem_03
 
-_initSystem_00c	
+; _initSystem_00c	
 ; 		ld	a,initResidents				; инициализация системы резидентов
 ; 		call	_resApi
+
+		call	_loadCursorsRes				; Загрузить /system/res/cursors/default.cur
+; 		cp	#ff
+; 		jr	nz,_initSystem_00c
+; 		call	_printBootError
+; 		jr	$
+
+; _initSystem_00c	call	_prepareCursor				; Установить спрайт для курсоса
 
 		call	_scopeBinary				; Собрать список доступных комманд из /bin/*
 		cp	#ff
@@ -653,6 +664,8 @@ disableKeyboard	ld	a,#00
 
 skipKeyboard	call	updateDrivers
 		
+		call	_updateCursor	
+
 ; disableResident ld	a,#00
 ;  		cp	#01
 ;  		jr	z,skipResident
@@ -668,6 +681,195 @@ skipResident	pop	af,bc,de,hl
 		ret
 
 _wcIntAddr	jp	#0000
+
+;---------------------------------------
+_setMouseCursor	ex	af,af'					; in A' - тип курсора (на самом деле номер фазы)	
+;---------------------------------------
+_setCursorPhase	push	hl,de
+
+		push	af					; in A - номер фазы
+
+		ld	a,(cursorSFile+1)
+		and	%00000111
+		ld	h,#00
+		ld	l,a
+		pop	af
+		call	_mult16x8				; in: hl * a
+ 								; out:hl,low de,high
+		ld	a,l
+
+		push	af
+		and	%00000011
+		rrca
+		rrca
+		ld	c,a
+		ld	a,(cursorSBitmapX)
+		and	%00111111
+		or	c
+		ld	(cursorSBitmapX),a
+		pop	af
+
+		and	%00111100
+		srl	a
+		srl	a
+		ld	c,a
+
+		ld	a,(cursorSBitmapY)
+		and	%11110000
+		or	c
+		ld	(cursorSBitmapY),a
+
+		pop	de,hl
+		ret
+
+;---------------------------------------
+_loadCursorsRes	ld	hl,cursorsPath
+		ld	de,bufferAddr
+		push	de
+		call	_loadFile
+
+		pop	hl
+		ld	a,(hl)
+		cp	#7f
+		ret	nz					; не верный формат файла
+		
+		inc	hl
+		ld	a,(hl)
+		cp	"C"
+		ret	nz					; не верный формат файла
+		
+		inc	hl
+		ld	a,(hl)
+		cp	"U"
+		ret	nz					; не верный формат файла
+		
+		inc	hl
+		ld	a,(hl)
+		cp	"R"
+		ret	nz					; не верный формат файла
+
+		inc	hl
+		ld	a,(hl)					; ширина курсора
+		srl	a
+		ld	(lcr_width+1),a
+		
+		ld	b,#00
+		ld	c,a
+		ld	de,256
+
+
+		ex	hl,de
+		sbc	hl,bc
+		ex	hl,de
+
+		ld	(lcr_skip+1),de
+
+		ld	a,(cursorSFileX+1)
+		and	%11111000
+		srl	c
+		srl	c
+		or	c
+		ld	(cursorSFileX+1),a
+
+		inc	hl
+		ld	a,(hl)					; высота курсора
+
+		ld	d,#00
+		ld	e,a
+
+		ld	c,a
+		ld	a,(cursorSFile+1)
+		and	%11111000
+		srl	c
+		srl	c
+		or	c
+		ld	(cursorSFile+1),a
+
+		inc	hl
+		ld	a,(hl)					; количество фаз
+
+		push	hl
+		ex	hl,de
+
+		call	_mult16x8				; in: hl * a
+								; out:hl,low de,high
+		ld	(lcr_height+1),hl
+
+		ld	a,(_PAGE3)
+		ld	(lcr_page+1),a
+
+		ld	a,sprBank				; Включаем страницу для спрайтов с #0000
+		call	_setRamPage3
+
+		pop	hl
+		
+		inc	hl
+
+		ld	de,#C000
+lcr_height	ld	bc,16
+prepareLoop	push	bc
+lcr_width	ld	bc,8
+		ldir
+		ex	de,hl
+lcr_skip	ld	bc,248
+		add	hl,bc
+		ex	de,hl
+		pop	bc
+		dec	bc
+		ld	a,b
+		or	c
+		jr	nz,prepareLoop
+
+		ld	bc,tsSGPage				; Указываем страницу для спрайтов
+		ld	a,sprBank
+		add	a,#20
+		out	(c),a
+
+lcr_page	ld	a,#00
+		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
+		ld	bc,tsRAMPage3
+		out	(c),a
+
+;---------------
+_updateCursor	ld	a,getMouseX
+		call	_driversApi
+		
+		ld	a,l
+		ld	(cursorSFileX),a
+		ld	a,h
+		and	%00000001
+		or	%00100010
+		ld	(cursorSFileX+1),a
+	
+		ld	a,getMouseY
+		call	_driversApi
+
+		ld	a,l
+		ld	(cursorSFile),a
+		ld	a,h
+		and	%00000001
+		or	%00100010
+		ld	(cursorSFile+1),a
+
+		ld	bc,tsFMAddr
+		ld 	a,%00010000				; Разрешить приём данных (?) Bit 4 - FM_EN установлен
+		out	(c),a
+
+		ld	hl,cursorSFile
+		ld 	de,#0000+512				; Память с палитрой замапливается на адрес #0000
+		ld	bc,6
+		ldir
+;---------------
+		ld	bc,tsFMAddr
+		xor	a					; Запретить, Bit 4 - FM_EN сброшен
+		out	(c),a
+
+		ld	bc,tsConfig				; Включаем отображение спрайта
+			  ;76543210
+		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
+		out	(c),a
+
+		ret
 
 ;---------------------------------------
 _actionInsOver	call	_getKeyWithShiftT
@@ -1449,10 +1651,14 @@ _disableNvram	push	af
 		pop	af
 		ret
 ;---------------------------------------
-_driversApi	push	af,bc
+_driversApi	di
+		push	af,bc
 		ld	a,#01
 		ld	(disableDrivers+1),a
 ; 		call	_disableRes
+
+		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
+		ld	(da_page+1),a
 
 		ld	a,driversBank				; Включаем страницу для drivers.sys с #0000
 		call	_setRamPage3
@@ -1461,14 +1667,16 @@ _driversApi	push	af,bc
 		call	driversAddr
 
 		push	af
-		ld	a,(_PAGE3)				; Восстанавливаем банку для WildCommander
+da_page		ld	a,#00
+		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
 		ld	bc,tsRAMPage3
 		out	(c),a
 		
 		xor	a
 		ld	(disableDrivers+1),a
 ; 		call	_enableRes
-		pop	af	
+		pop	af
+		ei	
 		ret
 
 ;---------------------------------------
@@ -1482,13 +1690,17 @@ disableDrivers	ld	a,#00
 		cp	#01
 		ret	z
 
+		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
+		ld	(ud_page+1),a
+
 		ld	a,driversBank
 		call	_setRamPage3				; Включаем страницу для drivers.sys с #с000
 
 		ld	a,mouseUpdate
 		call	driversAddr
 
-		ld	a,(_PAGE3)				; Восстанавливаем банку для WildCommander
+ud_page		ld	a,#00
+		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
 		ld	bc,tsRAMPage3
 		out	(c),a
 		ret
@@ -1510,7 +1722,7 @@ _setRamPage0_	add	32
 		ret
 
 _setRamPage3	ld	bc,tsRAMPage3
-		jr	_setRamPage0_
+ 		jr	_setRamPage0_
 ;---------------------------------------
 _moveScreenInit	push	hl
 		ld	hl,#0000
@@ -2024,9 +2236,16 @@ _openStream	ld	d,#00				; окрываем поток с устройством 
 
 ;---------------------------------------
 _load512bytes	
-; 		call	_disableRes	
+; 		call	_disableRes
+		ld	a,1
+		call	_setCursorPhase
 		ld	a,_LOAD512
-		jp	wcKernel
+		call	wcKernel
+		push	af
+		xor	a
+		call	_setCursorPhase
+		pop	af
+		ret
 ; 		jp	_enableRes
 
 ;---------------------------------------

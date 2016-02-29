@@ -17,7 +17,8 @@ pStatusReg	equ	#bb			; порт регистра состояния. Биты:
 						;  6,5,4,3,2,1й — Не используются
 						;  0й — Command bit, флаг команд 
 
-tReset		equ	32			; время ожидания инициализации карты после reset (1/48.888) секунды
+tReset		equ	1000			; подбор
+						; время ожидания инициализации карты после reset (1/48.888) секунды
 						; 32/48.888 = ~0.654 секунды
 						
 ;---------------------------------------
@@ -47,10 +48,19 @@ _gsWaitLastLoop	in	b,(c)
 ;---------------------------------------
 _gsInit		ld	a,cReset
 		out	(pReset),a
-		ld	b,tReset
-_gsInit_0	halt
-		djnz	_gsInit_0
-		ret
+; 		ld	b,tReset
+; _gsInit_0	halt
+; 		djnz	_gsInit_0
+		ld	bc,tReset
+_gsInit_0	push	bc
+		ld	b,255
+		djnz	$
+		pop	bc
+		dec	bc
+		ld	a,b
+		or	c
+		ret	z
+		jr	_gsInit_0
 
 ;---------------------------------------
 _gsDetect	in	a,(pDataInReg)
