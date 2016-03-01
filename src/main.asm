@@ -226,23 +226,4 @@
 
 	endif
 	
-;   	DISPLAY "_setVideoPage",/A,_setVideoPage
-;   	DISPLAY "loadApp",/A,loadApp
-;   	DISPLAY "resApi",/A,resApi
-;   	DISPLAY "stopRes",/A,stopRes
-;   	DISPLAY "_loadResident",/A,_loadResident
-;   	DISPLAY "resStarAddr",/A,resStarAddr
-;   	DISPLAY "appParams",/A,appParams
-;   	DISPLAY "_setTxtPalette",/A,_setTxtPalette
-;    	DISPLAY "_dir",/A,_dir
-;    	DISPLAY "lsLoadNext",/A,lsLoadNext
-;    	DISPLAY "disableResident",/A,disableResident
-;    	DISPLAY "_sh",/A,_sh
-;    	DISPLAY "cibParams",/A,cibParams
-;    	DISPLAY "appParams",/A,appParams
-;    	DISPLAY "_restoreHomePath",/A,_restoreHomePath
-;    	DISPLAY "_loadCursorsRes",/A,_loadCursorsRes
-;    	DISPLAY "_setCursorPhase",/A,_setCursorPhase
-;    	DISPLAY "checkMouseWheel",/A,checkMouseWheel
-;    	DISPLAY "mouseGetW",/A,mouseGetW
-;    	DISPLAY "zzz",/A,zzz
+  	DISPLAY "_cmc_00",/A,_cmc_00

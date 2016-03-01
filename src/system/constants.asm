@@ -89,3 +89,9 @@ aF10		equ	#1a
 aF11		equ	#1b
 
 ;-------------------------------------------------------------------------------------
+							; Курсоры мыши:
+mCursorDefault	equ	#00				;    по умолчанию
+mCursorClock	equ	#01				;    часы
+mCursorSelect	equ	#02				;    выделение
+mCursorHand	equ	#03				;    рука
+mCursorEmpty	equ	#04				;    пустой

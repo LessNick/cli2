@@ -43,6 +43,7 @@ mainLoop	halt						; Главный цикл (опрос клавиатуры)
 		call	_printWW
 
 		call	checkMouseWheel
+		call	checkMouseClick
 
  		call	_checkKeyAltL
  		jp	nz,altMode
@@ -76,12 +77,55 @@ mainLoop	halt						; Главный цикл (опрос клавиатуры)
 		cp	aF1
 		jr	c,mainLoopSkip
 		cp	aF1+11				; F1…F11
-		jr	c,checkFkeys
+		jp	c,checkFkeys
 		
 
 mainLoopSkip	cp	#20				; если код клавиши НЕ меньше #20 то в печать
 		call	nc,_printKey
 		jr	mainLoop
+
+;---------------------------------------
+checkMouseClick	ld	a,getMouseButtons
+		call	cliDrivers
+
+		bit	2,a					; средняя кнопка
+		jp	z,_cmc_00				; отпустили?
+
+		ld	a,#01
+		ld	(_cmc_00+1),a
+		ret
+
+_cmc_00		ld	a,#00
+		cp	#00
+		ret	z
+		
+		xor	a					; 1? нажали и отпустили
+		ld	(_cmc_00+1),a
+
+		ld	hl,(mouseSelectB)
+		ld	a,h
+		or	l
+		ret	z
+
+		xor	a
+		ld	de,(mouseSelectE)
+		ex	de,hl
+		sbc	hl,de
+		inc	hl					;
+		ex	de,hl					; hl - начало
+								; de - длина
+		call	_openCacheBank
+_cmc_00a	ld	a,(hl)
+		push	hl,de
+		call	_printKey
+		pop	de,hl
+		inc	hl
+		dec	de
+		ld	a,d
+		or	e
+		jr	nz,_cmc_00a
+		
+ 		jp	_cmc_01b				; закрываем банку
 
 ;---------------------------------------
 checkMouseWheel	ld	a,getMouseW
@@ -113,7 +157,7 @@ checkMouseWheel	ld	a,getMouseW
 		pop	bc
 
 cmw_up_loop	push	bc
-		ld	a,#02
+		ld	a,#01
 		call	PR_POZ
 		pop	bc
 		dec	bc
@@ -126,7 +170,7 @@ cmw_down_loop	push	hl
 		pop	bc
 
 		push	bc
-		ld	a,#01
+		ld	a,#02
 		call	PR_POZ
 		pop	bc
 		dec	bc

@@ -650,9 +650,6 @@ _cliInt		push	hl,de,bc,af				;==================================================
 		ld	hl,(intCounter)
 		inc	hl
 		ld	(intCounter),hl
-		
-		call	updateDrivers
-		call	_updateCursor
 
 disableKeyboard	ld	a,#00
  		cp	#01
@@ -671,8 +668,16 @@ disableKeyboard	ld	a,#00
 
  		call	_actionInsOver
 
-skipKeyboard	;call	updateDrivers
-		;call	_updateCursor	
+skipKeyboard	call	updateDrivers
+		call	_updateCursor
+
+		ld	a,(currentScreen)
+		cp	#00
+;  		jr	nz,skipMouseSelect
+		push	af
+		call	z,_checkMouseClicks
+		pop	af
+		call	nz,_resetMouseClicks
 
 ; disableResident ld	a,#00
 ;  		cp	#01
@@ -681,7 +686,10 @@ skipKeyboard	;call	updateDrivers
 ; 		ld	a,callResidentMain
 ; 		call	_resApi
 
-skipResident	pop	af,bc,de,hl		
+; skipResident
+
+; skipMouseSelect	
+		pop	af,bc,de,hl		
 		exx
 		ex	af,af'
 		pop	af,bc,de,hl
@@ -689,6 +697,186 @@ skipResident	pop	af,bc,de,hl
 		ret
 
 _wcIntAddr	jp	#0000
+
+;---------------------------------------
+_checkMouseClicks
+		ld	a,getMouseButtons
+		call	cliDrivers
+
+		bit	0,a					; левая кнопка
+		jp	z,_cmc_02				; отпустили?
+
+_cmc_01		ld	a,#00
+		cp	#01					; уже нажата и держится
+		jp	z,_cmc_03
+		
+		ld	hl,(mouseSelectB)
+		ld	a,h
+		or	l
+		jr	z,_cmc_01Skip				; Выделений нет - пропуск
+
+		call	_openCacheBank
+		call	_invertMousePos
+		ld	de,(mouseSelectE)
+		ex	de,hl
+		call	_invertMousePos
+		ex	de,hl
+		call	_fillMouseClicks
+
+_cmc_01Skip	ld	a,#01					; нажали 1й раз
+		ld	(_cmc_01+1),a
+
+		ld	a,mCursorSelect
+		call	_setCursorPhase
+
+		call	_getMouseTxtPos
+		ld	(_cmc_03+1),hl
+		ld	(mouseSelectB),hl			; Сохраняем начало выделения
+
+_cmc_01a	call	_openCacheBank
+
+		call	_invertMousePos
+
+		xor	a
+		ld	de,(_cmc_03+1)				; предыдущее значение
+
+		call	_fillMouseClicks
+
+		ld	(_cmc_03+1),hl
+		ld	(mouseSelectE),hl			; Сохраняем конец выделения
+
+_cmc_01b	ld	a,#00
+		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
+		ld	bc,tsRAMPage3
+		out	(c),a
+
+		ret
+
+_openCacheBank	ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
+		ld	(_cmc_01b+1),a
+
+		ld	a,#62					; Включаем страницу кеш текста
+		ld	bc,tsRAMPage3
+		out	(c),a
+		ret
+
+;----		
+_fillMouseClicks
+		push	hl
+		sbc	hl,de
+		jr	z,_cmc_01end				; равны = выход
+		jp	m,right2left
+		pop	hl
+		push	hl
+		
+_cmc_01loop1	dec	hl
+		ld	a,l
+		cp	e
+		jr	z,_cmc_01end
+		call	_invertMousePos
+		jr	_cmc_01loop1
+
+right2left	pop	hl
+		push	hl
+		
+_cmc_01loop2	inc	hl
+		ld	a,l
+		cp	e
+		jr	z,_cmc_01end
+		call	_invertMousePos
+		jr	_cmc_01loop2
+
+_cmc_01end	pop	hl
+		ret
+;----		
+
+;---------------
+_resetMouseClicks
+_cmc_02		ld	a,(_cmc_01+1)
+		cp	#00
+		ret	z					; уже отпустили (не нажимали)
+
+		xor	a
+		ld	(_cmc_01+1),a
+
+; 		call	_restoreBorder
+
+		ld	a,mCursorDefault
+		call	_setCursorPhase
+		ret
+;---------------
+_cmc_03		ld	de,#0000				; нажали и держат
+		push	de
+		call	_getMouseTxtPos
+		pop	de
+; 		ld	a,h
+; 		cp	d
+; 		jr	nz,_cmc_01a
+		ld	h,d					; не зависимо от новой позиции Y
+		ld	a,l
+		cp	e
+		ret	z
+		jr	_cmc_01a	
+
+;---------------
+_getMouseTxtPos	ld	a,getMouseX				; HL
+		call	cliDrivers
+		
+		ld	de,#0004
+		call	_divide16_16				; bc
+		push	bc
+
+		ld	a,getMouseY				; HL
+		call	cliDrivers
+		ld	de,#0008
+		call	_divide16_16				; bc
+
+		ld	hl,#c000
+		ld	b,c
+		ld	c,#00
+		add	hl,bc
+		pop	bc
+
+ 		add	hl,bc					; адрес курсора
+ 		ret
+;---------------
+_invertMousePos	push	hl,de
+		ld	de,(_scrollOffset)
+; 		ld	a,d
+; 		cp	#00
+; 		jr	z,_impSkip
+		ld	a,d
+		cp	#1e					; уже отображено 30 строк?
+		jr	c,_impSkip
+		
+		xor	a
+		ld	bc,#1d00				;30-1
+	
+		ex	de,hl
+		sbc	hl,bc
+		ex	de,hl
+		
+		add	hl,de
+
+_impSkip	ld	bc,#80					; HL - аддр
+		add	hl,bc
+		ld	a,(hl)
+		and	%11110000
+		srl	a
+		srl	a
+		srl	a
+		srl	a
+		ld	c,a
+		ld	a,(hl)
+		and	%00001111
+		sla	a
+		sla	a
+		sla	a
+		sla	a
+		or	c
+		ld	(hl),a
+		pop	de,hl
+		ret
 
 ;---------------------------------------
 _setMouseCursor	ex	af,af'					; in A' - тип курсора (на самом деле номер фазы)	
