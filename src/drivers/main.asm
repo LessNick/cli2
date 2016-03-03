@@ -88,6 +88,22 @@ sCliDrivers	cp	#00
 		dec	a
 		jp	z,_gsSetFXMasterVolume		; #25
 ;---------------------------------------
+; AY Chip driver (player)
+;---------------------------------------
+		dec	a
+		jp	z,_pt3init			; #26
+		dec	a
+		jp	z,_pt3play			; #27
+		dec	a
+		jp	z,_pt3mute			; #28
+		dec	a
+		jp	z,_pt3loopEnable		; #29
+		dec	a
+		jp	z,_pt3loopDisable		; #2A
+		dec	a
+		jp	z,_pt3setType			; #2B
+
+;---------------------------------------
 		ret
 
 _initDrivers	ret
@@ -99,8 +115,9 @@ _getDrvVersion	ld	hl,(drvVersion)
 
 		include	"mouse.asm"
 		include	"neogs.asm"
+		include	"aychip.asm"
 
-drvVersion	dw	#0002				; v 0.02
+drvVersion	dw	#0003				; v 0.03
 
 eCliDrivers	nop
 

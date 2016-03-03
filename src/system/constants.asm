@@ -40,6 +40,9 @@ gliAddr		equ	#c000				; Адрес для загрузки gli.sys
 ; resBank		equ	#08				; Банка и
 ; resAddr		equ	#c000				; Адрес для загрузки res.sys
 
+ayBank		equ	#08				; Банка и
+ayAddr		equ	#c000				; Адрес для загрузки модулей для AY
+
 sprBank		equ	#09				; Банка и
 sprAddr		equ	#c000				; Адрес для загрузки спрайтов
 

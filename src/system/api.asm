@@ -209,6 +209,15 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_setMouseCursor			; #58
 
+		dec	a
+		jp	z,_enableAyPlay				; #59
+
+		dec	a
+		jp	z,_disableAyPlay			; #5A
+
+		dec	a
+		jp	z,_uploadAyModule			; #5B
+
 _reserved	ret
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -688,7 +697,16 @@ skipKeyboard	call	updateDrivers
 
 ; skipResident
 
-; skipMouseSelect	
+; skipMouseSelect
+
+enableAy	ld	a,#00
+		cp	#00
+		jr	z,skipAy
+		
+		ld	a,pt3play
+		call	cliDrivers
+
+skipAy
 		pop	af,bc,de,hl		
 		exx
 		ex	af,af'
@@ -698,6 +716,26 @@ skipKeyboard	call	updateDrivers
 
 _wcIntAddr	jp	#0000
 
+;---------------------------------------
+_enableAyPlay	halt
+		ld	a,#01
+		ld	(enableAy+1),a
+		ret
+;---------------------------------------
+_disableAyPlay	halt
+		xor	a
+		ld	(enableAy+1),a
+		ld	a,pt3mute
+		call	cliDrivers
+		ret
+;---------------------------------------
+_uploadAyModule	ld	a,ayBank
+		push	bc
+		call	_setRamPage0
+		pop	bc
+		ld	de,#0000
+		ldir
+		jp	_restoreWcBank
 ;---------------------------------------
 _checkMouseClicks
 		ld	a,getMouseButtons
@@ -709,24 +747,20 @@ _checkMouseClicks
 _cmc_01		ld	a,#00
 		cp	#01					; уже нажата и держится
 		jp	z,_cmc_03
+
+		ld	a,#01
+		ld	(_cmc_01+1),a				; устанавливаем флаг, что уже нажали и держат
 		
 		ld	hl,(mouseSelectB)
 		ld	a,h
 		or	l
 		jr	z,_cmc_01Skip				; Выделений нет - пропуск
 
-		call	_openCacheBank
-		call	_invertMousePos
-		ld	de,(mouseSelectE)
-		ex	de,hl
-		call	_invertMousePos
-		ex	de,hl
-		call	_fillMouseClicks
+		call	_openCacheBank				; Банка с выделенным текстом
+		
+		call	_removeOldSel				; убираем старое выделение
 
-_cmc_01Skip	ld	a,#01					; нажали 1й раз
-		ld	(_cmc_01+1),a
-
-		ld	a,mCursorSelect
+_cmc_01Skip	ld	a,mCursorSelect
 		call	_setCursorPhase
 
 		call	_getMouseTxtPos
@@ -734,7 +768,6 @@ _cmc_01Skip	ld	a,#01					; нажали 1й раз
 		ld	(mouseSelectB),hl			; Сохраняем начало выделения
 
 _cmc_01a	call	_openCacheBank
-
 		call	_invertMousePos
 
 		xor	a
@@ -760,6 +793,20 @@ _openCacheBank	ld	a,(_PAGE3)				; Сохряняем какая была до э
 		out	(c),a
 		ret
 
+;---------------
+_removeOldSel	ld	de,(mouseSelectE)
+		ex	de,hl
+		call	_invertMousePos				; начальный курсор
+		ex	de,hl
+_removeOldSel2	ld	hl,(mouseSelectB)
+		ld	a,h
+		cp	d
+		jr	nz,_removeOldSel3
+		ld	a,l
+		cp	e
+		jr	z,_fillMouseClicks
+_removeOldSel3	call	_invertMousePos				; конечный курсор
+; 		jr	_fillMouseClicks			; всё что между ними
 ;----		
 _fillMouseClicks
 		push	hl
@@ -799,8 +846,6 @@ _cmc_02		ld	a,(_cmc_01+1)
 		xor	a
 		ld	(_cmc_01+1),a
 
-; 		call	_restoreBorder
-
 		ld	a,mCursorDefault
 		call	_setCursorPhase
 		ret
@@ -808,6 +853,10 @@ _cmc_02		ld	a,(_cmc_01+1)
 _cmc_03		ld	de,#0000				; нажали и держат
 		push	de
 		call	_getMouseTxtPos
+; 		push	hl
+; 		call	_openCacheBank
+; 		call	_removeOldSel2				; очищаем всё что было выделено
+; 		pop	hl
 		pop	de
 ; 		ld	a,h
 ; 		cp	d
@@ -816,7 +865,7 @@ _cmc_03		ld	de,#0000				; нажали и держат
 		ld	a,l
 		cp	e
 		ret	z
-		jr	_cmc_01a	
+		jp	_cmc_01a	
 
 ;---------------
 _getMouseTxtPos	ld	a,getMouseX				; HL
@@ -839,6 +888,7 @@ _getMouseTxtPos	ld	a,getMouseX				; HL
 
  		add	hl,bc					; адрес курсора
  		ret
+
 ;---------------
 _invertMousePos	push	hl,de
 		ld	de,(_scrollOffset)
@@ -1515,7 +1565,10 @@ _loadFile	xor	a					; загрузка файла с восстановлени�
 		ld	(checkLimit+1),a
 _loadFile0	call	_storePath
 		call	loadFile_00
-		jp	_restorePath
+		push	bc
+		call	_restorePath
+		pop	bc
+		ret
 
 _loadFileHere	xor	a					; загрузка файла без восстановления пути
 		ld	(checkLimit+1),a
@@ -1541,7 +1594,9 @@ loadFile_00	push	de					; de - aдрес загрузки
 		add	hl,bc
 		jr	c,loadFileTooBig			; если вылетаем за границу адресного пространства (>#ffff)
 
-		pop	hl
+		pop	hl					; hl - размер файла?
+zzz		ld	(loadFileSize+1),hl
+
 checkLimit	ld	a,#00
 		cp	#00
 		jr	z,loadFile_01
@@ -1565,6 +1620,7 @@ loadFile_01	call	_setFileBegin
 		call	_load512bytes
 
 		xor	a
+loadFileSize	ld	bc,#0000				; на выходе в BC - размер файла
 		ret
 
 loadWrongSize	pop	hl

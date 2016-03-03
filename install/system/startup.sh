@@ -16,5 +16,4 @@ loadfont -s /system/res/fonts/8x8/default.fnt
 ;cd /demo/bramble/art/
 ;pwd
 ;micetest
-
-
+;loadpt3 /music/ay/zoom.pt3
