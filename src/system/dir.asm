@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------------
 ; ls/dir - read directory
 ;---------------------------------------------
@@ -16,10 +16,18 @@ _dir		ex	de,hl
 		call	_changeDir
 		
 		cp	#ff
-		call	nz,lsPath
+		jr	nz,lsPath
+		
+		ld	hl,dirNotFoundMsg
+		ld	b,#ff
+		call	_printErrorString
+		xor	a
 
-		call	_restorePath
+lsExit		call	_restorePath
 		ret
+
+lsChanged	call	lsPath
+		jr	lsExit
 
 lsPath		ld	a,(lsPathCount)					; path counter
 		cp	#00
