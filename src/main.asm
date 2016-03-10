@@ -23,7 +23,7 @@
 	DEVICE ZXSPECTRUM128
 
 ;	define buildLoader				; Сборка загрузчика системы (плагин для WC)
-; 	define buildKernel				; Сборка всей системы
+	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
@@ -33,7 +33,7 @@
 ; 	define buildType				; Сборка команды type
 ; 	define buildKeyScan				; Сборка утилиты keyscan
 ; 	define buildLoadMod				; Сборка утилиты loadmod
-	define buildLoadPt3				; Сборка утилиты loadpt3
+; 	define buildLoadPt3				; Сборка утилиты loadpt3
 ; 	define buildMiceTest				; Сборка утилиты micetest
 ; 	define buildGliTest				; Сборка утилиты glitest
 ;  	define buildLoadSxg				; Сборка утилиты loadsxg
@@ -94,6 +94,8 @@
 	include "res/fonts/8x8/ibm.fnt.asm"		; CLi² ibm font
 	include "res/fonts/8x8/light.fnt.asm"		; CLi² light font
 	include "res/fonts/8x8/robat.fnt.asm"		; CLi² robat font
+	
+	include "res/fonts/16x16/apple_j.fnt.asm"	; 16c color font 8x16
 	endif
 ;-------------------------------------------------------------------------
 
@@ -233,4 +235,4 @@
 
 	endif
 	
-;   	DISPLAY "_uploadAyModule",/A,_uploadAyModule
+;   	DISPLAY "_opSet",/A,_opSet

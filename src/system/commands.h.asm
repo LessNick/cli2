@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------------
 ; Command's table below with all jump vectors
 ;---------------------------------------------

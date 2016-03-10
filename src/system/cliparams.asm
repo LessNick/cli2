@@ -90,8 +90,11 @@ curAnim		db	14,15					; timeout,color
 
 cursorType	db	"_"
 
-iBufferPos	db	#00
-iBuffer		ds	iBufferSize,#00
+iBufferPos	db	#00					; ??? Позиция в строке ввода 1>
+iBuffer		ds	iBufferSize,#00				; ??? Размер буфера строки ввода
+rBufferSize	equ	iBufferSize
+rBuffer		ds	rBufferSize,#00				; Размер буфера строки для замены с переменными
+rBufferNumber	db	"-----",#00				; Буфера для преобразования int2str
 
 fileLength	dw	#0000,#0000
 storeKey	db	#00					; временное сохрание символа под курсором
@@ -340,3 +343,32 @@ cliWheelPos	dw	#0000					; Текущая позиция Wheel в консоли
 
 mouseSelectB	dw	#0000					; Начальный адрес выделения мышью
 mouseSelectE	dw	#0000					; Конечный адрес выделения мышью
+
+;---------------------------------------------
+								; Переменные A-Z. По умолчанию равны 0, диапазон от -32768 до 32767
+op_varA		dw	#0000					; %A
+op_varB		dw	#0000					; %B
+op_varC		dw	#0000					; %C
+op_varD		dw	#0000					; %D
+op_varE		dw	#0000					; %E
+op_varF		dw	#0000					; %F
+op_varG		dw	#0000					; %G
+op_varH		dw	#0000					; %H
+op_varI		dw	#0000					; %I
+op_varJ		dw	#0000					; %J
+op_varK		dw	#0000					; %K
+op_varL		dw	#0000					; %L
+op_varM		dw	#0000					; %M
+op_varN		dw	#0000					; %N
+op_varO		dw	#0000					; %O
+op_varP		dw	#0000					; %P
+op_varQ		dw	#0000					; %Q
+op_varR		dw	#0000					; %R
+op_varS		dw	#0000					; %S
+op_varT		dw	#0000					; %T
+op_varU		dw	#0000					; %U
+op_varV		dw	#0000					; %V
+op_varW		dw	#0000					; %W
+op_varX		dw	#0000					; %X
+op_varY		dw	#0000					; %Y
+op_varZ		dw	#0000					; %Z

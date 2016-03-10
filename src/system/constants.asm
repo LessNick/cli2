@@ -46,6 +46,9 @@ ayAddr		equ	#c000				; Адрес для загрузки модулей для 
 sprBank		equ	#09				; Банка и
 sprAddr		equ	#c000				; Адрес для загрузки спрайтов
 
+fontBank	equ	30 ;#0a				; 2 Банки (16c) или 4 Банки (256c) и
+fontAddr	equ	#c000				; Адрес для загрузки графического шрифта
+
 iBufferSize	equ	255				; размер буфера строки [?]
 eBufferSize	equ	iBufferSize			; размер буфера редактируемой строки
 

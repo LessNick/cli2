@@ -22,6 +22,7 @@ sCliKernel
 		include "budder.asm"
 		
 		include "commands.asm"
+		include "operators.asm"
 		include "dir.asm"
 		include "run.asm"
 		include "sh.asm"
@@ -33,6 +34,7 @@ sCliKernel
 		include "messages.asm"
 		include "cliparams.asm"
 		include "commands.h.asm"
+		include "operators.h.asm"
 		
 		include "wc.h.asm"
 		include "tsconf.h.asm"

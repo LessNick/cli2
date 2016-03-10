@@ -1274,8 +1274,11 @@ _printFileNotFound
 		ld	hl,fileNotFoundMsg0
 		jr	_printErrorString
 
+_printErrLimits	ld	hl,errorLimitMsg
+		jr	_printEP
+
 _printErrParams	ld	hl,errorParamsMsg
-		ld	b,#ff
+_printEP	ld	b,#ff
 _printErrorString
 		ld	a,(colorError)
 
@@ -1561,17 +1564,21 @@ _loadFileLimit	ld	a,#01					; bc - лимит
 		jr	_loadFile0
 
 ;---------------
-_loadFile	xor	a					; загрузка файла с восстановлением пути
+_loadFile	xor	a
 		ld	(checkLimit+1),a
-_loadFile0	call	_storePath
+		ex	af,af'
+		cp	#01
+		jr	z,loadFile_00				; загрузка файла без восстановления пути
+
+_loadFile0	call	_storePath				; загрузка файла с восстановлением пути
 		call	loadFile_00
 		push	bc
 		call	_restorePath
 		pop	bc
 		ret
 
-_loadFileHere	xor	a					; загрузка файла без восстановления пути
-		ld	(checkLimit+1),a
+; _loadFileHere	xor	a					; загрузка файла без восстановления пути
+; 		ld	(checkLimit+1),a
 
 loadFile_00	push	de					; de - aдрес загрузки
 		call	_checkIsPath				; hl - адрес строки с именем файла

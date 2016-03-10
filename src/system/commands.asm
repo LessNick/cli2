@@ -10,9 +10,22 @@
 ;     a,#00 - command found, hl - addr params start
 
 ;---------------------------------------
-_parseLine	call	_checkIsExec				; ./filename
+_parseLine	call	_scanForReplace				; поиск и замена переменных в строке
+		cp	#ff
+		ret	z					; ошибка замены строки
+
+		call	_checkIsExec				; ./filename
 		cp	#ff
 		ret	nz					; команда исполняемый файл - выход
+
+		xor	a					; сброс флагов
+		ld	hl,opTable
+		push	de
+		call	_parser
+		pop	de
+		
+		cp	#ff
+		ret	nz					; команда начинается с точки и является оператором - выход
 
 		xor	a					; сброс флагов
 		ld	hl,cmdTable
@@ -34,16 +47,105 @@ _parseLine	call	_checkIsExec				; ./filename
 		jp	_printErrorString
 
 ;---------------------------------------
+_scanForReplace	push	de
+		ld	hl,rBuffer
+		push	hl
+		ld	de,rBuffer+1
+		ld	bc,rBufferSize-1
+		xor	a
+		ld	(hl),a
+		ldir						; очищаем новый буфер
+		pop	hl
+		pop	de
+		push	hl					; в DE на выходе будет rBuffer
+_sfr_loop	ld	a,(de)
+		cp	#00					; конец строки
+		jr	z,_sfr_exit
+		cp	"%"					; поиск переменной начинающейся с %
+		jr	nz,_sfr_next
+		inc	de
+		ld	a,(de)
+		cp	"%"					; %% - просто символ %
+		jr	z,_sfr_next
+		call	_upperCase				; приводим к a->A
+		cp	"A"
+		jr	c,_sfr_err
+		cp	"Z"+1
+		jr	nc,_sfr_err
+		sub	"A"
+		sla	a					; *2
+		push	hl					; hl = rBuffer
+		ld	hl,op_varA
+		ld	b,0
+		ld	c,a
+		add	hl,bc
+		ld	c,(hl)
+		inc	hl
+		ld	b,(hl)
+		pop	hl					; hl = rBuffer
+		bit 	7,b
+		jr	z,_sfr_skip
+		
+		ld	a,"-"
+		ld	(hl),a
+		inc	hl
+		res	7,b
+_sfr_skip	push	de,hl
+		ld	de,rBufferNumber
+		push	de					; de = rBufferNumber
+		push	bc
+		pop	hl					; bc -> hl = значение
+		call	_int2str
+		pop	de					; de = rBufferNumber
+		pop	hl					; hl = получатель rBuffer
+_sfr_sLoop	ld	a,(de)
+		cp	"0"
+		jr	nz,_sfr_skip1a
+		inc	de
+		jr	_sfr_sLoop
+
+_sfr_skip1a	cp	#00
+		jr	nz,_sfr_skip1c
+		ld	a,"0"
+		ld	(hl),a
+		jr	_sfr_skip2
+
+_sfr_skip1b	ld	a,(de)
+		cp	#00
+		jr	z,_sfr_skip2
+_sfr_skip1c	ld	(hl),a
+		inc	de
+		inc	hl
+		jr	_sfr_skip1b
+
+_sfr_skip2	pop	de
+		jr	_sfr_next2
+
+_sfr_next	ld	(hl),a
+
+_sfr_next2	inc	hl
+		inc	de
+		jr	_sfr_loop
+
+_sfr_exit	pop	de
+		xor	a					; ошибок нет
+		ret
+
+_sfr_err	pop	de
+		call	_printErrParams
+		ld	a,#ff					; ошибка замены
+		ret
+;---------------------------------------
 _upperCase	cp	"a"					; Делает символ большим
 		ret	c
-		cp	"z"
+		cp	"z"+1
 		ret	nc
 		sub	32
 		ret
 
 _lowerCase	cp	"A"					; Делает символ маленьким
 		ret	c
-		cp	"Z"
+		cp	"Z"+1
 		ret	nc
 		add	32
 		ret
@@ -253,10 +355,6 @@ cibOk_01	ld	(de),a
 
 		ld	de,cibPath
 cibParams	ld	hl,#0000
-
-; 		push	hl,de
-;  		call	_pathWorkDir
-;  		pop	de,hl
 
 		call	_runApp
 		xor	a,#00					; no err

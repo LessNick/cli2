@@ -1,12 +1,11 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; load font command
 ;---------------------------------------
 		org	#c000-4
 
-; fontBufferSize	equ	2048					; 2048 - размер шрифта
 fntBufferSize	equ	16					; 16*512 = 8192 Размер буфера в блоках по (512кб)
 
 		include "system/constants.asm"			; Константы
@@ -256,7 +255,7 @@ fntHeightOk
 
 		pop	hl
 ;---------------
-		inc	hl					; начало данных
+		inc	hl					; начало данных bitmap
 		ld	e,(hl)
 		inc	hl
 		ld	d,(hl)
@@ -264,6 +263,26 @@ fntHeightOk
 		push	hl
 		add	hl,de
 		ld	(fontAddrStart+1),hl
+
+;---------------
+		pop	hl					; начало данных палитры
+		ld	e,(hl)
+		inc	hl
+		ld	d,(hl)
+		inc	hl
+		push	hl
+		add	hl,de
+; 		ld	(fontAddrStart+1),hl
+
+;---------------
+		pop	hl					; начало данных таблицы ширины
+		ld	e,(hl)
+		inc	hl
+		ld	d,(hl)
+		inc	hl
+		push	hl
+		add	hl,de
+; 		ld	(fontAddrStart+1),hl
 
 ;---------------
 		ld	hl,fntNameMsg
@@ -397,10 +416,11 @@ wrongFile	ld	hl,wrongFileMsg
 		ld	a,#ff					; error
 		ret
 ;---------------------------------------------
-fontVersionMsg	db	"Font loader for CLI v0.10",#00
-fontCopyRMsg	db	"2013,2015 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+fontVersionMsg	db	"Font loader for CLI2 v0.12",#00
+fontCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 		
 fontUsageMsg	db	"Usage: loadfont [switches] filename.fnt",#0d
+		db	16,16,"  -g ",15,15,"\tgraphics mode. load fonts into graphics memory (default console)",#0d
 		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
 		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
 		db	16,16,"  -h ",15,15,"\thelp. show this info",#0d
@@ -409,7 +429,8 @@ fontUsageMsg	db	"Usage: loadfont [switches] filename.fnt",#0d
 noFileMsg	db	"Error: Incorrect file name.",#0d,#00
 wrongSizeMsg	db	"Error: Wrong file size.",#0d,#00
 wrongFileMsg	db	"Error: Incorrect file format.",#0d,#0d,#00
-wrongVerMsg	db	#0d,"Error: Unsupported font format. (Supported only b/w 1bit, monospaced, 8x8px )",#0d,#0d,#00
+wrongVerMsg	db	#0d,"Error: Unsupported font format. (Supported only b/w 1bit, monospaced, 8x8px )"
+		db	#0d,"       If you want load font for graphics mode, use -g key",#0d,#0d,#00
 
 fntFormatMsg	db	" ",249," Font format: FNT detected!",#0d,#00
 fntVerMsg	db	" ",249," FNT header version: ",#00
@@ -461,6 +482,6 @@ appEnd		nop
 fntBuffer	nop
 		
 ; 		DISPLAY "fontAddrStart",/A,fontAddrStart
-		DISPLAY "fontWrongVer",/A,fontWrongVer
+; 		DISPLAY "fontWrongVer",/A,fontWrongVer
 
 		SAVEBIN "install/bin/loadfont", appStart, appEnd-appStart

@@ -13,16 +13,10 @@ _sh		ex	de,hl					; hl params
 		push	hl
  		call	storeShPath
 
-; 		push	hl
-;  		call	_pathWorkDir
-;  		pop	hl
-
 		ld	de,scriptAddr
-		call	_loadFileHere
-
-; 		push	hl
-;  		call	_pathWorkDir
-;  		pop	hl
+		ld	a,#01					; загрузка без восстановления пути
+		ex	af,af'
+		call	_loadFile
 
 		pop	hl
 		cp	#ff
@@ -54,7 +48,6 @@ shStr_Loop	ld	a,(hl)
 
 shExt_00	ld	a,b
 		or	c
-; 		jr	z,shClear
 		jr	z,shExitOk
 		jr	shExt_01a
 
@@ -73,7 +66,6 @@ shExt_01a	xor	a					; сброс флагов
 		
 		ld	a,(de)
 		cp	#00
-; 		jr	z,shClear
 		jr	z,shExitOk
 
 shExt_02	push	hl
@@ -94,8 +86,6 @@ shExitErr	call	_printFileNotFound			; выводим сообщение, что 
 shExitOk	call	restoreShPath
 
 shClear		push	hl
-; 		call	restoreShPath
-
 		ld	a,scriptBank
 		call	switchMemBank
 		

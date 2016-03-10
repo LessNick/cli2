@@ -1,12 +1,13 @@
 ;---------------------------------------
-; CLi² (Command Line Interface) default fonts
-; 2015 © breeze/fishbone crew
+; CLi² (Command Line Interface) fonts
+; 2015,2016 © breeze/fishbone crew
 ;---------------------------------------
 
+	MODULE	bge_fnt
 		org	#C000
 
-sFont3		db	#7f,"FNT"				; #7f+"FNT" - 4 байта сигнатура, что это формат файла FNT
-		db	#01					; 1 байт версия формата
+sFont		db	#7f,"FNT"				; #7f+"FNT" - 4 байта сигнатура, что это формат файла FNT
+		db	#02					; 1 байт версия формата
 		db	#00					; 1 байт тип упаковки данных:
 								;		#00 - данные не пакованы
 		db	#00					; 1 байт тип шрифта:
@@ -24,25 +25,30 @@ sFont3		db	#7f,"FNT"				; #7f+"FNT" - 4 байта сигнатура, что э
 								;		#03 - 8 bit 256-ти цветный шрифт
 		dw	#0008					; 2 байта ширина шрифта
 		dw	#0008					; 2 байта высота шрифта
-		dw	bFont3-taFont3				; 2 байта смещение от текущего адреса до начала данных шрифта
+		dw	bFont-taFont				; 2 байта смещение от текущего адреса до начала данных шрифта
 
-taFont3	;	ds	256,0					; таблица ширины символов для пропорционального шрифта
-								; если задан bit 7 в типе шрифта
+taFont		dw	#0000					; 2 байта смещение от текущего адреса до начала палитры шрифта (если шрифт не 1bit)
+		dw	#0000					; 2 байта смещение от текущего адреса до начала таблицы ширины шрифта (если шрифт пропорциональный)
 
 								; Мета-данные:
-		dw	neFont3-nFont3				; 2 байта длина название шрифта
-nFont3		db	"BGE",#00				; * байт название шрифта, оканчивающихся кодом #00
-neFont3		
-		dw	aeFont3-aFont3				; 2 байта длина автора шрифта
-aFont3		db	"Wizard^dt",#00				; * байт автор шрифта, оканчивающихся кодом #00
-aeFont3		
-		dw	deFont3-dFont3				; 2 байта длина описания шрифта
-dFont3		db	"Font from Burial GFX Editor",#00 	; * байт описание шрифта, оканчивающихся кодом #00
-deFont3
+		dw	neFont-nFont				; 2 байта длина название шрифта
+nFont		db	"BGE",#00				; * байт название шрифта, оканчивающихся кодом #00
+neFont		
+		dw	aeFont-aFont				; 2 байта длина автора шрифта
+aFont		db	"Wizard^dt",#00				; * байт автор шрифта, оканчивающихся кодом #00
+aeFont		
+		dw	deFont-dFont				; 2 байта длина описания шрифта
+dFont		db	"Font from Burial GFX Editor",#00 	; * байт описание шрифта, оканчивающихся кодом #00
+deFont
 
-bFont3		incbin  "rc/fonts/8x8/bge.bin"			; Начало данных шрифта
-eFont3
+bFont		incbin  "rc/fonts/8x8/bge.bin"			; Начало данных шрифта
+eFont
 
-; 	DISPLAY "bFont3-taFont3",/A,bFont3-taFont3
+;		ds	256,0					; таблица ширины символов для пропорционального шрифта
+								; если задан bit 7 в типе шрифта
 
-	SAVEBIN "install/system/res/fonts/8x8/bge.fnt", sFont3, eFont3-sFont3
+; 	DISPLAY "bFont-taFont",/A,bFont-taFont
+
+	SAVEBIN "install/system/res/fonts/8x8/bge.fnt", sFont, eFont-sFont
+
+	ENDMODULE

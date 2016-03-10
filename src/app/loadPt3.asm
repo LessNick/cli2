@@ -69,6 +69,8 @@ ayFileName	ld	de,#0000				; Имя файла
 		call	ayPrtFilename
 		pop	hl
 		ld	de,ayBuffer
+		xor	a
+		ex	af,af'					; загрузка с сохранением пути
 		ld	a,loadFile				; Загружаем файл в буфер
 								; На выходе в BC - размер
 		call	cliKernel
