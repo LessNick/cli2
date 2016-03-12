@@ -227,6 +227,8 @@ _initSystem	xor	a
 
 		call	_moveScreenInit
 		
+		call	_initVars
+
 		ld	a,#01
 		ld	(disableDrivers+1),a
 		call	_switchTxtMode
@@ -274,6 +276,12 @@ _initSystem_00a	ld	a,#01					; Пометить, что драйвера усп�
 		jr	_initSystem_03
 
 _initSystem_00b	
+		call	_loadKeyMap				; Загрузить /system/res/keymaps/default.key
+		cp	#ff
+		jr	nz,_initSystem_00c
+		ld	hl,keymapPath
+		jr	_initSystem_03
+
 ; 		call	_loadSysRes				; Загрузить /system/res.sys
 ; 		cp	#ff
 ; 		jr	nz,_initSystem_00c
@@ -284,7 +292,7 @@ _initSystem_00b
 ; 		ld	a,initResidents				; инициализация системы резидентов
 ; 		call	_resApi
 
-		call	_loadCursorsRes				; Загрузить /system/res/cursors/default.cur
+_initSystem_00c	call	_loadCursorsRes				; Загрузить /system/res/cursors/default.cur
 ; 		cp	#ff
 ; 		jr	nz,_initSystem_00c
 ; 		call	_printBootError
@@ -343,6 +351,17 @@ _reInitSystem	call	_switchTxtMode
 ;---------------------------------------
 _getCliVersion	ld	hl,(cliVersion)
 		ret
+;---------------------------------------
+_initVars	ld	a,varBank				; иницализация переменных
+		call	_setRamPage0
+		ld	hl,varAddr
+		ld	de,varAddr+1
+		ld	bc,#3fff
+		xor	a
+		ld	(hl),a
+		ldir
+		jp	_restoreWcBank
+
 ;---------------------------------------
 
 _switchTxtMode	xor	a
@@ -1274,6 +1293,9 @@ _printFileNotFound
 		ld	hl,fileNotFoundMsg0
 		jr	_printErrorString
 
+_printErrNun	ld	hl,errorNunMsg
+		jr	_printEP
+
 _printErrLimits	ld	hl,errorLimitMsg
 		jr	_printEP
 
@@ -1602,7 +1624,7 @@ loadFile_00	push	de					; de - aдрес загрузки
 		jr	c,loadFileTooBig			; если вылетаем за границу адресного пространства (>#ffff)
 
 		pop	hl					; hl - размер файла?
-zzz		ld	(loadFileSize+1),hl
+		ld	(loadFileSize+1),hl
 
 checkLimit	ld	a,#00
 		cp	#00
@@ -1860,6 +1882,11 @@ _gliApi		push	af
 ; _loadSysRes	ld	hl,resPath
 ; 		ld	a,resBank				; Указываем страницу для загрузки  res.sys с #c000
 ; 		jr	loadDmaPath
+
+;---------------------------------------
+_loadKeyMap	ld	hl,keymapPath
+		ld	a,keymapBank				; Указываем страницу для загрузки  default.key с #c000
+		jr	loadDmaPath
 
 ;---------------------------------------
 _loadGli	ld	hl,gliPath
@@ -2252,9 +2279,17 @@ _getKeyWithShiftN
 gkE0_00		cp	#68
  		jr	c,returnEmptyAscii
  		ld	de,keyMap_E0-#68
+ 		push	af
+		ld	a,keymapBank
+		call	_setRamPage0
+		pop	af
  		jr	getAsciiCode_0C
 ;---------------
-getAsciiCode	push	hl
+getAsciiCode	push	af
+		ld	a,keymapBank
+		call	_setRamPage0
+		pop	af
+		push	hl
 
 		ld	a,(keyLayoutSwitch)		; Проверить активную раскладку
 		cp	#00				; 0 - EN, 1 - RU
@@ -2293,15 +2328,18 @@ getAsciiCode_0C	add	hl,de
 		jr	z,getAsciiCode_01
 		pop	af
 		or	a					; NZ - данные получены
-		ret
+		jr	getAsciiExit
 
 getAsciiCode_01	pop	af
 getAsciiCode_02	
 returnEmptyAscii
 		xor	a					; Z - данных нет - выход
 		or	a
+		
+getAsciiExit	push	af
+		call	_restoreWcBank
+		pop	af
 		ret
-
 ;---------------------------------------
 _checkSync	ld	hl,(intCounter)
 		ld	a,h

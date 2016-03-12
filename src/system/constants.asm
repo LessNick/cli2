@@ -46,6 +46,12 @@ ayAddr		equ	#c000				; Адрес для загрузки модулей для 
 sprBank		equ	#09				; Банка и
 sprAddr		equ	#c000				; Адрес для загрузки спрайтов
 
+varBank		equ	#0A				; Банка и
+varAddr		equ	#0000				; Адрес для переменных
+
+keymapBank	equ	#0B				; Банка и
+keymapAddr	equ	#0000				; Адрес для раскладки клавиатуры
+
 fontBank	equ	30 ;#0a				; 2 Банки (16c) или 4 Банки (256c) и
 fontAddr	equ	#c000				; Адрес для загрузки графического шрифта
 
@@ -66,33 +72,35 @@ deviceNemoM	equ	#01				; Nemo IDE Master
 deviceNemoS	equ	#02				; Nemo IDE Slave
 
 ;-------------------------------------------------------------------------------------
+		include "ascii_keys.h.asm"		; псевдо-коды ASCII для маппинга расширенных клавиш
+
 ;		equ	#01				; псевдо-коды ASCII для маппинга расширенных клавиш
-aInsert		equ	#02
-aDelete		equ	#03
-aHome		equ	#04
-aEnd		equ	#05
-aPageUp		equ	#06
-aPageDown	equ	#07
-aCurLeft	equ	#08
-aCurRight	equ	#09
-aCurDown	equ	#0a
-aCurUp		equ	#0b	
-;		equ	#0c
-aEnter		equ	#0d
-aBackspace	equ	#0e
-aTab		equ	#0f
-aEsc		equ	#10
-aF1		equ	#11
-aF2		equ	#12
-aF3		equ	#13
-aF4		equ	#14
-aF5		equ	#15
-aF6		equ	#16
-aF7		equ	#17
-aF8		equ	#18
-aF9		equ	#19
-aF10		equ	#1a
-aF11		equ	#1b
+; aInsert		equ	#02
+; aDelete		equ	#03
+; aHome		equ	#04
+; aEnd		equ	#05
+; aPageUp		equ	#06
+; aPageDown	equ	#07
+; aCurLeft	equ	#08
+; aCurRight	equ	#09
+; aCurDown	equ	#0a
+; aCurUp		equ	#0b	
+; ;		equ	#0c
+; aEnter		equ	#0d
+; aBackspace	equ	#0e
+; aTab		equ	#0f
+; aEsc		equ	#10
+; aF1		equ	#11
+; aF2		equ	#12
+; aF3		equ	#13
+; aF4		equ	#14
+; aF5		equ	#15
+; aF6		equ	#16
+; aF7		equ	#17
+; aF8		equ	#18
+; aF9		equ	#19
+; aF10		equ	#1a
+; aF11		equ	#1b
 
 ;-------------------------------------------------------------------------------------
 							; Курсоры мыши:

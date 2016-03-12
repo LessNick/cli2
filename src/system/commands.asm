@@ -6,11 +6,13 @@
 ;---------------------------------------
 ; In: de, command string addr
 ;	  hl, table of commands list
+;         bc, номер текущей строки в SH скрипте, =1 просто вызов
 ; Out:a,#ff = command not found
 ;     a,#00 - command found, hl - addr params start
 
 ;---------------------------------------
-_parseLine	call	_scanForReplace				; поиск и замена переменных в строке
+_parseLine	ld	(_plStrNumber+1),bc
+		call	_scanForReplace				; поиск и замена переменных в строке
 		cp	#ff
 		ret	z					; ошибка замены строки
 
@@ -21,6 +23,7 @@ _parseLine	call	_scanForReplace				; поиск и замена переменн
 		xor	a					; сброс флагов
 		ld	hl,opTable
 		push	de
+_plStrNumber	ld	bc,#0000
 		call	_parser
 		pop	de
 		
@@ -47,7 +50,9 @@ _parseLine	call	_scanForReplace				; поиск и замена переменн
 		jp	_printErrorString
 
 ;---------------------------------------
-_scanForReplace	push	de
+_scanForReplace	ld	a,varBank
+		call	_setRamPage0
+		push	de
 		ld	hl,rBuffer
 		push	hl
 		ld	de,rBuffer+1
@@ -58,6 +63,7 @@ _scanForReplace	push	de
 		pop	hl
 		pop	de
 		push	hl					; в DE на выходе будет rBuffer
+
 _sfr_loop	ld	a,(de)
 		cp	#00					; конец строки
 		jr	z,_sfr_exit
@@ -73,6 +79,22 @@ _sfr_loop	ld	a,(de)
 		cp	"Z"+1
 		jr	nc,_sfr_err
 		sub	"A"
+		
+		inc	de
+		ld	(_sfr_cont+1),de
+
+		push	hl,af
+		ld	hl,op_typeA
+		ld	b,0
+		ld	c,a
+		add	hl,bc
+		ld	a,(hl)
+		cp	#00					; undefined variable
+		jr	z,_sfr_undef
+		cp	#02					; string variable
+		jr	z,_sfr_string
+		pop	af,hl
+
 		sla	a					; *2
 		push	hl					; hl = rBuffer
 		ld	hl,op_varA
@@ -83,13 +105,16 @@ _sfr_loop	ld	a,(de)
 		inc	hl
 		ld	b,(hl)
 		pop	hl					; hl = rBuffer
+		
 		bit 	7,b
 		jr	z,_sfr_skip
-		
+
+		res	7,b
+
 		ld	a,"-"
 		ld	(hl),a
 		inc	hl
-		res	7,b
+
 _sfr_skip	push	de,hl
 		ld	de,rBufferNumber
 		push	de					; de = rBufferNumber
@@ -98,6 +123,7 @@ _sfr_skip	push	de,hl
 		call	_int2str
 		pop	de					; de = rBufferNumber
 		pop	hl					; hl = получатель rBuffer
+
 _sfr_sLoop	ld	a,(de)
 		cp	"0"
 		jr	nz,_sfr_skip1a
@@ -105,21 +131,21 @@ _sfr_sLoop	ld	a,(de)
 		jr	_sfr_sLoop
 
 _sfr_skip1a	cp	#00
-		jr	nz,_sfr_skip1c
+		jr	nz,_sfr_skip1b
 		ld	a,"0"
 		ld	(hl),a
 		jr	_sfr_skip2
 
-_sfr_skip1b	ld	a,(de)
-		cp	#00
-		jr	z,_sfr_skip2
-_sfr_skip1c	ld	(hl),a
-		inc	de
+_sfr_skip1b	ld	(hl),a
 		inc	hl
-		jr	_sfr_skip1b
+
+		inc	de
+		ld	a,(de)
+		cp	#00
+		jr	nz,_sfr_skip1b
 
 _sfr_skip2	pop	de
-		jr	_sfr_next2
+		jr	_sfr_loop
 
 _sfr_next	ld	(hl),a
 
@@ -128,13 +154,44 @@ _sfr_next2	inc	hl
 		jr	_sfr_loop
 
 _sfr_exit	pop	de
+		call	_restoreWcBank
 		xor	a					; ошибок нет
 		ret
 
 _sfr_err	pop	de
 		call	_printErrParams
+		call	_restoreWcBank
 		ld	a,#ff					; ошибка замены
 		ret
+;---------------
+_sfr_undef	pop	af,hl
+		ld	de,undefVarMsg
+_sfr_undefLoop	ld	a,(de)
+		cp	#00
+		jr	z,_sfr_cont	
+		ld	(hl),a
+		inc	de
+		inc	hl
+		jr	_sfr_undefLoop
+;---------------
+_sfr_string	pop	af
+		ld	hl,op_strA
+		ld	b,a
+		ld	c,0
+		add	hl,bc
+		ex	de,hl
+		pop	hl
+
+_sfr_strLoop	ld	a,(de)
+		cp	#00
+		jp	z,_sfr_cont
+		ld	(hl),a
+		inc	de
+		inc	hl
+		jr	_sfr_strLoop
+;---------------
+_sfr_cont	ld	de,#0000
+		jp	_sfr_loop
 ;---------------------------------------
 _upperCase	cp	"a"					; Делает символ большим
 		ret	c
@@ -205,6 +262,7 @@ end_of_command	call	_eatSpaces
 		ld	l,a
 		ld	(storeAddr),de
 		jp	(hl)				; de - addr start params
+							; bc - number of current string
 
 no_match	pop	af
 							; Routine to print "Unkown command error"

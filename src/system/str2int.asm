@@ -3,7 +3,9 @@
 ; 2013,2014 © breeze/fishbone crew
 ;---------------------------------------
 ; in: hl,string addr
-; out:hl = value
+; out:hl = value,
+;     de = string next
+;     a = ff - error
 
 _str2int	ld	bc,#0000
 		ld	de,#0000

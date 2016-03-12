@@ -24,7 +24,7 @@
 
 ;	define buildLoader				; Сборка загрузчика системы (плагин для WC)
 	define buildKernel				; Сборка всей системы
-; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt)
+; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
 ; 	define buildLoadPal				; Сборка утилиты loadpal
@@ -96,6 +96,8 @@
 	include "res/fonts/8x8/robat.fnt.asm"		; CLi² robat font
 	
 	include "res/fonts/16x16/apple_j.fnt.asm"	; 16c color font 8x16
+
+	include "res/keymaps/default.key.asm"		; Таблица раскладки клавиатуры (EN/RU)
 	endif
 ;-------------------------------------------------------------------------
 
@@ -235,4 +237,4 @@
 
 	endif
 	
-;   	DISPLAY "_opSet",/A,_opSet
+;   	DISPLAY "zzz",/A,zzz

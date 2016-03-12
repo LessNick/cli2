@@ -67,4 +67,4 @@ re2		equ	237
 ryu		equ	238
 rya		equ	239
 
-rNN		equ	252	; ���� �
+rNN		equ	252	; знак номер №

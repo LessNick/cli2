@@ -20,6 +20,8 @@ fileNotFoundMsg	db	"File ",243,#00
 fileNotFoundMsg0 db	242," not found.",#0d,#00
 errorDevMsg	db	"Can't initializing the boot device.",#0d,#00
 errorLimitMsg	db	"Maximum diapason -32767 to 32767.",#0d,#00
+errorNunMsg	db	"Not a number.",#0d,#00
+undefVarMsg	db	"undef",#00
 
 errorFileTooBig	db	"File size is too big. Not enough memory.",#0d,#00
 

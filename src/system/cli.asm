@@ -440,6 +440,7 @@ enterKey	call	resetWheel
 		call	putHistory
 
 		ld	de,iBuffer
+		ld	bc,#0001				; номер текущей строки в SH скрипте (в данном случае всегда 1)
 		call	_parseLine
 
 _enterReady	ld	hl,promptMsg
