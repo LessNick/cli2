@@ -40,6 +40,7 @@ sCliKernel
 		include "tsconf.h.asm"
 
 eCliKernel	nop
+
 	DISPLAY "-------------------------------------"
 	DISPLAY "kernel size",/A,eCliKernel-sCliKernel
 	DISPLAY "kernel end",/A,eCliKernel

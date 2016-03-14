@@ -365,7 +365,6 @@ appEnd		nop
 
 ayBuffer	nop
 
-; 		DISPLAY "z1",/A,z1
 ; 		DISPLAY "setLoop",/A,setLoop
 
 		SAVEBIN "install/bin/loadpt3", appStart, appEnd-appStart

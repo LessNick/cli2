@@ -119,7 +119,7 @@ sxgContinue	ex	de,hl
 ;---------------
 		inc	hl					; цвет фона для очистки
 		ld	a,(hl)
-; 		push	af
+
 		ld	(clrColor+1),a
 		push	hl
 		push	af
@@ -175,8 +175,7 @@ sxgContinue	ex	de,hl
 
 ;---------------
 sxgVMem		ld	b,#01
-; 		pop	af
-; 		ld	c,a					
+
 clrColor	ld	c,#00					; номер цвета
 		ld	a,clearGfxMemory			; Очищаем видеопамять
 		push	hl
@@ -225,8 +224,6 @@ clrColor	ld	c,#00					; номер цвета
 		srl	b
 		rr	c
 		jr	c,skipImageDec
-; 		dec	c
-;		inc	c
 
 skipImageDec	
 		ld	(imageWidth),bc
@@ -325,7 +322,6 @@ nextWidth	ld	a,d
 		inc	a
 		ld	(setVBank+1),a
 		call	setVBank
-; 		ld	de,#0000
 		ld	d,#00
 
 skipIncBank	ld	a,h					; Проверяем, а не закончились ли данные ?
@@ -469,8 +465,7 @@ wrongFile	ld	hl,wrongFileMsg
 		ret
 
 ;---------------------------------------------
-setImageMode	; Неправильный формат -> выход
-		push	af
+setImageMode	push	af					; Неправильный формат -> выход
 		ex	af,af'
 sxgType		ld	b,#01
 		ld	a,setGfxColorMode			; на входе в A = цветовой режим: %00-ZX, %01-16c, %10-256c, %11 - txt
@@ -670,6 +665,7 @@ sxgHeigthMsg0	db	"-----px",#0d,#00
 sxgScreenMsg	db	" ",249," Screen selected: "
 sxgScreenMsg0	db	"01",#0d,#00
 sxgLoadingMsg	db	#0d,"Loading...",#0d,#00
+
 ;---------------------------------------------
 ; Key's table for params
 ;---------------------------------------------
@@ -714,10 +710,8 @@ appEnd		nop
 		org	#e000
 sxgBuffer	nop
 
+; 		DISPLAY "loadSxgLoop",/A,loadSxgLoop
+; 		DISPLAY "skipImageDec",/A,skipImageDec
+; 		DISPLAY "skipIncBank",/A,skipIncBank
 
 		SAVEBIN "install/bin/loadsxg", appStart, appEnd-appStart
-
-		DISPLAY "loadSxgLoop",/A,loadSxgLoop
-		;DISPLAY "skipImageDec",/A,skipImageDec
-		;DISPLAY "skipIncBank",/A,skipIncBank
-		

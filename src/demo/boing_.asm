@@ -199,8 +199,6 @@ timeCount	dw	#0000
 infoMsg		db	16,2,"Amiga Boing (GLi demo) v 0.03",#0d
 		db	16,3,"2012,2013 ",#7f," Breeze\\\\Fishbone Crew",#0d,#0d,#00
 
-		;DISPLAY "loadPalMsg=",/A,loadPalMsg
-
 loadPalMsg	db	16,colorInfo,"Loading palette... ",#00
 loadSprMsg	db	16,colorInfo,"Loading sprites... ",#00
 appRunMsg	db	#0d,16,colorInfo,"Runing...",#0d,#0d

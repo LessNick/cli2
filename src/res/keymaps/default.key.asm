@@ -3,7 +3,7 @@
 ; 2016 © breeze/fishbone crew
 ;---------------------------------------
 
-; 		MODULE	default_key
+		MODULE	default_key
 
 		org	#0000
 
@@ -127,4 +127,4 @@ eKeyMap
 
 	SAVEBIN "install/system/res/keymaps/default.key", sKeyMap, eKeyMap-sKeyMap
 
-; 	ENDMODULE
+	ENDMODULE

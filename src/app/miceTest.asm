@@ -28,11 +28,7 @@ appStart
 		ld	a,mouseInit
 		call	cliDrivers
 
-; 		call	prepareCursor
-
 miceLoop	halt
-; 		call	updateCursor
-
 		ld	a,getKeyWithShift
 		call	cliKernel
 
@@ -48,59 +44,6 @@ miceLoop	halt
 		call	cliKernel
 
 		jp	miceLoop
-
-;---------------------------------------------
-; prepareCursor	ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
-; 		ld	a,sprBank
-; 		out	(c),a
-
-; 		ld	hl,#0000
-; 		ld	de,#0001
-; 		ld	bc,#3fff
-; 		xor	a
-; 		ld	(hl),a
-; 		ldir
-
-; 		ld	hl,miceCursor
-; 		ld	de,#0000
-; 		ld	b,11
-; prepareLoop	push	bc
-; 		ld	bc,6
-; 		ldir
-; 		ex	de,hl
-; 		ld	bc,250
-; 		add	hl,bc
-; 		ex	de,hl
-; 		pop	bc
-; 		djnz	prepareLoop
-
-; 		ld	bc,tsSGPage				; Указываем страницу для спрайтов
-; 		ld	a,sprBank
-; 		out	(c),a
-
-; 		ld	bc,tsRAMPage0				; Подключаем страницу sprBank адреса #0000
-; 		ld	a,(_PAGE0)				; Восстанавливаем банку для WildCommander
-; 		out	(c),a
-
-; updateCursor	ld	bc,tsFMAddr
-; 		ld 	a,%00010000				; Разрешить приём данных (?) Bit 4 - FM_EN установлен
-; 		out	(c),a
-
-; 		ld	hl,cursorSFile
-; 		ld 	de,#0000+512				; Память с палитрой замапливается на адрес #0000
-; 		ld	bc,6
-; 		ldir
-
-; 		ld	bc,tsFMAddr
-; 		xor	a					; Запретить, Bit 4 - FM_EN сброшен
-; 		out	(c),a
-
-; 		ld	bc,tsConfig				; Включаем отображение спрайта
-; 			  ;76543210
-; 		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
-; 		out	(c),a
-
-; 		ret
 
 ;---------------------------------------------
 setMicePos	ld	a,getMouseDeltaX
@@ -162,13 +105,6 @@ micePlusYSkip	ld	de,rawYMsg
 		ld	de,rawYMsg+4
 		ld	a,char2str
 		call	cliKernel
-;---------------
-; 		ld	a,getMouseWheel
-; 		call	cliDrivers
-
-; 		ld	de,posWheelMsg
-; 		ld	a,fourbit2str
-; 		call	cliKernel
 ;---------------
 		ld	a,getMouseDeltaW
 		call	cliDrivers
@@ -251,17 +187,9 @@ cursorType_0	xor	a
 newCursorSet	ex	af,af'
 		ld	a,setMouseCursor
 		call	cliKernel
-
 ;---------------
 		ld	a,getMouseX
 		call	cliDrivers
-		
-; 		ld	a,l
-; 		ld	(cursorSFileX),a
-; 		ld	a,h
-; 		and	%00000001
-; 		or	%00100010
-; 		ld	(cursorSFileX+1),a
 
 		ld	de,posXMsg
 		ld	a,int2str
@@ -269,13 +197,6 @@ newCursorSet	ex	af,af'
 ;---------------		
 		ld	a,getMouseY
 		call	cliDrivers
-
-; 		ld	a,l
-; 		ld	(cursorSFile),a
-; 		ld	a,h
-; 		and	%00000001
-; 		or	%00100010
-; 		ld	(cursorSFile+1),a
 
 		ld	de,posYMsg
 		ld	a,int2str
@@ -298,20 +219,7 @@ setTracker	ld	hl,(timeCount)
 		jp	cliKernel
 
 ;---------------------------------------------
-miceCallBack	ret
-; 		cp	#00					; активирован текстовый режим?
-; 		jr	nz,miceCallGfx
-; 		ld	hl,319					; да
-; 		ld	de,239
-; 		jr	miceCallUpdate
-
-; miceCallGfx	ld	hl,359					; нет, графический
-; 		ld	de,287
-
-; miceCallUpdate	ld	a,mouseInit
-; 		call	cliDrivers
-; ; 		jp	updateCursor
-; 		ret
+miceCallBack	ret						; Обработчик CallBack при переключении экранов ALT+F1/F4
 
 ;---------------------------------------------
 miceStop	ld	a,editInit
@@ -409,47 +317,6 @@ timeCountMsg	db	"-----"
 ;---------------------------------------------
 timeCount	dw	#0000
 ;---------------------------------------------
-; cursorSFile	db	#00			; Y0-7     | 8 bit младшие даные Y координаты (0-255px)
-; 			;FLAR S Y8
-; 		db	%00100010		; Y8       | 0й бит - старшие данные Y координаты (256px >)
-; 						; YS       | 1,2,3 бит - высота в блоках по 8 px
-; 						; RESERVED | 4й бит - зарезервирован
-; 						; ACT      | 5й бит - спрайт активен (показывается)
-; 						; LEAP     | 6й бит - указывает, что данный спрайт последний в текущем слое. (для перехода по слоям)
-; 						; YF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по вертикали
-		
-; cursorSFileX	db	#00			; X0-7     | 8 bit младшие даные X координаты (0-255px)
-; 			;F  R S X8
-; 		db	%00000010		; X8       | 0й бит - старшие данные X координаты (256px >)
-; 						; XS       | 1,2,3 бит - ширина в блоках по 8 px
-; 						; RESERVED | 4й бит - зарезервирован
-; 						; -        | 5,6й бит - не используются
-; 						; XF       | 7й бит - указывает, что данный спрайт нужно отобразить зеркально по горизонтали
-; 			;TNUM
-; 		db	%00000000		; TNUM	   | Номер тайла для левого верхнего угла.
-; 						;          | 0,1,2,3,4,5й бит - Х координата в битмап
-; 			;SPALTNUM		;          | 6,7й бит +
-; ; 		db	%00010000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
-; 		db	%00000000		; TNUM     | 0,1,2,3 бит - Y координата в битмап
-; 						; SPAL     | 4,5,6,7й биты номер палитры (?)
-;---------------------------------------------
-; miceCursor	db	#be,#00,#00,#00,#00,#00
-; 		db	#1b,#ee,#00,#00,#00,#00
-; 		db	#01,#bb,#ee,#00,#00,#00
-; 		db	#01,#bb,#bb,#ee,#00,#00
-; 		db	#00,#1b,#bb,#bb,#ee,#00
-; 		db	#00,#1b,#bb,#bb,#bb,#00
-; 		db	#00,#01,#bb,#be,#00,#00
-; 		db	#00,#01,#bb,#1b,#e0,#00
-; 		db	#00,#00,#1b,#01,#be,#00
-; 		db	#00,#00,#1b,#00,#1b,#e0
-; 		db	#00,#00,#00,#00,#01,#b0
-; 		db	#00,#00,#00,#00,#00,#00
-;  		db	#00,#00,#00,#00,#00,#00
-;  		db	#00,#00,#00,#00,#00,#00
-;  		db	#00,#00,#00,#00,#00,#00
-;  		db	#00,#00,#00,#00,#00,#00
-
 appEnd	nop
 
 		SAVEBIN "install/bin/micetest", appStart, appEnd-appStart

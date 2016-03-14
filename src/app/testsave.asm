@@ -133,6 +133,6 @@ fileContent	db	"0123456789ABCDEF"
 		ds	512,0
 appEnd	nop
 
+; 		DISPLAY "checkFileName",/A,checkFileName
+
 		SAVEBIN "install/bin/testsave", appStart, appEnd-appStart
-		
-		DISPLAY "checkFileName",/A,checkFileName

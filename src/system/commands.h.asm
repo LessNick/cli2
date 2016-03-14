@@ -20,9 +20,6 @@ cmdTable
 	db	"*"
 	dw	_dir
 ;--- E ---
-	db	"exit"
-	db	"*"
-	dw	_closeCli
 ;--- F ---
 ;--- G ---
 ;--- H ---
@@ -36,10 +33,6 @@ cmdTable
 	db	"ls"
 	db	"*"
 	dw	_dir
-
-; 	db	"loadres"
-; 	db	"*"
-; 	dw	_loadRes
 
 	db	"locale"
 	db	"*"
@@ -58,9 +51,6 @@ cmdTable
 	db	"*"
 	dw	_scopeBinaryCmd
 
-; 	db	"run"
-; 	db	"*"
-; 	dw	_runApp
 ;--- S ---
 	db	"screen"
 	db	"*"

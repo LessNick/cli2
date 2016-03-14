@@ -201,7 +201,6 @@ decSkip_02	sla	a
 		ret
 
 ;---------------
-; incPal		ld	hl,palBuffer
 incPal		ld	hl,emptyBuffer
 		ld	b,0					;512/2 = 256
 		
@@ -387,7 +386,7 @@ emptyBuffer	ds	512,#00
 		org	#f200
 palBuffer	ds	512,#00
 
-		SAVEBIN "install/bin/screenfx", appStart, appEnd-appStart
-		
 ; 		DISPLAY "decPal",/A,decPal
+
+		SAVEBIN "install/bin/screenfx", appStart, appEnd-appStart
 		

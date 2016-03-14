@@ -21,9 +21,6 @@ appStart
 		ld	(modPrintStatus+1),a
 		ld	(modFileCheck+1),a
 
-; 		ld	a,#01
-; 		ld	(#8801+1),a
-
 		ld	a,(hl)
 		cp	#00
 		jp	z,modShowInfo				; Выход. Вывод информации о программе
@@ -148,10 +145,7 @@ enableAutoPlay	ld	a,#00
 
 		call	modPrtOk
 
-modExit
-; 		xor	a
-; 		ld	(#8801+1),a
-		ld	a,printRestore				; Восстанавливаем все цвета и параметры, что бы не было глюков
+modExit		ld	a,printRestore				; Восстанавливаем все цвета и параметры, что бы не было глюков
 		jp	cliKernel
 
 ;---------------------------------------------
@@ -291,8 +285,6 @@ modPrtError	ld	a,(modPrintStatus+1)
 		ret	z
 		ld	a,printStatusError
 		call	cliKernel
-; 		xor	a
-; 		ret
 		jp	modExit
 
 ;---------------------------------------------
@@ -407,6 +399,6 @@ modBuffer	ds	modBufferSize*512,#00
 modBufferEnd	nop
 
 ; 		DISPLAY "modBufferEnd",/A,modBufferEnd
-		DISPLAY "modFileName",/A,modFileName
+; 		DISPLAY "modFileName",/A,modFileName
 
 		SAVEBIN "install/bin/loadmod", appStart, appEnd-appStart

@@ -9,7 +9,7 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_getCliVersion			; #02
 		dec	a
-		jp	z,_exitSystem				; #03
+		jp	z,_reserved				; #03		!!! RESERVED !!!
 		dec	a
 		jp	z,_clearTxtMemory			; #04
 		dec	a
@@ -192,11 +192,10 @@ _cliApi		cp	#00
 		jp	z,_waitAnyKey				; #52
 
 		dec	a
-; 		jp	z,_enableRes				; #53			; Разрешить вызов обработчика резидентов
-		jp	z,_reserved
+		jp	z,_reserved				; #53		!!! RESERVED !!!
 		dec	a
-; 		jp	z,_disableRes				; #54			; Запретить вызов обработчика резидентов
-		jp	z,_reserved
+
+		jp	z,_reserved				; #54		!!! RESERVED !!!
 
 		dec	a
 		jp	z,_enableNvram				; #55
@@ -282,23 +281,7 @@ _initSystem_00b
 		ld	hl,keymapPath
 		jr	_initSystem_03
 
-; 		call	_loadSysRes				; Загрузить /system/res.sys
-; 		cp	#ff
-; 		jr	nz,_initSystem_00c
-; 		ld	hl,resPath
-; 		jr	_initSystem_03
-
-; _initSystem_00c	
-; 		ld	a,initResidents				; инициализация системы резидентов
-; 		call	_resApi
-
 _initSystem_00c	call	_loadCursorsRes				; Загрузить /system/res/cursors/default.cur
-; 		cp	#ff
-; 		jr	nz,_initSystem_00c
-; 		call	_printBootError
-; 		jr	$
-
-; _initSystem_00c	call	_prepareCursor				; Установить спрайт для курсоса
 
 		call	_scopeBinary				; Собрать список доступных комманд из /bin/*
 		cp	#ff
@@ -386,12 +369,12 @@ _switchTxtMode	xor	a
 ;-------------------
 _switchGfxMode	ld	a,c
 		ld	(_switchGfxEnd_3+1),a
-		ld	a,b			;3 2 1
-		dec	a			;2 1 0
+		ld	a,b					;3 2 1
+		dec	a					;2 1 0
 		jp	z,_switchGfxMode1	
-		dec	a			;1 0
+		dec	a					;1 0
 		jp	z,_switchGfxMode2
-		dec	a			;0
+		dec	a					;0
 		jp	z,_switchGfxMode3
 
 		ret						; error ?
@@ -445,9 +428,9 @@ _switchGfxEnd_3	ld	a,#00
 
 		jp	setAppBank
 
-_switchGfxOn	;halt						; !!!! ПРЕРЫВАНИЕ !!!! НИКАКИХ ХАЛЬТОВ !!!
-		call	_setVideoMode
+_switchGfxOn	call	_setVideoMode				; !!!! ПРЕРЫВАНИЕ !!!! НИКАКИХ ХАЛЬТОВ !!!
 		jp	moveScreenUpdate			; обновляем смещения
+
 ;---------------------------------------
 _setGfxColorMode
 		ex	af,af'					; на входе в A = цветовой режим: %00-ZX, %01-16c, %10-256c, %11 - txt
@@ -701,22 +684,10 @@ skipKeyboard	call	updateDrivers
 
 		ld	a,(currentScreen)
 		cp	#00
-;  		jr	nz,skipMouseSelect
 		push	af
 		call	z,_checkMouseClicks
 		pop	af
 		call	nz,_resetMouseClicks
-
-; disableResident ld	a,#00
-;  		cp	#01
-;  		jr	z,skipResident
-
-; 		ld	a,callResidentMain
-; 		call	_resApi
-
-; skipResident
-
-; skipMouseSelect
 
 enableAy	ld	a,#00
 		cp	#00
@@ -872,14 +843,7 @@ _cmc_02		ld	a,(_cmc_01+1)
 _cmc_03		ld	de,#0000				; нажали и держат
 		push	de
 		call	_getMouseTxtPos
-; 		push	hl
-; 		call	_openCacheBank
-; 		call	_removeOldSel2				; очищаем всё что было выделено
-; 		pop	hl
 		pop	de
-; 		ld	a,h
-; 		cp	d
-; 		jr	nz,_cmc_01a
 		ld	h,d					; не зависимо от новой позиции Y
 		ld	a,l
 		cp	e
@@ -911,9 +875,6 @@ _getMouseTxtPos	ld	a,getMouseX				; HL
 ;---------------
 _invertMousePos	push	hl,de
 		ld	de,(_scrollOffset)
-; 		ld	a,d
-; 		cp	#00
-; 		jr	z,_impSkip
 		ld	a,d
 		cp	#1e					; уже отображено 30 строк?
 		jr	c,_impSkip
@@ -1193,10 +1154,10 @@ _setVideoN	call	scanCodeReady				; снимаем флаг нажатия кла
 _setVideoT	call	_switchTxtMode
 		jr	_setVideoN
 ;---------------------------------------
-_exitSystem	call	_restoreWCInt
-		call	_restoreWC
-		xor	a	 				; просто выход
-		ret
+; _exitSystem	call	_restoreWCInt
+; 		call	_restoreWC
+; 		xor	a	 				; просто выход
+; 		ret
 
 ;---------------------------------------
 _setPal		ld	bc,tsFMAddr
@@ -1450,10 +1411,6 @@ pathCd		ld	hl,#0000
 		xor	a
 		ld	(hl),a
 
-; 		push	hl
-; 		call	_storePath
-; 		pop	hl
-
 		pop	de
 		ld	a,(de)
 		cp	#00					; root ?
@@ -1469,8 +1426,7 @@ pathCd_00	push	hl
 		inc	hl
 		ret
 
-cipExit		;call	_storePath
-		pop	hl
+cipExit		pop	hl
 		xor	a
 		ex	af,af'
 		xor	a
@@ -1504,26 +1460,10 @@ storeHomeExit	pop	bc,de,hl
 
 _restoreHomePath
 		push	hl,de,bc
-; 		ld	hl,pathHomeString			; restore current path from home app path
-; 		ld	de,pathString
-; 		ld	bc,pathStrSize
-; 		ldir
  		ld	de,pathHomeString
  		call	_restorePath_1
-;  		call	_changeDir
 		pop	bc,de,hl
 		ret
-
-; _restorePath	push	af
-; 		ex	af,af'
-; 		push	af
-; 		ld	de,pathBString
-; 		call	_changeDir
-; 		pop	af
-; 		ex	af,af'
-; 		pop	af
-; 		ret
-
 
 ;---------------------------------------
 _initCallBack	ld	hl,callBackRet				; инициализирует callBack при переключении ALT+F1/F2/F3/F4
@@ -1598,9 +1538,6 @@ _loadFile0	call	_storePath				; загрузка файла с восстано�
 		call	_restorePath
 		pop	bc
 		ret
-
-; _loadFileHere	xor	a					; загрузка файла без восстановления пути
-; 		ld	(checkLimit+1),a
 
 loadFile_00	push	de					; de - aдрес загрузки
 		call	_checkIsPath				; hl - адрес строки с именем файла
@@ -1708,11 +1645,7 @@ loadFileCheck	ld	c,#00
 
 		ld	b,c
 loadFileAddr	ld	hl,#0000
-
-; 		call	_disableRes
 		call	_load512bytes
-; 		call	_enableRes
-
 		xor	a
 		ret
 
@@ -1762,8 +1695,6 @@ _setTxtPalette	xor	a
 								;	в HL адрес начала палитры
 								;	в D номер блока один из 16-ти
 								;	в BC размер загружаемой палитры
-; 		ld	de,#0000				
-; 		ld	bc,512
 		sla	d					; * 2 (512)
 		xor	a
 		ld	e,a
@@ -1863,26 +1794,6 @@ _gliApi		push	af
 		pop	af
 
 		ret
-
-;---------------------------------------
-; _resApi		push	af
-
-; 		ld	a,resBank
-; 		call	switchMemBank
-; 		pop	af
-
-; 		call	resAddr
-
-; 		push	af
-; 		call	restoreMemBank
-; 		pop	af
-; 		ret
-
-;---------------------------------------
-; _loadSysRes	ld	hl,resPath
-; 		ld	a,resBank				; Указываем страницу для загрузки  res.sys с #c000
-; 		jr	loadDmaPath
-
 ;---------------------------------------
 _loadKeyMap	ld	hl,keymapPath
 		ld	a,keymapBank				; Указываем страницу для загрузки  default.key с #c000
@@ -1912,16 +1823,6 @@ restorePage3	ld	a,#00
 		ld	(_PAGE3),a
 		pop	af
 		ret
-
-;---------------------------------------
-; _enableRes	push 	af
-; 		xor	a					; Разрешить вызов обработчика резидентов
-; 		jr	_disableRes1
-; _disableRes	push	af
-; 		ld	a,#01					; Запретить вызов обработчика резидентов
-; _disableRes1	ld	(disableResident+1),a
-; 		pop	af
-; 		ret
 ;---------------------------------------
 _enableNvram	push 	af
  		call	_nvRamOpen
@@ -1941,7 +1842,6 @@ _driversApi	di
 		push	af,bc
 		ld	a,#01
 		ld	(disableDrivers+1),a
-; 		call	_disableRes
 
 		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
 		ld	(da_page+1),a
@@ -1960,7 +1860,6 @@ da_page		ld	a,#00
 		
 		xor	a
 		ld	(disableDrivers+1),a
-; 		call	_enableRes
 		pop	af
 		ei	
 		ret
@@ -2080,9 +1979,6 @@ setGXoff	ld	a,l
 		ld	a,h
 		ld	bc,tsGXoffsH
 		out	(c),a
-
-; 		ld	a,_GXoff
-; 		call	wcKernel			; !!!!! FIX !!!!
 		ret
 
 ;---------------
@@ -2092,9 +1988,6 @@ setGYoff	ld	a,l
 		ld	a,h
 		ld	bc,tsGYoffsH
 		out	(c),a
-
-; 		ld	a,_GYoff
-; 		call	wcKernel			; !!!!! FIX !!!!
 		ret
 ;---------------
 getCurScrXToHL	ld	a,(currentScreen)
@@ -2481,13 +2374,12 @@ _setVideoPage	ex	af,af'
 		jp	wcKernel
 
 ;---------------------------------------                        
-_setVideoBuffer	;push	af					; #00 - 0й текстовый                             #10
-		;ex	af,af'					; #01 - 1й графичекский видео буфер (16 страниц) #20
-		;ld	a,_MNGV_PL				; #02 - 2й графичекский видео буфер (16 страниц) #30
-		;call	wcKernel				; #03 - 3й графичекский видео буфер (16 страниц) #40
-		;pop	af
+; #00 - 0й текстовый                             #10
+; #01 - 1й графичекский видео буфер (16 страниц) #20
+; #02 - 2й графичекский видео буфер (16 страниц) #30
+; #03 - 3й графичекский видео буфер (16 страниц) #40
 		
-		inc	a					; !!! FIX !!!
+_setVideoBuffer	inc	a					; !!! FIX !!!
 		sla 	a
 		sla 	a
 		sla 	a
@@ -2554,20 +2446,6 @@ _svm 		ld	a,mouseInit
 		ld	de,#0000
 		jp	_updateCursor2
 
-; 		ex	af,af'					; включение видео режима (разрешение+тип)
-; 								; i:A' - видео режим
-; 								;   [7-6]: %00 - 256x192
-; 								;          %01 - 320x200
-; 								;          %10 - 320x240
-; 								;          %11 - 360x288
-; 								;   [5-2]: %0000
-; 								;   [1-0]: %00 - ZX
-; 								;          %01 - 16c
-; 								;          %10 - 256c
-; 								;          %11 - txt
-; 		ld	a,_GVmod
-; 		jp	wcKernel				; !!! FIX !!!
-
 ;---------------------------------------
 _callDma	ex	af,af'
 		ld	a,_DMAPL
@@ -2585,9 +2463,7 @@ _openStream	ld	d,#00				; окрываем поток с устройством 
 		jp	wcKernel
 
 ;---------------------------------------
-_load512bytes	
-; 		call	_disableRes
-		ld	a,1
+_load512bytes	ld	a,1
 		call	_setCursorPhase
 		ld	a,_LOAD512
 		call	wcKernel
@@ -2596,7 +2472,6 @@ _load512bytes
 		call	_setCursorPhase
 		pop	af
 		ret
-; 		jp	_enableRes
 
 ;---------------------------------------
 _setFileBegin	ld	a,_GFILE
@@ -2616,4 +2491,4 @@ _pathToRoot	ld	d,#ff				; окрываем поток с устройством 
 _searchEntry	ld	a,_FENTRY
 		jp	wcKernel
 
-; ;---------------------------------------
+;---------------------------------------

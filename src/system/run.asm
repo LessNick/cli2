@@ -11,8 +11,6 @@ _run		ld	(appParams+1),hl
 		jp	z,_printErrParams
 
 		call	_storeHomePath
-; 		call	_storePath
-		
 		call	_checkIsPath
 		
 		ex	af,af'
@@ -40,12 +38,8 @@ exeApp		push	hl
 		ld	b,c
 ;---------------
 loadApp		ld	a,appBank
-; 		call	switchMemBank
 		call	switchMemBank+3
 		call	storeMemBank
-
-; 		ld	a,disableRes
-; 		call	resApi
 		
 		ld	hl,appAddr-4
 		push	hl
@@ -73,11 +67,7 @@ loadApp		ld	a,appBank
 		jr	nz,wrongApp
 
 appParams	ld	hl,#0000
-; 		push	hl
 		call	_restoreHomePath
-; 		call	_restorePath
-; 		call	_pathWorkDir
-; 		pop	hl
 		jp	appAddr
 		
 wrongApp	ld	a,#ff				; не верный формат приложения - выход

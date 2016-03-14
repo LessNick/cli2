@@ -7,7 +7,6 @@ coldStart	jp	_coldStart				; #8000: Первая точка входа
 cliApi		jp	_cliApi					; #8003: Точка входа для вызова функций API
 driversApi	jp	_driversApi				; #8006: Точка входа для вызова функций драйверов
 gliApi		jp	_gliApi					; #8009: Точка входа для вызова функций графической библиотеки
-resApi		jp	_reserved ;_resApi			; #800c: Точка входа для вызова функций резидентов
 
 _coldStart	ld	(storeIx),ix				; Сохраняем значение IX для WildCommander
 		call	_storeWcInt				; Сохраняем INT WildCommander'а
@@ -217,9 +216,6 @@ altMode		call	_getKeyWithShift
 		cp	aPageDown
 		jp	z,scrollPageDown
 
-		cp	"x"
-		jp	z,kernelExit				; Закрыть CLi и вернуться в WildCommander
-
  		jp	mainLoop
 
 ;---------------------------------------
@@ -245,15 +241,6 @@ scrollPageDownL	ld	a,#02
 		call	PR_POZ
 		djnz	scrollPageDownL
 		jp	mainLoop
-;---------------------------------------
-kernelExit	
-		ld	a,printRestore
-		call	cliKernel
-
-		ld	a,exitSystem
-		call	_cliApi
-		ld	ix,(storeIx)				; Восстанавливаем значение IX для WildCommander
-		ret
 
 ;---------------------------------------
 upKey		ld	a,(hCount)
@@ -510,16 +497,6 @@ backSpaceKey	ld	a,(iBufferPos)
 		dec	a
 		cp	#ff					; Начало строки буфера edit256
 		jr	nz,putEX
-
-;		ld	a,(iBufferPos)
-;		cp	80-3					; 1>_ = 3 simbols
-;		jr	c,delSkip
-;		ld	a,79					; _ = 1 simbol
-;delSkip	ld	b,#00
-;		ld	c,a
-;		ld	de,
-;		ld	a,#01					; move up
-;		call	PR_POZ
 
 		ld	a,79
 putEX		ld	(printEX),a

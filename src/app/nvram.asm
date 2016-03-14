@@ -289,6 +289,7 @@ nvramClearMsg	db	"Clear all values of nvram, are you sure? (y/n)",#0d,#00
 
 abortedMsg	db	"Aborted.",#0d,#00
 cleanedMsg	db	"Successfully cleaned.",#0d,#00
+
 ;---------------------------------------------
 ; Key's table for params
 ;---------------------------------------------
@@ -324,6 +325,6 @@ nvramPos	db	#00
 nvramStrPos	db	#00
 
 appEnd	nop
-		DISPLAY "nvramGet",/A,nvramGet
+; 		DISPLAY "nvramGet",/A,nvramGet
 
 		SAVEBIN "install/bin/nvram", appStart, appEnd-appStart

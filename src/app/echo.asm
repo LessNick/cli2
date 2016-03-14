@@ -16,10 +16,7 @@ bufferSize	equ	255					; Размер буфера для вывода
 appStart	
 		db	#7f,"CLA"				; Command Line Application
 
-; 		ex	de,hl					; не надо пропускать пробелы нарушается рисунок ASCII начинающийся с пробелов
-; 		ld	a,eatSpaces
-; 		call	cliKernel
-; 		ex	de,hl
+								; не надо пропускать пробелы нарушается рисунок ASCII начинающийся с пробелов
 
 		push	hl					; На входе в HL адрес начала строки с параметрами
 		ld	a,printInit

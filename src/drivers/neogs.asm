@@ -48,9 +48,6 @@ _gsWaitLastLoop	in	b,(c)
 ;---------------------------------------
 _gsInit		ld	a,cReset
 		out	(pReset),a
-; 		ld	b,tReset
-; _gsInit_0	halt
-; 		djnz	_gsInit_0
 		ld	bc,tReset
 _gsInit_0	push	bc
 		ld	b,255

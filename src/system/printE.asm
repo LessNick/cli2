@@ -167,12 +167,6 @@ _printKey	push	af
 		ld	de,edit256+127
 		lddr
 
-;    		ld	a,(eStrLen)
-;    		inc	a
-;    		cp	80
-;    		jr	z,pKskipInc
-;    		ld	(eStrLen),a
-
 pKskipInc	pop	hl
 	
 ;---------------

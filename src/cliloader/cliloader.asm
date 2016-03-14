@@ -306,14 +306,10 @@ eStartingMsg
 
 lastPost	dw	#0000
 
-;systemPath	db	flagDir, "SYSTEM     ",#00
-;kernelFile	db	flagFile,"KERNEL  SYS",#00
 systemPath	db	flagDir, "system",#00
 kernelFile	db	flagFile,"kernel.sys",#00
-; kernelFile	db	flagFile,"system/kenel.sys",#00
 
 defaultPal	
-; 		include "../res/default.pal.asm"
 		;         rR   gG   bB
 		;         RRrrrGGgggBBbbb
 		DUP	16

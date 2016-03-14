@@ -763,16 +763,6 @@ entrySkip	cp	#00
 		jr	entryLoop
 
 ;---------------------------------------
-; _loadRes	ld	a,loadResident				; hl params
-; 		ex	de,hl
-; 		call	_resApi
-; 		cp	#ff
-; 		ret	nz
-; 		ld	hl,wrongResMsg
-; 		ld	b,a				; #ff
-; 		jp	_printErrorString
-
-;---------------------------------------
 _changeDirCmd	call	_changeDir
 		cp	#ff
 		ret	nz
@@ -983,12 +973,6 @@ clearTxtScreen	xor	a
 		jp	PR_POZ
 
 ;---------------------------------------
-_closeCli	pop	af
-		pop	af
-		pop	af
-		jp	_exitSystem
-
-;---------------------------------------
 _pathWorkDir	ld	hl,pathString
 		call	_printString
 		jp	_printReturn
@@ -1016,17 +1000,13 @@ _runApp		call	_run
 		jp	_printErrorString
 ;---------------------------------------
 _prepareSize	ld	hl,(fileLength+2)		; старшая часть размера
-
-		;	hl * 128 (128 блоков по 512б в 1 единице старшей части размера)
-
-		ld	a,128
+		ld	a,128				;	hl * 128 (128 блоков по 512б в 1 единице старшей части размера)
 		call	_mult16x8			; de = high, hl = low
 
 		push	hl
 		ld	hl,(fileLength)			; младшая часть размера
 
-		;	hl / 512
-		ld	de,512
+		ld	de,512				;	hl / 512
 		call	_divide16_16			; bc, hl - остаток
 
 		ld	a,h

@@ -117,4 +117,3 @@ fileMsg1	db	242," already exist.", 16,16,#0d,#00
 appEnd	nop
 
 		SAVEBIN "install/bin/testfile", appStart, appEnd-appStart
-		

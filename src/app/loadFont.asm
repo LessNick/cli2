@@ -477,7 +477,6 @@ keyTable	db	"-h"
 ;---------------------------------------------
 appEnd		nop
 
-; fontBuffer	ds	fontBufferSize,#00
 		org	#e000
 fntBuffer	nop
 		

@@ -45,9 +45,6 @@
 ; 	define buildTestFile				; Сборка тестового приложения testfile
 ; 	define buildScreenFX				; Сборка приложения screenFX
 ; 	define buildDisk2trd				; Сборка приложения disk2trd
-; 	define buildLoadres				; Сборка приложения loadres
-	
-; 	define buildResTest1				; Сборка резидента test1
 
 ;-------------------------------------------------------------------------
 	ifdef buildLoader	
@@ -222,18 +219,6 @@
 		DISPLAY "Start build: disk2trd..."
 	 	include "app/disk2trd.asm"
 		endif
-
-		ifdef buildLoadres
-		; CLi² loadres application
-		DISPLAY "Start build: loadres..."
-	 	include "app/loadres.asm"
-		endif
-
-; 		ifdef buildResTest1
-; 		; CLi² test1 resident
-; 		DISPLAY "Start build: resident test1..."
-; 	 	include "residents/test1.asm"
-; 		endif
 
 	endif
 	

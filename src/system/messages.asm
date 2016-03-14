@@ -15,7 +15,6 @@ cantReadDirMsg	db	"Can't read directory.",#0d,#00
 errorParamsMsg	db	"Wrong parameters.",#0d,#00
 dirNotFoundMsg	db	"Directory not found.",#0d,#00
 wrongAppMsg	db	"Wrong application file format.",#0d,#00
-; wrongResMsg	db	"Wrong resident file format.",#0d,#00
 fileNotFoundMsg	db	"File ",243,#00
 fileNotFoundMsg0 db	242," not found.",#0d,#00
 errorDevMsg	db	"Can't initializing the boot device.",#0d,#00
@@ -27,10 +26,6 @@ errorFileTooBig	db	"File size is too big. Not enough memory.",#0d,#00
 
 okBinMgs	db	"System directory '/bin' successfully rescaned.",#0d,#00
 errorBinMgs	db	"System directory '/bin' not found.",#0d,#00
-; errorDrvMgs	db	"System file '/system/drivers.sys' not found.",#0d,#00
-; errorGliMgs	db	"System file '/system/gli.sys' not found.",#0d,#00
-; errorStartUpMgs	db	"System file '/system/startup.sh' not found.",#0d,#00
-
 kernelPanicMgs	db	"Critical Error! System halted.",#00
 
 bootErrorMgs	db	"System file ",243,#00

@@ -6,7 +6,6 @@
 ;---------------------------------------
 		org	#c000-4
 
-; palBufferSize	equ	516					; 512 + header
 palBufferSize	equ	2					; 2*512 = 1024 Размер буфера в блоках по (512кб)
 
 		include "system/constants.asm"			; Константы
@@ -44,11 +43,6 @@ appStart
 		ld	hl,palFileError_1+1
 		ld	(hl),de
 		ex	de,hl	
-
-; 		ld	de,palBuffer
-; 		ld	bc,palBufferSize
-; 		ld	a,loadFileLimit
-; 		call	cliKernel
 
 		ld	de,palBuffer
 		ld	b,palBufferSize

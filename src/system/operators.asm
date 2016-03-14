@@ -25,15 +25,6 @@ _opSet_begin	ex	de,hl					; в HL - начало строки
 		ld	(_ost_pos+1),a
 		ld	(_opSetStrPos+1),a
 		
-; 		push	hl,af
-; 		ld	hl,op_typeA
-; 		ld	b,0
-; 		ld	c,a
-; 		add	hl,bc
-; 		ld	a,#01					; тип переменной int
-; 		ld	(hl),a
-; 		pop	af,hl
-
 		sla	a					; *2
 		inc	hl
 		push	hl					; hl = rBuffer
