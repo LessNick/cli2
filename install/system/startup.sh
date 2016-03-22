@@ -6,15 +6,7 @@ echo \x10\x10
 loadfont -s /system/res/fonts/8x8/default.fnt
 ;keyscan
 ;nvram -s #f0,#02 -g #f0 -g #f0 -g #f0 -g #f0
-;loadsxg testpal.sxg
-;screenfx -fi
-;sleep 0
-;screenfx -fo
-;screen 0
-sh /demo/bramble/run.sh
-;sh /demo/bramble/run2.sh
-;sh /demo/bramble/run3.sh
-;sh /demo/bramble/run4.sh
+;sh /demo/bramble/run.sh
 ;loadpt3 -a /music/ay/mmcm.pt3
 ;screen 1
 ;loadsxg -g 1 /images/apple_~1.sxg

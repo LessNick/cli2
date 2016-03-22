@@ -63,7 +63,6 @@
 	include "system/main.asm" 			; CLi² Kernel
 	include "drivers/main.asm"			; CLi² Drivers
 	include "libs/gli.asm"				; CLi² Graphics Library
-; 	include "libs/res.asm"				; CLi² Programms residents
 
 ;-------------------------------------------------------------------------
 	; Используется, если собирается только система (без приложения)
@@ -71,7 +70,6 @@
 	include "system/api.h.asm"
 	include "drivers/drivers.h.asm"
 	include "libs/gli.h.asm"
-; 	include "libs/res.h.asm"
 ;-------------------------------------------------------------------------
 	endif
 
@@ -222,6 +220,4 @@
 
 	endif
 	
-; 	DISPLAY "updateCursor",/A,updateCursor
-; 	DISPLAY "_loadDrivers",/A,_loadDrivers
 ; 	DISPLAY "_PAGE3",/A,_PAGE3

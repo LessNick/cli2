@@ -13,7 +13,6 @@ _getGfxPalette	push	hl,bc
 		call	storeRam3
 
 		ld	a,gPalBank1				; Включаем страницу для сохранения графической палитры
-; 		call	switchMemBank
 		call	setRamPage3
 
 		pop	bc
@@ -22,7 +21,6 @@ _getGfxPalette	push	hl,bc
 		ex	hl,de
 		call	toBuff0000
 
-; 		call	setAppBank
 		call	reStoreRam3
 
 		pop	de

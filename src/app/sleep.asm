@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; sleep command
 ;---------------------------------------
@@ -47,11 +47,7 @@ sleep_01b	halt
 ;---------------
 unlimitWait	ld	a,#00
 		cp	#01
-		jr	nz,unlimitWait_0
-
-		ld	a,printRestore
-		call	cliKernel
-		jr	unlimitWait_1
+		jr	z,unlimitWait_1
 		
 unlimitWait_0	ld	a,printContinue
 		call	cliKernel
@@ -88,8 +84,8 @@ setSilentMode	ld	a,#01
 		xor	a					; Обязательно должно быть 0!!!
 		ret
 ;---------------
-appVersionMsg	db	"Sleep v0.02",#00
-appCopyRMsg	db	"2013,2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appVersionMsg	db	"Sleep v0.04",#00
+appCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 
 appUsageMsg	db	15,5,"Usage: Sleep [switches] seconds",#0d
 		db	16,16,"  -s ",15,15,"\tsilent mode. information is not displayed",#0d

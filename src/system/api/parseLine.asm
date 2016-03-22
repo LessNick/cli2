@@ -154,15 +154,12 @@ sfr_next2	inc	hl
 sfr_exit	pop	de
 		xor	a					; ошибок нет
 		jp	reStoreRam0
-; 		call	_restoreWcBank
-; 		ret
 
-sfr_err	pop	de
+sfr_err		pop	de
 		call	_printErrParams
 		ld	a,#ff					; ошибка замены
 		jp	reStoreRam0
-; 		call	_restoreWcBank
-; 		ret
+
 ;---------------
 sfr_undef	pop	af,hl
 		ld	de,undefVarMsg
@@ -298,7 +295,6 @@ storeAddr	dw	#0000
 checkIsBin	push	de
 		
 		ld	a,scopeBinBank
-; 		call	switchMemBank
 		call	setRamPage3
 
 		ld	hl,cibFile

@@ -44,17 +44,13 @@ _cgm_skip	ld	h,c
 		pop	af
 
 		push	af
-; 		call	switchMemBank
-		
+
 		call	storeRam3
 		call	setRamPage3
-		
-; 		call	_setVideoPage
+
 		ld	(#c000),hl				; заливаем цветом первые 2 пикселя
 
 		call	reStoreRam3
-
-; 		call	setAppBank
 
 		ld	a,#ff
 		call	callDma					; ожидаем готовности DMA

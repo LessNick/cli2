@@ -8,7 +8,6 @@
 ;---------------------------------------
 _clearTxtMemory	call	storeRam3
 		ld	a,#00					; Включаем страницу с текстовым режимом
-; 		call	switchMemBank
 		call	setRamPage3
 
 		ld	hl,#c000+128				; блок атрибутов

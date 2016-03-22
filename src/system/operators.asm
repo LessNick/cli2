@@ -8,7 +8,6 @@ _opSet		call	storeRam0
 		ld	a,varBank
 		call	_setRamPage0
 		call	_opSet_begin
-; 		jp	_restoreWcBank
 		jp	reStoreRam0
 
 _opSet_begin	ex	de,hl					; в HL - начало строки
@@ -189,9 +188,6 @@ _opForTo	ld	hl,#0000
 		ld	(hl),c
 		inc	hl
 		ld	(hl),b
-; 		ex	af,af'
-		
-; 		jp	_restoreWcBank
 		jp	reStoreRam0
 
 ;---------------------------------------

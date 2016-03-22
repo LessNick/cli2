@@ -18,13 +18,11 @@ _switchTxtMode	xor	a
 		call	storeRam3
 
 		ld	a,palBank
-; 		call	switchMemBank
 		call	setRamPage3
 
 		ld	hl,palAddr
 		call	_setPalNow
 
-; 		call	setAppBank
 		call	reStoreRam3
 
 		jp	restoreBorder
@@ -154,7 +152,6 @@ updateCursor2	ld	a,e
 		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
 		out	(c),a
 
-; 		ret
 		jp	reStoreRam0
 ;---------------------------------------
 

@@ -10,7 +10,8 @@
 ;	 Если палтира больше 16-ти цветов, то D должно быть = 0
 ;    BC - размер палитры в байтах (=512 адресует всю палитру)
 ;---------------------------------------
-_setTxtPalette	
+_setTxtPalette	ret
+
 ; 		xor	a
 ; 		ld	(setPalScr+1),a
 ; 								; На входе:
@@ -25,7 +26,6 @@ _setTxtPalette
 ; 		call	storeRam3
 
 ; 		ld	a,palBank				; Включаем страницу для сохранения текстовой палитры
-; ; 		call	switchMemBank
 ; 		call	setRamPage3
 
 ; 		ld 	de,palAddr

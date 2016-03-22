@@ -62,14 +62,11 @@ _switchGfxEnd_1	ld	a,#00
 _switchGfxEnd_2	ld	a,#00
 		call	storeRam3
 		call	setRamPage3
-; 		call	switchMemBank
 		pop	hl
 
 _switchGfxEnd_3	ld	a,#00
 		cp	#01
 		call	nz,_setPalNow
 
-; 		ret
-; 		jp	setAppBank
 		jp	reStoreRam3
 ;---------------------------------------

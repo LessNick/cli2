@@ -16,6 +16,6 @@ _uploadAyModule	call	storeRam0
 		pop	bc
 		ld	de,#0000
 		ldir
-; 		jp	_restoreWcBank
+
 		jp	reStoreRam0
 ;---------------------------------------

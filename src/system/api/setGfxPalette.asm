@@ -18,8 +18,6 @@ _setGfxPalette	push	bc
 
 		call	storeRam3
 		ld	a,gPalBank1				; Включаем страницу для сохранения графической палитры
-; 		call	switchMemBank
-; 		call	_setVideoPage
 		call	setRamPage3
 
 		pop	bc
@@ -37,8 +35,6 @@ setPalScr	ld	c,#00
 		cp	c
  		call	z,_setPalNow
 
-; setAppBank	ld	a,appBank				; Включаем страницу приложений
-; 		jp	switchMemBank
 		jp	reStoreRam3
 
 toBuff0000	ld	de,#0000				; На входе в HL адрес начала палитры

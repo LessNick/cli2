@@ -17,7 +17,6 @@ _setFont	call	storeRam0
 		ld	bc,2048
 		ldir
 		ld	a,txtFontBank				; Включаем страницу с нашим фонтом
-; 		call	switchMemBank
 		call	setRamPage3
 		
 		ld	hl,#0000				; Копируем шрифт из #0000

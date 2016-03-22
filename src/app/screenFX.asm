@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2014 © breeze/fishbone crew
+; 2014,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; screenFX - сборник эффектов для работы с экранами
 ;--------------------------------------		
@@ -32,8 +32,10 @@ appStart
 		cp	#ff
 		jp	z,appNoParams				; Выход. Вывод информации о программе
 
-
-		ret
+appCheck	ld	a,#00
+		cp	#01
+		ret	z
+		jp	appNoParams				; Не заданы команды. Вывод информации о программе
 
 ;---------------
 fxSetScreen	ld	a,getNumberFromParams
@@ -88,6 +90,9 @@ fxfiWait	halt
 		cp	#ff					; 25 цветов
 		jr	nz,fxfiLoop
 
+;---------------
+fxCmdExit	ld	a,#01
+		ld	(appCheck+1),a
 		xor	a					; Обязательно должно быть 0!!!
 		ret
 
@@ -96,20 +101,22 @@ fxFadeOut	call	preparePal
 		ld	hl,palBuffer
 		ld	a,setPalNow
 		call	cliKernel
+		
 		ld	b,25					; 25 цветов
 fxfoLoop	push	bc
+		call	decPal
+
 		ld	b,2					; задержка
 fxfoWait	halt
 		djnz	$-1
 
-		call	decPal
 		ld	hl,palBuffer
 		ld	a,setPalNow
 		call	cliKernel
 		pop	bc
 		djnz	fxfoLoop
 
-		ret
+		jr	fxCmdExit
 
 ;---------------
 preparePal	ld	hl,palBuffer				; буфер куда прочитать палитру
@@ -122,27 +129,6 @@ vmMode		ld	b,#01
 		ld	c,#01					; не включать палитру
 		ld	a,switchGfxMode
 		jp	cliKernel
-
-;---------------
-; setPal		ld	a,
-; 		ld	bc,tsFMAddr
-; 		ld 	a,%00010000				; Разрешить приём данных для палитры (?) Bit 4 - FM_EN установлен
-; 		out	(c),a
-
-; 		ld 	de,#0000				; Память с палитрой замапливается на адрес #0000
-; 		ld	bc,512
-; 		ldir
-
-; 		ld 	bc,tsFMAddr			
-; 		xor	a					; Запретить, Bit 4 - FM_EN сброшен
-; 		out	(c),a
-
-; 		ld	bc,tsPalSel
-; 		xor	a
-; 		out	(c),a					; Выбрать 0ю группу и 16 палитр (если выбран режим 16ц)
-		
-; 		xor	a					; Обязательно должно быть 0!!!
-; 		ret
 
 ;---------------
 decPal		ld	hl,palBuffer
@@ -360,7 +346,7 @@ appVersionMsg	db	"ScreenFX (some screen effects) v0.04",#00
 appCopyRMsg	db	"2014,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 
 appUsageMsg	db	15,5,"Usage: screenfx switches",#0d
-		db	16,16,"  -g n",15,15,"\tgraphics screen. set work screen (default 1)",#0d
+		db	16,16,"  -s n",15,15,"\tscreen number. set work screen (default 1)",#0d
 		db	16,16,"  -fi ",15,15,"\tswitch to current screen and show it with fade in effect",#0d
 		db	16,16,"  -fo ",15,15,"\tswitch to current screen and hide it with fade out effect"
 		db	16,16,#0d,#00
@@ -372,7 +358,7 @@ currentInColor	db	#00
 ; Key's table for params
 ;---------------------------------------------
 keyTable
-		db	"-g"
+		db	"-s"
 		db	"*"
 		dw	fxSetScreen
 

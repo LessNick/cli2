@@ -9,19 +9,6 @@
 ;         bc, номер текущей строки в SH скрипте, =1 просто вызов
 ; Out:a,#ff = command not found
 ;     a,#00 - command found, hl - addr params start
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-
-
-
-
-
-
 ;---------------------------------------
 _showHelp	ld	hl,helpMsg
 		call	_printOkString
@@ -91,7 +78,6 @@ helpLast	ld	hl,helpOneLine
 		call	_printOkString
 
 		ld	a,scopeBinBank
-; 		call	switchMemBank
 		call	setRamPage3
 
 		call	clearOneLine
@@ -142,7 +128,6 @@ helpExit	ld	hl,helpOneLine
 
 ;---------------------------------------
 _scopeBinary	ld	a,scopeBinBank
-; 		call	switchMemBank
 		call	setRamPage3
 
 		call	clearScopeBin
@@ -325,8 +310,6 @@ clearEntryForSearch
 		ldir
 		pop	af,bc,de,hl
 		ret
-;---------------------------------------
-
 
 ;---------------------------------------
 _changeDirCmd	call	_changeDir
@@ -503,9 +486,6 @@ _initPath	ld	hl,pathString
 		ret
 
 ;---------------------------------------
-
-
-;---------------------------------------
 _clearScreen	ex	de,hl
 		ld	a,(hl)
 		cp	#00
@@ -566,8 +546,6 @@ _runApp		call	_run
 		ld	hl,wrongAppMsg
 		ld	b,a				; #ff
 		jp	_printErrorString
-;---------------------------------------
-
 
 ;---------------------------------------
 _scopeBinaryCmd	call	_scopeBinary

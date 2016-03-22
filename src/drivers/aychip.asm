@@ -9,7 +9,6 @@ _pt3init	call	storeRam0
 		call	_setRamPage0
 		ld	hl,#0000
 		call	INIT
-; 		jp	_restoreWcBank
 		jp	reStoreRam0
 		
 ;---------------------------------------
@@ -17,7 +16,6 @@ _pt3play	call	storeRam0
 		ld	a,ayBank
 		call	_setRamPage0
 		call	PLAY
-; 		jp	_restoreWcBank
 		jp	reStoreRam0
 
 ;---------------------------------------

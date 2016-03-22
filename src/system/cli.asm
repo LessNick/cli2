@@ -8,11 +8,8 @@ cliApi		jp	_cliApi					; #8003: Точка входа для вызова фун
 driversApi	jp	_driversApi				; #8006: Точка входа для вызова функций драйверов
 gliApi		jp	_gliApi					; #8009: Точка входа для вызова функций графической библиотеки
 
-_coldStart	
-; 		ld	(storeIx),ix				; Сохраняем значение IX для WildCommander
-; 		call	_storeWcInt				; Сохраняем INT WildCommander'а
+_coldStart	halt
 
-		halt
 startSwith	ld	a,#00					; Проверка при первом старте (холодном) необходимо загрузить недостающие компоненты
 		cp	#01
 		jr	z,warmStart
@@ -125,8 +122,7 @@ _cmc_00a	ld	a,(hl)
 		ld	a,d
 		or	e
 		jr	nz,_cmc_00a
-		
-;  		jp	_cmc_01b				; закрываем банку
+
 		jp	reStoreRam3
 
 ;---------------------------------------

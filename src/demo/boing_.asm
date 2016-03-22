@@ -129,7 +129,7 @@ tableCount	ld	bc,tableHalf
 tableSet	ld	(tableCount+1),bc
 		ld	(tableAddr+1),hl
 		jp	sprMove
-;
+
 BoingStop	call	editInit
 
 		call	disableSprites

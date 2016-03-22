@@ -50,7 +50,6 @@ gkE0_00		cp	#68
 		call	storeRam3
 
 		ld	a,keymapBank
-; 		call	_setRamPage0
 		call	setRamPage3
 		pop	af
 		jr	getAsciiCode_0C
@@ -61,7 +60,6 @@ getAsciiCode	push	af
 		call	storeRam3
 
 		ld	a,keymapBank
-; 		call	_setRamPage0
 		call	setRamPage3
 		pop	af
 		push	hl
@@ -112,7 +110,6 @@ returnEmptyAscii
 		or	a
 		
 getAsciiExit	push	af
-; 		call	_restoreWcBank
 		call	reStoreRam3
 
 		pop	af

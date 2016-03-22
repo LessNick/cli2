@@ -381,17 +381,6 @@ _setInterrupt	halt
 		ret
 
 ;---------------------------------------
-; _storeWcInt	halt
-; 		ld	hl,(_WCINT)
-; 		ld	(_wcIntAddr+1),hl
-; 		ret
-
-; _restoreWCInt	halt
-; 		ld	hl,(_wcIntAddr+1)
-; 		ld	(_WCINT),hl
-; 		ret
-
-;---------------------------------------
 _cliInt		push	hl,de,bc,af				;======================================================================================================
 		exx
 		ex	af,af'
@@ -425,8 +414,6 @@ disableKeyboard	ld	a,#00
 
  		call	_checkKeyAltL
  		call	nz,_actionAltKey
-
-;   		call	_actionInsOver
 
 skipKeyboard	
 		call	updateDrivers
@@ -471,12 +458,6 @@ restoreP3	ld	a,#00
 _wcIntAddr	jp	#0000
 
 ;---------------------------------------
-
-;---------------------------------------
-
-;---------------------------------------
-
-;---------------------------------------
 _checkMouseClicks
 		ld	a,getMouseButtons
 		call	cliDrivers
@@ -518,17 +499,9 @@ _cmc_01a	call	_openCacheBank
 		ld	(_cmc_03+1),hl
 		ld	(mouseSelectE),hl			; Сохраняем конец выделения
 
-; _cmc_01b	ld	a,#00
-; 		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
-; 		ld	bc,tsRAMPage3
-; 		out	(c),a
-		
-; 		ret
 		jp	reStoreRam3
 
-_openCacheBank	;ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
-		;ld	(_cmc_01b+1),a
-		call	storeRam3
+_openCacheBank	call	storeRam3				; Сохряняем какая была до этого открыта страница
 
 		ld	a,#62					; Включаем страницу кеш текста
 		ld	bc,tsRAMPage3
@@ -548,9 +521,9 @@ _removeOldSel2	ld	hl,(mouseSelectB)
 		cp	e
 		jr	z,_fillMouseClicks
 _removeOldSel3	call	_invertMousePos				; конечный курсор
-; 		jr	_fillMouseClicks			; всё что между ними
-;----		
-_fillMouseClicks
+			
+;---------------
+_fillMouseClicks						; всё что между крайними точками
 		push	hl
 		sbc	hl,de
 		jr	z,_cmc_01end				; равны = выход
@@ -661,9 +634,6 @@ _impSkip	ld	bc,#80					; HL - аддр
 		ret
 
 ;---------------------------------------
-
-
-;---------------------------------------
 _loadCursorsRes	ld	hl,cursorsPath
 		ld	de,bufferAddr
 		push	de
@@ -736,9 +706,6 @@ _loadCursorsRes	ld	hl,cursorsPath
 								; out:hl,low de,high
 		ld	(lcr_height+1),hl
 
-; 		ld	a,(_PAGE3)
-; 		ld	(lcr_page+1),a
-
 		call	storeRam3
 
 		ld	a,sprBank				; Включаем страницу для спрайтов с #0000
@@ -768,14 +735,8 @@ lcr_skip	ld	bc,248
 		add	a,#20
 		out	(c),a
 
-; lcr_page	ld	a,#00
-; 		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
-; 		ld	bc,tsRAMPage3
-; 		out	(c),a
-		call	reStoreRam3
+		call	reStoreRam3				; Восстанавливаем банку которая была до вызова
 		jp	updateCursor
-;---------------
-
 
 ;---------------------------------------
 _actionInsOver	call	getKeyWithShiftT
@@ -834,55 +795,16 @@ _setVideoN	call	scanCodeReady				; снимаем флаг нажатия кла
 _setVideoT	call	_switchTxtMode
 		jr	_setVideoN
 
-
-
 ;---------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
 _printUnknownCmd
 		ld	hl,unknownCmdMsg
 		ld	b,#ff
 		jp	_printErrorString
 
-
-
+;---------------------------------------
 _printWarningString
 		ld	a,(colorWarning)
 		jp	printColorStr
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------------------------------
 
 ;---------------------------------------
 _clearBuffer	ld	hl,bufferAddr
@@ -906,8 +828,6 @@ _cliInitDev	call	_initPath
 
 		ld	a,#ff					; error
 		ret
-;---------------------------------------
-
 
 ;---------------------------------------
 _storeHomePath	push	hl,de,bc
@@ -946,53 +866,11 @@ _restoreHomePath
 _initCallBack	ld	hl,callBackRet				; инициализирует callBack при переключении ALT+F1/F2/F3/F4
 		jp	_setAppCallBack
 
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------
-
-
-;---------------
-
-
-;---------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-;---------------------------------------
-
-
-;---------------
-						; 3й
-
-;---------------
-
-
-;---------------------------------------
-
-
 ;---------------------------------------
 _gliApi		call	storeRam3
 
 		push	af
 		ld	a,gliBank
-; 		call	switchMemBank
 		call	setRamPage3
 		pop	af
 
@@ -1000,11 +878,6 @@ _gliApi		call	storeRam3
 
 		jp	reStoreRam3
 
-; 		push	af
-; 		call	setAppBank
-; 		pop	af
-
-; 		ret
 ;---------------------------------------
 _loadKeyMap	ld	hl,keymapPath
 		ld	a,keymapBank				; Указываем страницу для загрузки  default.key с #c000
@@ -1019,29 +892,12 @@ _loadGli	ld	hl,gliPath
 _loadDrivers	ld	hl,driversPath
 		ld	a,driversBank				; Указываем страницу для загрузки drivers.sys с #c000
 
-loadDmaPath	
-; 		push	af
-; 		ld	a,(_PAGE3)
-; 		ld	(restorePage3+1),a
-; 		pop	af
-; 		add	32
-; 		ld	(_PAGE3),a
-
-		call	storeRam3
+loadDmaPath	call	storeRam3
 		call	setRamPage3
 
 		ld	de,#c000
 		call	_loadFile
-
-; 		push	af					; Load status
-; restorePage3	ld	a,#00
-; 		ld	(_PAGE3),a
-; 		pop	af
-; 		ret
 		jp	reStoreRam3
-;---------------------------------------
-
-
 
 ;---------------------------------------
 _driversApi	di
@@ -1049,10 +905,7 @@ _driversApi	di
 		ld	a,#01
 		ld	(disableDrivers+1),a
 
-; 		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
-; 		ld	(da_page+1),a
-
-		call	storeRam3
+		call	storeRam3				; Сохряняем какая была до этого открыта страница
 
 		ld	a,driversBank				; Включаем страницу для drivers.sys с #0000
 		call	setRamPage3
@@ -1061,12 +914,7 @@ _driversApi	di
 		call	driversAddr
 
 		push	af
-; da_page		ld	a,#00
-; 		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
-; 		ld	bc,tsRAMPage3
-; 		out	(c),a
-		
-		call	reStoreRam3
+		call	reStoreRam3				; Восстанавливаем банку установленную до вызова
 
 		xor	a
 		ld	(disableDrivers+1),a
@@ -1075,15 +923,10 @@ _driversApi	di
 		ret
 
 ;---------------------------------------
-
-;---------------------------------------
 updateDrivers
 disableDrivers	ld	a,#00
 		cp	#01
 		ret	z
-
-; 		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
-; 		ld	(ud_page+1),a
 
 		call	storeRam3
 
@@ -1093,51 +936,8 @@ disableDrivers	ld	a,#00
 		ld	a,mouseUpdate
 		call	driversAddr
 
-; ud_page		ld	a,#00
-; 		ld	(_PAGE3),a				; Восстанавливаем банку для WildCommander
-; 		ld	bc,tsRAMPage3
-; 		out	(c),a
-; 		ret
-
-		jp	reStoreRam3
+		jp	reStoreRam3				; Восстанавливаем банку установленную до вызова
 		
-;---------------------------------------
-
-
-;---------------------------------------
-
-;---------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
-
-
-;---------------------------------------
-
-
-;---------------------------------------
-
-
 ;---------------------------------------
 _getKey		xor	a				; сбрасываем учёш клавиши shift
 		ld	(checkShiftKey),a
@@ -1147,10 +947,6 @@ _getKey		xor	a				; сбрасываем учёш клавиши shift
 		ld	(checkShiftKey),a
 		pop	af
 		ret
-
-;---------------------------------------
-
-;---------------------------------------
 
 ;---------------------------------------
 storeAltStatus	ld	hl,keyStatus + #11
@@ -1231,27 +1027,6 @@ _checkKeyShiftR	ld	hl,keyStatus + #59
 
 ;---------------------------------------
 
-;---------------------------------------
-; switchMemBank	call	storeMemBank
-; 		jp	_setVideoPage
-
-; ;---------------
-; storeMemBank	push	af
-; 		ld	a,(_PAGE3)
-; 		sub	#20
-; 		ld	(storeBank+1),a
-; 		pop	af
-; 		ret
-; ;---------------
-; restoreMemBank	push	af
-; storeBank	ld	a,#00
-; 		call	_setVideoPage
-; 		pop	af
-; 		ret
-;---------------------------------------
-
-
-;---------------------------------------
 
 
 
@@ -1267,10 +1042,11 @@ _checkKeyShiftR	ld	hl,keyStatus + #59
 
 
 
-;---------------------------------------
-; _setVideoPage	ex	af,af'
-; 		ld	a,_MNGCVPL
-; 		jp	wcKernel
+
+
+
+
+
 
 
 
@@ -1304,9 +1080,6 @@ load512bytes	ld	a,1
 		ret
 
 ;---------------------------------------
-
-
-;---------------------------------------
 _setDirBegin	ld	a,_GDIR
 		jp	wcKernel
 
@@ -1315,8 +1088,5 @@ _pathToRoot	ld	d,#ff				; окрываем поток с устройством 
 		ld	bc,#ffff			; устройство (#ffff = не создавать заново, использовать текущий поток)
 		ld	a,_STREAM
 		jp	wcKernel
-
-;---------------------------------------
-
 
 ;---------------------------------------

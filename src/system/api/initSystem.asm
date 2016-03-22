@@ -119,6 +119,5 @@ _initVars	call	storeRam0
 		xor	a
 		ld	(hl),a
 		ldir
-; 		jp	_restoreWcBank
 		jp	reStoreRam0
 ;---------------------------------------

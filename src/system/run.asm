@@ -18,8 +18,7 @@ _run		ld	(appParams+1),hl
 		call	z,exeApp
 
 		jp	_initCallBack			; Вернуть (восстановить) адрес callBack на Ret
-; 		call	_restoreWcBank
-; 		ret
+
 ;---------------
 exeApp		push	hl
 		ld	a,flagFile			; file
@@ -38,8 +37,6 @@ exeApp		push	hl
 		ld	b,c
 ;---------------
 loadApp		ld	a,appBank
-; 		call	switchMemBank+3
-; 		call	storeMemBank
 		call	setRamPage3
 		
 		ld	hl,appAddr-4
@@ -73,3 +70,4 @@ appParams	ld	hl,#0000
 		
 wrongApp	ld	a,#ff				; не верный формат приложения - выход
 		ret
+;---------------
