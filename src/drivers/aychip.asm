@@ -4,22 +4,28 @@
 ;---------------------------------------
 ; Ay Chip driver (player)
 ;---------------------------------------
-_pt3init	ld	a,ayBank
+_pt3init	call	storeRam0
+		ld	a,ayBank
 		call	_setRamPage0
 		ld	hl,#0000
 		call	INIT
-		jp	_restoreWcBank
+; 		jp	_restoreWcBank
+		jp	reStoreRam0
 		
 ;---------------------------------------
-_pt3play	ld	a,ayBank
+_pt3play	call	storeRam0
+		ld	a,ayBank
 		call	_setRamPage0
 		call	PLAY
-		jp	_restoreWcBank
+; 		jp	_restoreWcBank
+		jp	reStoreRam0
+
 ;---------------------------------------
 _pt3loopEnable	ld	a,(START)
 		and	%00000110
 		ld	(START),a
 		ret
+
 ;---------------------------------------
 _pt3loopDisable	ld	a,(START)
 		and	%00000110

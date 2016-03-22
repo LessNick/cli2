@@ -77,7 +77,8 @@ shExt_02	push	hl
 		call	z,_printUnknownCmd
 
 		ld	a,scriptBank
-		call	switchMemBank
+; 		call	switchMemBank
+		call	setRamPage3
 
 		pop	hl
 		jr	shExt_Loop
@@ -87,7 +88,8 @@ shExitOk	call	restoreShPath
 
 shClear		push	hl
 		ld	a,scriptBank
-		call	switchMemBank
+; 		call	switchMemBank
+		call	setRamPage3
 		
 		ld	hl,scriptAddr
 		ld	de,scriptAddr+1

@@ -11,7 +11,7 @@ _dir		ex	de,hl
 		jr	z,lsPath
 
 		push	hl
-		call	_storePath
+		call	storePath
 		pop	de
 		call	_changeDir
 		
@@ -23,7 +23,7 @@ _dir		ex	de,hl
 		call	_printErrorString
 		xor	a
 
-lsExit		call	_restorePath
+lsExit		call	restorePath
 		ret
 
 lsChanged	call	lsPath
@@ -37,14 +37,14 @@ lsPath		ld	a,(lsPathCount)					; path counter
 		jr	lsBegin
 
 lsNotRoot	ld	hl,rootSearch
-		call	_searchEntry
+		call	searchEntry
 		jp	z,lsCantReadDir
 
 lsBegin		xor	a
 		ld	(lsCount+1),a
 		ld	(itemsCount+1),a
 
-		call	_setFileBegin
+		call	setFileBegin
 
 lsReadAgain	call	clearBuffer
 		
@@ -52,7 +52,7 @@ lsReadAgain	call	clearBuffer
 
 		ld	hl,bufferAddr
 		ld	b,#01						; 1 block 512b
-		call	_load512bytes
+		call	load512bytes
 
 		ei
 

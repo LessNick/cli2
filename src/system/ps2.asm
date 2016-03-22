@@ -1,25 +1,9 @@
 ;---------------------------------------------
 ; PS/2 Keyboard driver
 ;---------------------------------------------
-_ps2Init	call	_ps2SelectNvram
-		xor	a
-		ld	(ps2Status),a
-_ps2Init_00	ld	(ps2RepeatMode),a
-		ld	a,(ps2RepeatDefaut)
-		add	a,a
-		ld	(ps2RepeatCounter),a
 
-		jp	_ps2ResetAll
 
-;---------------------------------------
 
-_ps2SelectNvram	ld	a,#f0					; отсылаем #02 -> #f0 (включить режим чтение ps/2)
-		ld	bc,peNvRamLocation
-		out	(c),a
-		ld	a,#02
-		ld	bc,peNvRamData
-		out	(c),a
-		ret
 		
 ;---------------------------------------
 _ps2PrepareScanCode
@@ -160,40 +144,12 @@ ps2RepeatDisable push	af
 		ret
 
 ;---------------
-_ps2GetScanCodeT						; Забрать данные, но не снимать флаг!
-		ld	a,(ps2Status)
-		cp	#04
-		jr	nz,_ps2NoScanCode
-		jr	_ps2YepScanCode
 
-_ps2GetScanCode	ld	a,(ps2Status)
-		cp	#04
-		jr	z,scanCodeReady				; Если #04, данные готовы — можно забирать
-_ps2NoScanCode	ld	hl,#0000
-		ld	de,#0000
-		ld	a,#ff					; A=#FF Ошибка.Данные не готовы
-		ret
-
-scanCodeReady	xor	a
- 		ld	(ps2Status),a				; данные забраны, можно подготовить следующие
-
-_ps2YepScanCode	ld	hl,(ps2ScanCode)
- 		ld	de,(ps2ScanCode+2)
- 		ret
 
 ;---------------	
-_ps2ResetKeyboard
-		ld	a,#0c
-		call	_nvRamGetData
-		and	%00000010				; 1-й бит сохраняем статус Caps Lock
-		or	%00000001				; 0-й бит cброс буфера клавиатуры
-_ps2ResKbd	ex	af,af'
-		ld	a,#0c
-		call	_nvRamSetData
-		ret
 
-_ps2ResetAll	ld	a,%00000001				; 0-й бит cброс буфера клавиатуры
-		jr	_ps2ResKbd
+
+
 ;---------------
 ps2SetKeyStatus	ld	hl,(ps2ScanCode)				
  		ld	de,(ps2ScanCode+2)

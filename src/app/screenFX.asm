@@ -44,6 +44,7 @@ fxSetScreen	ld	a,getNumberFromParams
 		ld	a,h
 		cp	#00
 		jp	nz,wrongParams
+		
 		ld	a,l
 		cp	#04
 		jr	c,fxSetScreen_0
@@ -64,18 +65,23 @@ fxFadeIn	call	preparePal
 		xor	a
 		ld	(hl),a
 		ldir
+		
 		ld	hl,emptyBuffer
-		call	setPal
+		ld	a,setPalNow
+		call	cliKernel
 
 		ld	a,24
 		ld	(currentInColor),a
+
 fxfiLoop	ld	b,2					; задержка
 fxfiWait	halt
-		djnz	$-1
+ 		djnz	$-1
 
-		call	incPal
+		call	incPal	
 		ld	hl,emptyBuffer
-		call	setPal
+		ld	a,setPalNow
+		call	cliKernel
+
 		ld	a,(currentInColor)
 		dec	a
 		ld	(currentInColor),a
@@ -88,7 +94,8 @@ fxfiWait	halt
 ;---------------
 fxFadeOut	call	preparePal
 		ld	hl,palBuffer
-		call	setPal
+		ld	a,setPalNow
+		call	cliKernel
 		ld	b,25					; 25 цветов
 fxfoLoop	push	bc
 		ld	b,2					; задержка
@@ -97,7 +104,8 @@ fxfoWait	halt
 
 		call	decPal
 		ld	hl,palBuffer
-		call	setPal
+		ld	a,setPalNow
+		call	cliKernel
 		pop	bc
 		djnz	fxfoLoop
 
@@ -116,24 +124,25 @@ vmMode		ld	b,#01
 		jp	cliKernel
 
 ;---------------
-setPal		ld	bc,tsFMAddr
-		ld 	a,%00010000				; Разрешить приём данных для палитры (?) Bit 4 - FM_EN установлен
-		out	(c),a
+; setPal		ld	a,
+; 		ld	bc,tsFMAddr
+; 		ld 	a,%00010000				; Разрешить приём данных для палитры (?) Bit 4 - FM_EN установлен
+; 		out	(c),a
 
-		ld 	de,#0000				; Память с палитрой замапливается на адрес #0000
-		ld	bc,512
-		ldir
+; 		ld 	de,#0000				; Память с палитрой замапливается на адрес #0000
+; 		ld	bc,512
+; 		ldir
 
-		ld 	bc,tsFMAddr			
-		xor	a					; Запретить, Bit 4 - FM_EN сброшен
-		out	(c),a
+; 		ld 	bc,tsFMAddr			
+; 		xor	a					; Запретить, Bit 4 - FM_EN сброшен
+; 		out	(c),a
 
-		ld	bc,tsPalSel
-		xor	a
-		out	(c),a					; Выбрать 0ю группу и 16 палитр (если выбран режим 16ц)
+; 		ld	bc,tsPalSel
+; 		xor	a
+; 		out	(c),a					; Выбрать 0ю группу и 16 палитр (если выбран режим 16ц)
 		
-		xor	a					; Обязательно должно быть 0!!!
-		ret
+; 		xor	a					; Обязательно должно быть 0!!!
+; 		ret
 
 ;---------------
 decPal		ld	hl,palBuffer
@@ -347,8 +356,8 @@ wrongParams	ld	hl,wrongParamsMsg
 		call	cliKernel
 		ret
 ;---------------
-appVersionMsg	db	"ScreenFX (some screen effects) v0.02",#00
-appCopyRMsg	db	"2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appVersionMsg	db	"ScreenFX (some screen effects) v0.04",#00
+appCopyRMsg	db	"2014,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 
 appUsageMsg	db	15,5,"Usage: screenfx switches",#0d
 		db	16,16,"  -g n",15,15,"\tgraphics screen. set work screen (default 1)",#0d

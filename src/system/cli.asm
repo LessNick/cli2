@@ -8,8 +8,9 @@ cliApi		jp	_cliApi					; #8003: Точка входа для вызова фун
 driversApi	jp	_driversApi				; #8006: Точка входа для вызова функций драйверов
 gliApi		jp	_gliApi					; #8009: Точка входа для вызова функций графической библиотеки
 
-_coldStart	ld	(storeIx),ix				; Сохраняем значение IX для WildCommander
-		call	_storeWcInt				; Сохраняем INT WildCommander'а
+_coldStart	
+; 		ld	(storeIx),ix				; Сохраняем значение IX для WildCommander
+; 		call	_storeWcInt				; Сохраняем INT WildCommander'а
 
 		halt
 startSwith	ld	a,#00					; Проверка при первом старте (холодном) необходимо загрузить недостающие компоненты
@@ -28,18 +29,19 @@ warmStart	ld	a,reInitSystem
 		call	_cliApi
 
 contStart	ld	hl,promptMsg				; приглашение 1>
-		call	_printEStr
+		call	printEStr
 
 ;---------------------------------------		
 mainLoop	halt						; Главный цикл (опрос клавиатуры)
+		call	_actionInsOver
 		call	_showCursor
 
 		ld 	hl,edit256
 		ld 	a,#01
 		ld 	bc,#0000				; reserved
-		call	_bufferUpdate
+		call	bufferUpdate
 
-		call	_printWW
+		call	printWW
 
 		call	checkMouseWheel
 		call	checkMouseClick
@@ -124,7 +126,8 @@ _cmc_00a	ld	a,(hl)
 		or	e
 		jr	nz,_cmc_00a
 		
- 		jp	_cmc_01b				; закрываем банку
+;  		jp	_cmc_01b				; закрываем банку
+		jp	reStoreRam3
 
 ;---------------------------------------
 checkMouseWheel	ld	a,getMouseW
@@ -276,10 +279,10 @@ upKey_01	ld	de,iBuffer
 		call	_editInit
 			
 		ld	hl,promptMsg
-		call	_printEStr
+		call	printEStr
 
 		ld	hl,iBuffer
-		call	_printEStr
+		call	printEStr
 
 		ld	(iBufferPos),a
 ; 		ret
@@ -414,7 +417,7 @@ resetWheel	push	hl
 ;---------------------------------------
 enterKey	call	resetWheel
 
-		call	_getFullColor
+		call	getFullColor
 		ld	(currentColor),a
 		ld	a,(storeKey)
 		call	printEChar
@@ -431,18 +434,11 @@ enterKey	call	resetWheel
 		call	_parseLine
 
 _enterReady	ld	hl,promptMsg
-		call	_printEStr
+		call	printEStr
 		call	_clearIBuffer
 		jp	mainLoop
 
-_clearIBuffer	ld	hl,iBuffer
-		ld	de,iBuffer+1
-		ld	bc,iBufferSize-1
-		xor	a
-		ld	(hl),a
-		ldir
-		ld	(iBufferPos),a
- 		ret
+
 
 putHistory	ld	a,(hCount)
 		cp	historySize

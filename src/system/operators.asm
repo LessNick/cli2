@@ -4,10 +4,12 @@
 ;---------------------------------------
 ; Embedded operators started with dot
 ;---------------------------------------
-_opSet		ld	a,varBank
+_opSet		call	storeRam0
+		ld	a,varBank
 		call	_setRamPage0
 		call	_opSet_begin
-		jp	_restoreWcBank
+; 		jp	_restoreWcBank
+		jp	reStoreRam0
 
 _opSet_begin	ex	de,hl					; в HL - начало строки
 		
@@ -15,7 +17,7 @@ _opSet_begin	ex	de,hl					; в HL - начало строки
 		cp	#00
 		jp	z,_printErrParams
 
-		call	_upperCase				; приводим к a->A
+		call	upperCase				; приводим к a->A
 		cp	"A"
 		jp	c,_printErrParams
 		cp	"Z"+1
@@ -103,13 +105,13 @@ _opGetValue 	call	_str2int
 		cp	#ff					; не число!
 		jr	nz,_opGetValueSkip
 		pop	af
-		jp	_printErrNun
+		jp	printErrNun
 
 _opGetValueSkip	ld	a,h
 		cp	#7f+1
 		ret	c
 		pop	af
-		jp	_printErrLimits
+		jp	printErrLimits
 
 _opSetString	ld	hl,op_strA
 _opSetStrPos	ld	b,#00
@@ -169,12 +171,12 @@ _opForA		ld	a,#00
 
 		call	_eatSpaces
 		ld	a,(de)
-		call	_upperCase
+		call	upperCase
 		cp	"T"
 		jp	nz,_printErrParams
 		inc	de
 		ld	a,(de)
-		call	_upperCase
+		call	upperCase
 		cp	"O"
 		jp	nz,_printErrParams
 		inc	de
@@ -189,7 +191,8 @@ _opForTo	ld	hl,#0000
 		ld	(hl),b
 ; 		ex	af,af'
 		
-		jp	_restoreWcBank
+; 		jp	_restoreWcBank
+		jp	reStoreRam0
 
 ;---------------------------------------
 _opNext		

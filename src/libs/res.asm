@@ -89,19 +89,19 @@ _loadResident00	ex	de,hl
 
 		push	hl
 		ld	a,flagFile			; file
-		call	_prepareEntry
+		call	prepareEntry
 			
-		call	_eSearch
+		call	eSearch
 		pop	hl
 		jr	nz,_loadResident01
 		
 		call	_printFileNotFound
 		jr	_loadResidentExit
 		
-_loadResident01	call	_storeFileLen
+_loadResident01	call	storeFileLen
 
-		call	_setFileBegin
-		call	_prepareSize
+		call	setFileBegin
+		call	prepareSize
 		ld	a,b
 		cp	#00
 		jp	z,_loadResident02
@@ -115,7 +115,7 @@ _loadResident02	ld	b,c
 		ld	h,(hl)
 		ld	l,a
 		push	hl
-		call	_load512bytes
+		call	load512bytes
 		pop	hl
 
 ;---------------

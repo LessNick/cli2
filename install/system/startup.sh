@@ -11,8 +11,18 @@ loadfont -s /system/res/fonts/8x8/default.fnt
 ;sleep 0
 ;screenfx -fo
 ;screen 0
+sh /demo/bramble/run.sh
 ;sh /demo/bramble/run2.sh
-;loadsxg /test.sxg
+;sh /demo/bramble/run3.sh
+;sh /demo/bramble/run4.sh
+;loadpt3 -a /music/ay/mmcm.pt3
+;screen 1
+;loadsxg -g 1 /images/apple_~1.sxg
+;sleep 0
+;cls -g 1
+;screen 0
+;screen 1
+;hello
 ;cd /demo/bramble/art/
 ;pwd
 ;micetest

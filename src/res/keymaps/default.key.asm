@@ -5,7 +5,7 @@
 
 		MODULE	default_key
 
-		org	#0000
+		org	#C000
 
 		include	"cp866.asm"
 		include "../../system/ascii_keys.h.asm"

@@ -173,11 +173,11 @@ keyStatusE0	ds	125, #00
 
 keyLayoutSwitch	db	#00					; переключение раскладки 0 - EN, 1 - RU
 
-keyMap_E0	equ	#0000
-keyMap_0A	equ	#0018
-keyMap_0B	equ	#00A0
-keyMap_1A	equ	#0128
-keyMap_1B	equ	#01B0
+keyMap_E0	equ	#C000
+keyMap_0A	equ	#C018
+keyMap_0B	equ	#C0A0
+keyMap_1A	equ	#C128
+keyMap_1B	equ	#C1B0
 
 fKeysSize	equ	16					; Количество байт отведённых под 1 команду
 

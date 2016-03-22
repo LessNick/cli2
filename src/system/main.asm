@@ -27,8 +27,6 @@ sCliKernel
 		include "run.asm"
 		include "sh.asm"
 		
-		include "str2int.asm"
-		include "int2str.asm"
 		include "hex2int.asm"
 
 		include "messages.asm"

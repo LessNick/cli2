@@ -11,39 +11,40 @@ _run		ld	(appParams+1),hl
 		jp	z,_printErrParams
 
 		call	_storeHomePath
-		call	_checkIsPath
+		call	checkIsPath
 		
 		ex	af,af'
 		cp	#00
 		call	z,exeApp
 
-		call	_initCallBack			; Вернуть (восстановить) адрес callBack на Ret
-		call	_restoreWcBank
-		ret
+		jp	_initCallBack			; Вернуть (восстановить) адрес callBack на Ret
+; 		call	_restoreWcBank
+; 		ret
 ;---------------
 exeApp		push	hl
 		ld	a,flagFile			; file
-		call	_prepareEntry
+		call	prepareEntry
 			
-		call	_eSearch
+		call	eSearch
 		pop	hl
 		jp	z,_printFileNotFound
-		call	_storeFileLen
+		call	storeFileLen
 
-		call	_setFileBegin
-		call	_prepareSize
+		call	setFileBegin
+		call	prepareSize
 		ld	a,b
 		cp	#00
 		jp	nz,_printFileTooBig
 		ld	b,c
 ;---------------
 loadApp		ld	a,appBank
-		call	switchMemBank+3
-		call	storeMemBank
+; 		call	switchMemBank+3
+; 		call	storeMemBank
+		call	setRamPage3
 		
 		ld	hl,appAddr-4
 		push	hl
-		call	_load512bytes
+		call	load512bytes
 
 		pop	hl
 

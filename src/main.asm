@@ -222,4 +222,6 @@
 
 	endif
 	
-;   	DISPLAY "zzz",/A,zzz
+; 	DISPLAY "updateCursor",/A,updateCursor
+; 	DISPLAY "_loadDrivers",/A,_loadDrivers
+; 	DISPLAY "_PAGE3",/A,_PAGE3
