@@ -5,29 +5,44 @@
 ; MODULE: #32 setTxtPalette
 ;---------------------------------------
 ; Установить палитру для текстового режима
-; i: HL - адрес начала данных палитры
+; i: HL - адрес начала 512 байт данных палитры
 ;    D - номер одиной из 16-ти палитр в которую начинать загрузку (0,1,2,3… 15)
 ;	 Если палтира больше 16-ти цветов, то D должно быть = 0
 ;    BC - размер палитры в байтах (=512 адресует всю палитру)
 ;---------------------------------------
-_setTxtPalette	ret
+_setTxtPalette	push	hl,de,bc
 
-; 		xor	a
-; 		ld	(setPalScr+1),a
-; 								; На входе:
-; 								;	в HL адрес начала палитры
-; 								;	в D номер блока один из 16-ти
-; 								;	в BC размер загружаемой палитры
-; 		sla	d					; * 2 (512)
-; 		xor	a
-; 		ld	e,a
-; 		ldir
+		call	storeRam3
 
-; 		call	storeRam3
+		ld	a,palBank				; Включаем страницу для чтения текстовой палитры
+		call	setRamPage3
 
-; 		ld	a,palBank				; Включаем страницу для сохранения текстовой палитры
-; 		call	setRamPage3
+		call	storeRam0				; Включаем страницу для временного хранения текстовой палитры
+		ld	a,#ff
+		call	_setRamPage0
 
-; 		ld 	de,palAddr
-; 		jr	storePalette
+		ld	hl,palAddr
+		call	toBuff0000				; Прочитали текущую палитру
+
+		call	reStoreRam3
+
+		pop	bc,de,hl
+
+		sla	d					; * 2 (512)
+		xor	a
+		ld	e,a
+
+		ld	(setPalScr+1),a
+
+		ldir						; вставляем часть (или всю если =512) палитры поверх
+								; старой
+
+		call	storeRam3
+
+		ld	a,palBank				; Включаем страницу для сохранения текстовой палитры
+		call	setRamPage3
+
+		ld	de,palAddr
+		jr	storePalette
+
 ;---------------------------------------

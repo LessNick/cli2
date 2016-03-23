@@ -156,7 +156,10 @@ checkDirExist		equ	#2F			; Проверить существует ли ката
 							; o:NZ - каталог существует
 							;    Z - каталог не найден
 
-getTxtPalette		equ	#30			; reserved
+getTxtPalette		equ	#30			; ; Получить палитру для текстового режима
+							; i: HL - адрес начала, куда будут
+							;	  сохранены 512 байт данных
+
 getGfxPalette		equ	#31			; reserved
 
 setTxtPalette		equ	#32			; Установить палитру для текстового режима
