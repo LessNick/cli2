@@ -33,7 +33,7 @@ lsPath		ld	a,(lsPathCount)					; path counter
 		cp	#00
 		jr	nz,lsNotRoot
 
-		call	_pathToRoot
+		call	pathToRoot
 		jr	lsBegin
 
 lsNotRoot	ld	hl,rootSearch

@@ -117,7 +117,10 @@ _getDrvVersion	ld	hl,(drvVersion)
 		include	"neogs.asm"
 		include	"aychip.asm"
 
-drvVersion	dw	#0003				; v 0.03
+		org	#ed00
+		include	"vitamin/uni.asm"
+
+drvVersion	dw	#0004				; v 0.04
 
 eCliDrivers	nop
 

@@ -7,9 +7,9 @@
 ; Запретить воспроизведение AY. При этом вызывается драйвер - pt3mute
 ;---------------------------------------
 _disableAyPlay	halt
-		xor	a
-		ld	(enableAy+1),a
 		ld	a,pt3mute
 		call	cliDrivers
+		xor	a
+		ld	(enableAy+1),a
 		ret
 ;---------------------------------------

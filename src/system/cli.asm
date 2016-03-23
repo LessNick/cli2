@@ -83,7 +83,12 @@ mainLoopSkip	cp	#20				; если код клавиши НЕ меньше #20 т
 		jr	mainLoop
 
 ;---------------------------------------
-checkMouseClick	ld	a,getMouseButtons
+checkMouseClick	ld	hl,enableCursors
+		ld	a,(hl)
+		bit	0,a
+		ret	z
+
+		ld	a,getMouseButtons
 		call	cliDrivers
 
 		bit	2,a					; средняя кнопка

@@ -4,6 +4,9 @@ loadmod -s music.mod
 ;--------------------- 
 loadsxg -cx -cy -g 1 -s art/00.sxg 
 loadmod -s -p 
+;---------------------
+cursor -s 1 hide
+cursor -s 2 hide
 ;--------------------- 
 screenfx -s 1 -fi 
 loadsxg -cx -cy -g 2 -s art/01.sxg 
@@ -392,3 +395,6 @@ screenfx -s 1 -fo
 loadmod -s -fo 
 type outro.nfo
 screen 0 
+;---------------------
+cursor -s 1 show
+cursor -s 2 show

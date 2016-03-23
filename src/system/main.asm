@@ -20,6 +20,7 @@ sCliKernel
 		include "print.asm"
 		include "printE.asm"
 		include "budder.asm"
+; 		include "dma.asm"
 		
 		include "commands.asm"
 		include "operators.asm"

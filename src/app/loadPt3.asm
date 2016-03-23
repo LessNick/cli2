@@ -24,8 +24,18 @@ appStart
 		jp	z,ayShowInfo				; Выход. Вывод информации о программе
 
 		push	hl
+
+		ld	hl,ayTryInit
+		call	ayPrintStatus
+
 		ld	a,disableAyPlay
 		call	cliKernel
+		cp	#ff
+		push	af
+		call	nz,ayPrtOk
+		pop	af
+		call	z,ayPrtError
+
 		ld	a,pt3loopDisable
 		call	cliDrivers
 		pop	hl
@@ -279,7 +289,7 @@ fileNotSet	ld	hl,noFileMsg
 		ld	a,printErrorString
 		jp	cliKernel
 ;---------------------------------------------
-ayVersionMsg	db	"ProTracker 3 file loader for AY-3-8910/12 Sound Chip v0.02",#00
+ayVersionMsg	db	"ProTracker 3 file loader for AY-3-8910/12 Sound Chip v0.04",#00
 ayCopyRMsg	db	"2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 		
 ayUsageMsg	db	15,5,"Usage: loaday [switches] filename.ay",#0d
@@ -295,13 +305,13 @@ ayUsageMsg	db	15,5,"Usage: loaday [switches] filename.ay",#0d
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 
-loadayMsg_01	db	"Try to detect AY Sound Chip...",#00
 loadayMsg_03	db	"Try to open pt3 file ",243
 loadayMsg_03a	ds	80," "
 loadayMsg_03b	db	242,"...",#00
 loadayMsg_04	db	"Loading module...",#00
 loadayMsg_05	db	"Autoplay start...",#00
 
+ayTryInit	db	"Try to initialize AY Sound Chip...",#00
 ayTryPlay	db	"Try to start playing...",#00
 ayTryStop	db	"Try to stop playing...",#00
 ayTryCont	db	"Try to continue playing...",#00

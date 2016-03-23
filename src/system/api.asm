@@ -220,6 +220,9 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_setPalNow				; #5C
 
+		dec	a
+		jp	z,_showHideCursor			; #5D
+
 _reserved	ret
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -314,6 +317,7 @@ _reserved	ret
 		include "api/disableAyPlay.asm"			; ID: #5A
 		include "api/uploadAyModule.asm"		; ID: #5B
 		include "api/setPalNow.asm"			; ID: #5C
+		include "api/showHideCursor.asm"		; ID: #5D
 
 
 ;---------------------------------------
@@ -352,19 +356,6 @@ rsr3		ld	a,#00
 		ld	(_PAGE3),a				; Восстанавливаем банку
 		ld	bc,tsRAMPage3
 		jr	setRam
-;---------------------------------------
-
-
-
-
-
-
-
-
-;---------------
-
-
-
 ;---------------------------------------
 _borderIndicate	halt
 		call	setBorder
@@ -459,6 +450,11 @@ _wcIntAddr	jp	#0000
 
 ;---------------------------------------
 _checkMouseClicks
+		ld	hl,enableCursors
+		ld	a,(hl)
+		bit	0,a
+		ret	z
+
 		ld	a,getMouseButtons
 		call	cliDrivers
 
@@ -820,7 +816,7 @@ _cliInitDev	call	_initPath
 
 		ld	a,(bootDevide)
 		ld	b,a					; загрузочное устройство
-		call	_openStream
+		call	openStream
 		ret	z					; если устройство найдено
 
 		ld	a,"?"
@@ -1058,13 +1054,7 @@ callDma		ex	af,af'
 		jp	wcKernel
 
 ;---------------------------------------
-_restoreWC	ld	a,#00				; Восстановление видеорежима для WC (#00 - основной экран (тхт))
-		ex	af,af'
-		ld	a,_MNGV_PL
-		jp	wcKernel
-
-;---------------------------------------
-_openStream	ld	d,#00				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
+openStream	ld	d,#00				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
 		ld	a,_STREAM
 		jp	wcKernel
 
@@ -1080,11 +1070,11 @@ load512bytes	ld	a,1
 		ret
 
 ;---------------------------------------
-_setDirBegin	ld	a,_GDIR
+setDirBegin	ld	a,_GDIR
 		jp	wcKernel
 
 ;---------------------------------------
-_pathToRoot	ld	d,#ff				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
+pathToRoot	ld	d,#ff				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
 		ld	bc,#ffff			; устройство (#ffff = не создавать заново, использовать текущий поток)
 		ld	a,_STREAM
 		jp	wcKernel

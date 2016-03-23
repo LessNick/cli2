@@ -143,13 +143,38 @@ updateCursor2	ld	a,e
 		ld	bc,6
 		ldir
 ;---------------
+		ld	hl,currentScreen
+		ld	a,(hl)
+		cp	#00					; текстовый экран
+		jr	nz,_ucSkip
+
+		ld	b,#01
+		jr	_ucNext
+
+_ucSkip		ld	b,a
+		ld	a,#01
+_ucLoop		rlca
+		djnz	_ucLoop
+
+		ld	b,a
+_ucNext		ld	hl,enableCursors
+		ld	a,(hl)
+		and	b
+		cp	#00
+		jr	z,_ucHide
+		ld	a,%10000000
+		jr	_ucSet
+
+_ucHide		xor	a
+_ucSet		ld	(_ucValue+1),a
+;---------------
 		ld	bc,tsFMAddr
 		xor	a					; Запретить, Bit 4 - FM_EN сброшен
 		out	(c),a
 
 		ld	bc,tsConfig				; Включаем отображение спрайта
 			  ;76543210
-		ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
+_ucValue	ld	a,%10000000				; bit 7 - S_EN Sprite Layers Enable
 		out	(c),a
 
 		jp	reStoreRam0

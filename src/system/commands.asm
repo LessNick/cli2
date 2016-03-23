@@ -347,7 +347,7 @@ changeNow	ex	de,hl
 		call	eSearch
 		jp	z,cdNotFound-1
 
-		call	_setDirBegin
+		call	setDirBegin
 
 		call	setPathString
 
@@ -368,7 +368,7 @@ cdLastCheck	pop	hl
 		call	eSearch
 		jr	z,cdNotFound
 
-		call	_setDirBegin
+		call	setDirBegin
 
 		call	setPathString
 
@@ -460,7 +460,7 @@ resetToRoot	inc	hl
 		cp	#00
 		ret	z					; alredy root
 		push	hl
-		call	_pathToRoot
+		call	pathToRoot
 		xor	a
 		ld	(lsPathCount),a
 		call	_initPath
