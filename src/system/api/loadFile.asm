@@ -39,12 +39,12 @@ loadFile_00	push	de					; de - aдрес загрузки
 		or	e
 		jr	nz,loadFileTooBig
 		
-		pop	bc
+		pop	bc					; DE -> BC
 		push	bc					; в BC адрес загрузки
 		
 		push	hl
 		add	hl,bc
-		jr	c,loadFileTooBig			; если вылетаем за границу адресного пространства (>#ffff)
+		jr	c,loadFileTooBig-1			; если вылетаем за границу адресного пространства (>#ffff)
 
 		pop	hl					; hl - размер файла?
 		ld	(loadFileSize+1),hl
@@ -80,7 +80,8 @@ loadWrongSize	pop	hl
 		ex	af,af'
 		jr	loadFileError
 
-loadFileTooBig	pop	hl
+		pop	af
+loadFileTooBig	pop	af
 		call	_printFileTooBig
 		ld	a,eFileTooBig
 		ex	af,af'

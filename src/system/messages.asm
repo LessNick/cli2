@@ -22,7 +22,7 @@ errorLimitMsg	db	"Maximum diapason -32767 to 32767.",#0d,#00
 errorNunMsg	db	"Not a number.",#0d,#00
 undefVarMsg	db	"undef",#00
 
-errorFileTooBig	db	"File size is too big. Not enough memory.",#0d,#00
+errorFileTooBig	db	"File is very big. Not enough memory.",#0d,#00
 
 okBinMgs	db	"System directory '/bin' successfully rescaned.",#0d,#00
 errorBinMgs	db	"System directory '/bin' not found.",#0d,#00

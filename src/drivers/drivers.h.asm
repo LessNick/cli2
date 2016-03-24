@@ -106,14 +106,6 @@ pt3init			equ	#26			; Инициализация AY
 							; Пердварительно должн быть загружены данные в AYBANK
 pt3play			equ	#27			; Воспроизведение следующего блока данных (int)
 pt3mute			equ	#28			; Заткнуть все регистры AY
-pt3loopEnable		equ	#29			; Разрешить зацикливание трека. Вызывать перед инициализацией!!
-pt3loopDisable		equ	#2A			; Запретить зацикливание трека. Вызывать перед инициализацией!!
-pt3setType		equ	#2B			; Установить тип подключения каналов:
-							; i: A' = 0 - ABC (по умолчанию)
-							;	  1 - ACB
-							;	  2 - BAC
-;---------------------------------------
-; Типы подключения AY:
-pt3abc			equ	#00
-pt3acb			equ	#01
-pt3bac			equ	#02
+pt3loopEnable		equ	#29			; reserved
+pt3loopDisable		equ	#2A			; reserved
+pt3setType		equ	#2B			; reserved

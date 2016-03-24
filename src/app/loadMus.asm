@@ -2,7 +2,7 @@
 ; CLi² (Command Line Interface)
 ; 2016 © breeze/fishbone crew
 ;---------------------------------------
-; PT3 file loader
+; Music file loader
 ;---------------------------------------
 
 		org	#c000-4
@@ -16,29 +16,12 @@ appStart
 ;---------------------------------------------
 		xor	a
 		ld	(enableAutoPlay+1),a
-		ld	(ayPrintStatus+1),a
-		ld	(ayFileCheck+1),a
+		ld	(musPrintStatus+1),a
+		ld	(musFileCheck+1),a
 
 		ld	a,(hl)
-		cp	#00
-		jp	z,ayShowInfo				; Выход. Вывод информации о программе
-
-		push	hl
-
-		ld	hl,ayTryInit
-		call	ayPrintStatus
-
-		ld	a,disableAyPlay
-		call	cliKernel
-		cp	#ff
-		push	af
-		call	nz,ayPrtOk
-		pop	af
-		call	z,ayPrtError
-
-		ld	a,pt3loopDisable
-		call	cliDrivers
-		pop	hl
+		cp	#00					; Не заданы параметры
+		jp	z,musShowInfo				; Выход. Вывод информации о программе
 
 		ex	de,hl
 		ld	a,eatSpaces
@@ -49,148 +32,121 @@ appStart
 		ld	a,checkCallKeys
 		call	cliKernel
 
-		cp	#ff
-		jp	z,ayShowInfo				; Выход. Вывод информации о программе
+		cp	#ff					; Задан неверный ключ
+		jp	z,musShowInfo				; Выход. Вывод информации о программе
 
 		ld	a,(hl)
-		cp	#00
-		jp	nz,ayContinue
+		cp	#00					; если это не конец строки = продолжаем
+		jp	nz,musContinue
 
-ayFileCheck	ld	a,#00
-		cp	#01
+musFileCheck	ld	a,#00					; необходимо ли указать имя файла
+		cp	#01					; если задан ключ -c(continue) то просто выйти
 		ret	z
 		jp	fileNotSet				; Выход. Не задан файл
 
-ayContinue	ld	(ayFileName+1),hl
-
-		ld	a,(ayPrintStatus+1)
-		cp	#01
-		jr	z,startLoader
-		call	ayLoaderVer
+musContinue	ld	(musFileName+1),hl
 
 ;---------------------------------------------
-startLoader	
-ayFileName	ld	de,#0000				; Имя файла
+; Начало
+;---------------------------------------------
+		call	musLoaderVer
+;---------------
+		push	hl
+
+		ld	hl,musTryInit
+		call	musPrintStatus
+
+		ld	a,disableAyPlay
+		call	cliKernel
+		cp	#ff
+		push	af
+		call	nz,musPrtOk
+		pop	af
+		call	z,musPrtError
+
+		pop	hl
+;---------------
+
+
+musFileName	ld	de,#0000				; Имя файла
 
 		ld	a,eatSpaces
 		call	cliKernel
 		ex	de,hl
+		
 		push	hl
-		call	ayPrtFilename
+		call	musPrtFilename				; вывод надписи «пытаемся загрузить»
 		pop	hl
-		ld	de,ayBuffer
+		
+		ld	de,musBuffer
 		xor	a
 		ex	af,af'					; загрузка с сохранением пути
 		ld	a,loadFile				; Загружаем файл в буфер
 								; На выходе в BC - размер
 		call	cliKernel
 		cp	#ff					; Если на выходе #ff = ошибка
-		jp	z,ayPrtError
+		jp	z,musPrtError
 
 		push	bc
-		call	ayPrtOk
+		call	musPrtOk
+
+		ld	hl,musTryDetect				; вывод надписи «пытаемся продетектить»
+		call	musPrintStatus
 		pop	bc
 
 		ld	a,uploadAyModule
-		ld	hl,ayBuffer
+		ld	hl,musBuffer
 		call	cliKernel
-
+		
 		ld	a,pt3init
 		call	cliDrivers
 
-ayType		ld	a,#00
-		cp	#01
-		jr	nz,ayLoop
-	
-switchType	ld	a,#00
-		push	af
+		cp	#ff					; Если на выходе #ff = ошибка
+		jp	z,musPrtError
 
-		ld	hl,ayTypeABC
-		cp	pt3abc
-		jr	z,swt_print
-
-		ld	hl,ayTypeACB
-		cp	pt3acb
-		jr	z,swt_print
-
-		ld	hl,ayTypeBAC
-swt_print	call	ayPrintStatus
-
-		pop	af
-		ex	af,af'
-		ld	a,pt3setType
-		call	cliDrivers
-
-		call	ayPrtOk
-
-ayLoop		ld	a,#00
-		cp	#01
-		jr	nz,enableAutoPlay
-
-		ld	hl,ayEnableLoop
-		call	ayPrintStatus
-		
-		ld	a,pt3loopEnable
-		call	cliDrivers
-
-		call	ayPrtOk
+		call	musPrtOk
 
 enableAutoPlay	ld	a,#00
 		cp	#01
 		ret	nz
 		
-		call	ayPrtPlay
+		call	musPrtPlay
 		
 		ld	a,enableAyPlay
 		call	cliKernel
 
-ayExit		call	ayPrtOk
+musExit		call	musPrtOk
 
-ayEnd		ld	a,printRestore				; Восстанавливаем все цвета и параметры, что бы не было глюков
+musEnd		ld	a,printRestore				; Восстанавливаем все цвета и параметры, что бы не было глюков
 		jp	cliKernel
 
 ;---------------------------------------------
-ayShowInfo	call	ayLoaderVer				; Вывод информации о программе
-		call	ayLoaderHelp
+musShowInfo	call	musLoaderVer				; Вывод информации о программе
+		call	musLoaderHelp
 		ret
 
-ayLoaderVer	ld	hl,ayVersionMsg			
+musLoaderVer	ld	a,(musPrintStatus+1)
+ 		cp	#01
+ 		ret	z
+		ld	hl,musVersionMsg			
 		ld	a,printAppNameString
 		call	cliKernel
 
-		ld	hl,ayCopyRMsg
+		ld	hl,musCopyRMsg
 		ld	a,printCopyrightString
 		call	cliKernel
 		jr	skipCheckFile
 
-ayLoaderHelp	ld	hl,ayUsageMsg
+musLoaderHelp	ld	a,(musPrintStatus+1)
+ 		cp	#01
+ 		ret	z
+ 		ld	hl,musUsageMsg
 		ld	a,printString
 		call	cliKernel
 		jr	skipCheckFile
-
 ;---------------
-setAbc		ld	a,pt3abc
-		ld	(switchType+1),a
-		jr	setAy
-
-setAcb		ld	a,pt3acb
-		ld	(switchType+1),a
-		jr	setAy
-
-setBac		ld	a,pt3bac
-		ld	(switchType+1),a
-
-setAy		ld	a,#01
-		ld	(ayType+1),a
-		ret
-;---------------
-setLoop		ld	a,#01
-		ld	(ayLoop+1),a
-		ret
-
-;---------------
-ayLoaderPlay	ld	hl,ayTryPlay
-		call	ayPrintStatus
+musLoaderPlay	ld	hl,musTryPlay
+		call	musPrintStatus
 
 		ld	a,pt3init
 		call	cliDrivers
@@ -199,41 +155,41 @@ ayLoaderPlay	ld	hl,ayTryPlay
 		call	cliKernel
 		
 		call	skipCheckFile
-		jr	ayExit
+		jr	musExit
 
 ;---------------
-ayLoaderStop	ld	hl,ayTryStop
-		call	ayPrintStatus
+musLoaderStop	ld	hl,musTryStop
+		call	musPrintStatus
 		ld	a,disableAyPlay				; Остановка воспроизведения
 		call	cliKernel
 		call	skipCheckFile
-		jr	ayExit
+		jr	musExit
 
 ;---------------
-ayLoaderCont	ld	hl,ayTryCont
-		call	ayPrintStatus
+musLoaderCont	ld	hl,musTryCont
+		call	musPrintStatus
 		ld	a,enableAyPlay				; Продолжить воспроизведения
 		call	cliKernel
 		call	skipCheckFile
-		jr	ayExit
+		jr	musExit
 
 ;---------------
 skipCheckFile	ld	a,#01					; Просто выйти если файл не задан
-		ld	(ayFileCheck+1),a
+		ld	(musFileCheck+1),a
 		ret
 
 ;---------------------------------------------
-ayPrtFilename	ld	de,loadayMsg_03a
-		call	ayPrtFilename0
+musPrtFilename	ld	de,loadmusMsg_03a
+		call	musPrtFilename0
 
-		ld	hl,loadayMsg_03b
-		call	ayPrtFilename0
+		ld	hl,loadmusMsg_03b
+		call	musPrtFilename0
 		ld	(de),a
 
-		ld	hl,loadayMsg_03
-		jp	ayPrintStatus
+		ld	hl,loadmusMsg_03
+		jp	musPrintStatus
 
-ayPrtFilename0	ld	a,(hl)
+musPrtFilename0	ld	a,(hl)
 		cp	#00
 		ret	z
 		cp	" "
@@ -241,33 +197,33 @@ ayPrtFilename0	ld	a,(hl)
 		ld	(de),a
 		inc	de
 		inc	hl
-		jr	ayPrtFilename0
+		jr	musPrtFilename0
 
 ;---------------------------------------------
-ayPrtUpload	ld	hl,loadayMsg_04
-		jp	ayPrintStatus
+musPrtUpload	ld	hl,loadmusMsg_04
+		jp	musPrintStatus
 
 ;---------------------------------------------
-ayPrtPlay	ld	hl,loadayMsg_05
-		jr	ayPrintStatus
+musPrtPlay	ld	hl,loadmusMsg_05
+		jr	musPrintStatus
 
 ;---------------------------------------------
-ayPrtOk		ld	a,(ayPrintStatus+1)
+musPrtOk	ld	a,(musPrintStatus+1)
 		cp	#01
 		ret	z
 		ld	a,printStatusOk
 		jp	cliKernel
 
 ;---------------------------------------------
-ayPrtError	ld	a,(ayPrintStatus+1)
+musPrtError	ld	a,(musPrintStatus+1)
 		cp	#01
 		ret	z
 		ld	a,printStatusError
 		call	cliKernel
-		jp	ayExit
+		jp	musEnd
 
 ;---------------------------------------------
-ayPrintStatus	ld	a,#00
+musPrintStatus	ld	a,#00
 		cp	#01
 		ret	z
 		ld	a,printStatusString
@@ -277,11 +233,11 @@ ayPrintStatus	ld	a,#00
 setAutoPlay	ld	a,#01
 		ld	(enableAutoPlay+1),a
 		xor	a
-		ld	(ayFileCheck+1),a
+		ld	(musFileCheck+1),a
 		ret
 
 setSilentmode	ld	a,#01
-		ld	(ayPrintStatus+1),a
+		ld	(musPrintStatus+1),a
 		ret
 
 ;---------------------------------------------
@@ -289,14 +245,13 @@ fileNotSet	ld	hl,noFileMsg
 		ld	a,printErrorString
 		jp	cliKernel
 ;---------------------------------------------
-ayVersionMsg	db	"ProTracker 3 file loader for AY-3-8910/12 Sound Chip v0.04",#00
-ayCopyRMsg	db	"2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+musVersionMsg	db	"Music loader for AY8910/12, YM2203 & TS Sound Chip v0.06",#00
+musCopyRMsg	db	"2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 		
-ayUsageMsg	db	15,5,"Usage: loaday [switches] filename.ay",#0d
+musUsageMsg	db	15,5,"Usage: loadmus [switches] filename.(pt3|pt2|mtc|tfc|ts)",#0d
 		db	16,16,"  -a ",15,15,"\tautoplay. allow to automatically play the file after upload",#0d
-		db	16,16,"  -l ",15,15,"\tloop. allow to loop play module (default disabled)",#0d
 		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
-		db	16,16,"  -p ",15,15,"\tplay current pt3 (if already loaded)",#0d
+		db	16,16,"  -p ",15,15,"\tplay current music (if already loaded)",#0d
 		db	16,16,"  -st ",15,15,"\tstop play.",#0d
 		db	16,16,"  -c ",15,15,"\tcontinue play.",#0d
 		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
@@ -305,20 +260,17 @@ ayUsageMsg	db	15,5,"Usage: loaday [switches] filename.ay",#0d
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 
-loadayMsg_03	db	"Try to open pt3 file ",243
-loadayMsg_03a	ds	80," "
-loadayMsg_03b	db	242,"...",#00
-loadayMsg_04	db	"Loading module...",#00
-loadayMsg_05	db	"Autoplay start...",#00
+loadmusMsg_03	db	"Try to open file ",243
+loadmusMsg_03a	ds	80," "
+loadmusMsg_03b	db	242,"...",#00
+loadmusMsg_04	db	"Loading module...",#00
+loadmusMsg_05	db	"Autoplay start...",#00
 
-ayTryInit	db	"Try to initialize AY Sound Chip...",#00
-ayTryPlay	db	"Try to start playing...",#00
-ayTryStop	db	"Try to stop playing...",#00
-ayTryCont	db	"Try to continue playing...",#00
-ayEnableLoop	db	"Set loop playing...",#00
-ayTypeABC	db	"Set ",243,"ABC",242," mode...",#00
-ayTypeACB	db	"Set ",243,"ACB",242," mode...",#00
-ayTypeBAC	db	"Set ",243,"BAC",242," mode...",#00
+musTryInit	db	"Try to initialize sound chip...",#00
+musTryDetect	db	"Try to detect supported music format...",#00
+musTryPlay	db	"Try to start playing...",#00
+musTryStop	db	"Try to stop playing...",#00
+musTryCont	db	"Try to continue playing...",#00
 
 ;---------------------------------------------
 ; Key's table for params
@@ -329,11 +281,7 @@ keyTable	db	"-a"
 
 		db	"-h"
 		db	"*"
-		dw	ayShowInfo
-
-		db	"-l"
-		db	"*"
-		dw	setLoop
+		dw	musShowInfo
 
 		db	"-s"
 		db	"*"
@@ -341,31 +289,19 @@ keyTable	db	"-a"
 
 		db	"-v"
 		db	"*"
-		dw	ayLoaderVer
+		dw	musLoaderVer
 
 		db	"-p"
 		db	"*"
-		dw	ayLoaderPlay
+		dw	musLoaderPlay
 
 		db	"-st"
 		db	"*"
-		dw	ayLoaderStop
+		dw	musLoaderStop
 
 		db	"-c"
 		db	"*"
-		dw	ayLoaderCont
-
-		db	"-abc"
-		db	"*"
-		dw	setAbc
-
-		db	"-acb"
-		db	"*"
-		dw	setAcb
-
-		db	"-bac"
-		db	"*"
-		dw	setBac
+		dw	musLoaderCont
 
 ;--- table end marker ---
 		db	#00
@@ -373,8 +309,8 @@ keyTable	db	"-a"
 ;---------------------------------------------
 appEnd		nop
 
-ayBuffer	nop
+musBuffer	nop
 
 ; 		DISPLAY "setLoop",/A,setLoop
 
-		SAVEBIN "install/bin/loadpt3", appStart, appEnd-appStart
+		SAVEBIN "install/bin/loadmus", appStart, appEnd-appStart

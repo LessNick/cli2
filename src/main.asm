@@ -23,7 +23,7 @@
 	DEVICE ZXSPECTRUM128
 
 ;	define buildLoader				; Сборка загрузчика системы (плагин для WC)
-; 	define buildKernel				; Сборка всей системы
+	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
@@ -33,8 +33,8 @@
 ; 	define buildType				; Сборка команды type
 ; 	define buildKeyScan				; Сборка утилиты keyscan
 ; 	define buildLoadMod				; Сборка утилиты loadmod
-; 	define buildLoadPt3				; Сборка утилиты loadpt3
-	define buildCursor				; Сборка утилиты cursor
+; 	define buildLoadMus				; Сборка утилиты loadmus
+; 	define buildCursor				; Сборка утилиты cursor
 ; 	define buildMiceTest				; Сборка утилиты micetest
 ; 	define buildGliTest				; Сборка утилиты glitest
 ;  	define buildLoadSxg				; Сборка утилиты loadsxg
@@ -147,10 +147,10 @@
 		include "app/loadMod.asm"
 		endif
 
-		ifdef buildLoadPt3
-		; CLi² pt3 loader application
-		DISPLAY "Start build: LoadPt3..."
-		include "app/loadPt3.asm"
+		ifdef buildLoadMus
+		; CLi² ay loader application
+		DISPLAY "Start build: LoadMus..."
+		include "app/loadMus.asm"
 		endif
 
 		ifdef buildCursor
@@ -227,4 +227,4 @@
 
 	endif
 	
-; 	DISPLAY "_showHideCursor",/A,_showHideCursor
+; 	DISPLAY "loadFileTooBig",/A,loadFileTooBig
