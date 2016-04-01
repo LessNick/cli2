@@ -39,11 +39,14 @@ exeApp		push	hl
 loadApp		ld	a,appBank
 		call	setRamPage3
 		
-		ld	hl,appAddr-4
-		push	hl
+; 		ld	hl,appAddr-4
+; 		push	hl
+		ld	hl,appAddr
 		call	load512bytes
 
-		pop	hl
+; 		pop	hl
+
+		ld	hl,appAddr
 
 		ld	a,(hl)
 		cp	127
@@ -63,6 +66,11 @@ loadApp		ld	a,appBank
 		ld	a,(hl)
 		cp	"A"
 		jr	nz,wrongApp
+
+		ld	hl,appAddr+4
+		ld	de,appAddr
+		ld	bc,#3fff-4
+		ldir
 
 appParams	ld	hl,#0000
 		call	_restoreHomePath

@@ -71,12 +71,12 @@ startGS		call	modPrtDetect
 
 		call	modPrtUsing
 
-		ld	a,getPanelStatus			; Провеяем, не с NGS ли карточки пытаются загрузить мод?
-		call	cliKernel
-		cp	#02					; Если на выходе #02 - ошибка
-		jp	z,modPrtError				; TODO: Сделать буфер больше и грузить сразу весь мод в память!
+; 		ld	a,getPanelStatus			; Провеяем, не с NGS ли карточки пытаются загрузить мод?
+; 		call	cliKernel
+; 		cp	#02					; Если на выходе #02 - ошибка
+; 		jp	z,modPrtError				; TODO: Сделать буфер больше и грузить сразу весь мод в память!
 
-		call	modPrtOk
+; 		call	modPrtOk
 
 modFileName	ld	de,#0000				; Имя файла
 
@@ -311,7 +311,7 @@ fileNotSet	ld	hl,noFileMsg
 		jp	cliKernel
 
 ;---------------------------------------------
-modVersionMsg	db	"MOD file loader for (Neo)GS Card v0.18",#00
+modVersionMsg	db	"MOD file loader for (Neo)GS Card v0.20",#00
 modCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 		
 modUsageMsg	db	15,5,"Usage: loadmod [switches] filename.mod",#0d

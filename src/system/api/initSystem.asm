@@ -9,7 +9,6 @@
 
 _initSystem	xor	a
 		ld	(driversLoaded+1),a
-		call	_ps2Init
 
 		call	_moveScreenInit
 		
@@ -20,9 +19,13 @@ _initSystem	xor	a
 
 		call	_switchTxtMode
 
+
 		call	_clearTxtMemory
 
 		call	_nvRamOpen				; Разрешаем доступ к nvram
+
+		call	_ps2Init
+; 		call	_ps2ResetKeyboard			; Инициализация клавиатуры
 
 		call	_printInit
 
@@ -38,6 +41,8 @@ _initSystem	xor	a
 		ld	a,#03
 		call	_clearGfxMemory+1			; Очищаем графическую область 3
 		
+; 		jp	$
+
 		call	_cliInitDev				; Подготовка к работе SD-карты
 		cp	#ff
 		jr	nz,_initSystem_00
@@ -83,6 +88,12 @@ _initSystem_03	call	_printBootError
 		ld	hl,kernelPanicMgs
 		call	_printWarningString
 		jp	$
+		
+; 		ld	a,#00
+; tmpLoop		ld	bc,tsRAMPage3
+; 		out	(c),a
+; 		inc	a
+; 		jp	tmpLoop
 
 _printBootError	push	hl
 		ld	hl,bootErrorMgs

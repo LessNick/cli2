@@ -2,16 +2,18 @@
 ; CLi² (Command Line Interface) main block
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
-		org	#be00
-edit256		ds	128," "				; 128 bytes ascii
-		ds	128,#0000			; 128 bytes colors
+; 		org	#be00
+; edit256		ds	128," "				; 128 bytes ascii
+; 		ds	128,#0000			; 128 bytes colors
 		
-		org	#bf00
+; 		org	#bf00
 
-bufer256	ds	128," "				; 128 bytes ascii
-		ds	128,#0000			; 128 bytes colors
+; bufer256	ds	128," "				; 128 bytes ascii
+; 		ds	128,#0000			; 128 bytes colors
 
-		org	#8000
+; 		org	#8000
+		org	#7000
+
 sCliKernel
 		include "cli.asm"
 		include "ps2.asm"
@@ -20,11 +22,14 @@ sCliKernel
 		include "print.asm"
 		include "printE.asm"
 		include "budder.asm"
-; 		include "dma.asm"
+		include "dma_dis.asm"
+; 		include "fat_dis.asm"
 		
 		include "commands.asm"
 		include "operators.asm"
 		include "dir.asm"
+		include "ls.asm"
+		include "ll.asm"
 		include "run.asm"
 		include "sh.asm"
 		
@@ -37,6 +42,7 @@ sCliKernel
 		
 		include "wc.h.asm"
 		include "tsconf.h.asm"
+		include "fat.h.asm"
 
 eCliKernel	nop
 

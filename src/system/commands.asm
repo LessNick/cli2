@@ -456,9 +456,9 @@ cdExitOk	ld	hl,pathString
 		ret
 
 resetToRoot	inc	hl
-		ld	a,(lsPathCount)
-		cp	#00
-		ret	z					; alredy root
+; 		ld	a,(lsPathCount)
+; 		cp	#00
+; 		ret	z					; alredy root
 		push	hl
 		call	pathToRoot
 		xor	a

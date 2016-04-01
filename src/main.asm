@@ -22,8 +22,9 @@
 
 	DEVICE ZXSPECTRUM128
 
-;	define buildLoader				; Сборка загрузчика системы (плагин для WC)
-	define buildKernel				; Сборка всей системы
+; 	define buildLoader				; Сборка загрузчика системы (плагин для WC)
+	define buildSexyBoot				; Сборка загрузчика системы boot.$c
+; 	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
@@ -40,18 +41,25 @@
 ;  	define buildLoadSxg				; Сборка утилиты loadsxg
 ; 	define buildNvram				; Сборка утилиты nvram
 ; 	define buildHello				; Сборка тестового приложения hello
-; 	define buildBoing				; Сборка тестовой демки boing
 ; 	define buildMkdir				; Сборка команды mkdir
+; 	define buildScreenFX				; Сборка приложения screenFX
+;  	define buildDate				; Сборка приложения date
+
+; 	define buildBoing				; Сборка тестовой демки boing
 ; 	define buildTestSave				; Сборка тестового приложения testsave
 ; 	define buildTestFile				; Сборка тестового приложения testfile
-; 	define buildScreenFX				; Сборка приложения screenFX
 ; 	define buildDisk2trd				; Сборка приложения disk2trd
-
 ;-------------------------------------------------------------------------
 	ifdef buildLoader	
-        ; CLi² Loader
-        DISPLAY "Start build: Loader..."
+	; CLi² Loader
+	DISPLAY "Start build: Loader..."
 	include "cliloader/main.asm"
+	endif
+;-------------------------------------------------------------------------
+	ifdef buildSexyBoot	
+	; CLi² Sexy Boot
+	DISPLAY "Start build: SexyBoot..."
+	include "sexyBoot/main.asm"
 	endif
 ;-------------- загрузчик или ядро системы -------------------------------
 
@@ -192,39 +200,45 @@
 		ifdef buildBoing
 		; CLi² demo 1
 		DISPLAY "Start build: Boing..."
-	 	include "demo/boing.asm"
+		include "demo/boing.asm"
 		endif
 
 		ifdef buildMkdir
 		; CLi² mkdir application
 		DISPLAY "Start build: MKdir..."
-	 	include "app/mkdir.asm"
+		include "app/mkdir.asm"
 		endif
 
 		ifdef buildTestSave
 		; CLi² testsave application
 		DISPLAY "Start build: testsave..."
-	 	include "app/testsave.asm"
+		include "app/testsave.asm"
 		endif
 
 		ifdef buildTestFile
 		; CLi² testsave application
 		DISPLAY "Start build: testfile..."
-	 	include "app/testfile.asm"
+		include "app/testfile.asm"
 		endif
 
 		ifdef buildScreenFX
 		; CLi² screenFX application
 		DISPLAY "Start build: screenFX..."
-	 	include "app/screenFX.asm"
+		include "app/screenFX.asm"
+		endif
+
+		ifdef buildDate
+		; CLi² date application
+		DISPLAY "Start build: date..."
+		include "app/date.asm"
 		endif
 
 		ifdef buildDisk2trd
 		; CLi² disk2trd application
 		DISPLAY "Start build: disk2trd..."
-	 	include "app/disk2trd.asm"
+		include "app/disk2trd.asm"
 		endif
 
 	endif
 	
-; 	DISPLAY "loadFileTooBig",/A,loadFileTooBig
+; 	DISPLAY "zzz",/A,zzz

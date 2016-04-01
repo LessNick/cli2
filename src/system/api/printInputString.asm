@@ -85,7 +85,11 @@ printEUp	push	hl
 		pop	hl
 		ret
 
-printEExit	ld	a,(eStrLen)
+printEExit	ld	hl,(scrollOffset)
+		inc	h
+		ld	(scrollOffset),hl
+
+		ld	a,(eStrLen)
 		ret
 
 printEChar	ld	hl,edit256				; печать символа в редактируемой строке

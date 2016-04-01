@@ -13,6 +13,5 @@ _ps2ResetKeyboard
 		or	%00000001				; 0-й бит cброс буфера клавиатуры
 _ps2ResKbd	ex	af,af'
 		ld	a,#0c
-		call	_nvRamSetData
-		ret
+		jp	_nvRamSetData
 ;---------------------------------------

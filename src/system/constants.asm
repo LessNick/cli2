@@ -2,6 +2,11 @@
 ; CLi² (Command Line Interface) constants
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
+
+lsBuffer	equ	#4000				; Буфер чтения дискриптора файла. 512 байт
+edit256		equ	#be00				; Буфер строки ввода 128 байт текст + 128 байт цвет
+bufer256	equ	#bf00				; Буфер строки печати 128 байт текст + 128 байт цвет
+
 wcKernel	equ	#6006				; WildCommander API
 
 txtFontBank	equ	#01				; Банка и

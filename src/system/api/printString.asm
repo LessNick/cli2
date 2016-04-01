@@ -162,6 +162,10 @@ prepareNext	ld	hl,bufer256
 		xor	a
 		ld	(printX),a
 
+		ld	hl,(scrollOffset)
+		inc	h
+		ld	(scrollOffset),hl
+
 printScrollEnable
 		ld	a,#00					; scroll?
 		cp	#00
@@ -311,13 +315,17 @@ codeInk_0	cp	16					; 16 ? взять цвет по умолчанию
 		jr	nz,codeInk_1
 		call	getFullColor
 
-codeInk_1	and	%00001111
+codeInk_1	call	setInk
+		jp	printSLoop
+	
+
+setInk		and	%00001111
 		ld	c,a
 		ld	a,(currentColor)
 		and	%11110000
 		or	c
 		ld	(currentColor),a
-		jp	printSLoop
+		ret
 
 ;---------------
 codePaper	inc	hl
@@ -328,19 +336,23 @@ codePaper_0	cp	16					; 16 ? взять цвет по умолчанию
 		jr	nz,codePaper_1
 		call	getFullColor
 		and	%11110000
-		jr	codePaper_2
+		call	setPaper_2
+		jp	printSLoop
 
-codePaper_1	and	%00001111
+codePaper_1	call	setPaper
+		jp	printSLoop
+
+setPaper	and	%00001111
 		sla	a
 		sla	a
 		sla	a
 		sla	a
-codePaper_2	ld	c,a
+setPaper_2	ld	c,a
 		ld	a,(currentColor)
 		and	%00001111
 		or	c
 		ld	(currentColor),a
-		jp	printSLoop
+		ret
 
 ;---------------
 codeSysPaper	call	codeSys

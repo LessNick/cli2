@@ -223,6 +223,33 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_showHideCursor			; #5D
 
+		dec	a
+		jp	z,_setCurrentInk			; #5E
+
+		dec	a
+		jp	z,_getCurrentInk			; #5F
+
+		dec	a
+		jp	z,_setCurrentPaper			; #60
+
+		dec	a
+		jp	z,_getCurrentPaper			; #61
+
+		dec	a
+		jp	z,_long2str				; #62
+
+		dec	a
+		jp	z,_getCurrentDate			; #63
+
+		dec	a
+		jp	z,_getCurrentTime			; #64
+
+		dec	a
+		jp	z,_getMonthNameByNumber-1		; #65
+
+		dec	a
+		jp	z,_getDayNameByNumber-1			; #66
+
 _reserved	ret
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -288,7 +315,7 @@ _reserved	ret
 								; ID: #3D - reserved
 		include "api/eatSpaces.asm"			; ID: #3E
 		include "api/setAppCallBack.asm"		; ID: #3F
-		include "api/setRamPage0Ext.asm"			; ID: #40
+		include "api/setRamPage0Ext.asm"		; ID: #40
 		include "api/restoreWcBank.asm"			; ID: #41
 		include "api/moveScreenInit.asm"		; ID: #42
 		include "api/moveScreenUp.asm"			; ID: #43
@@ -318,8 +345,45 @@ _reserved	ret
 		include "api/uploadAyModule.asm"		; ID: #5B
 		include "api/setPalNow.asm"			; ID: #5C
 		include "api/showHideCursor.asm"		; ID: #5D
+		include "api/setCurrentInk.asm"			; ID: #5E
+		include "api/getCurrentInk.asm"			; ID: #5F
+		include "api/setCurrentPaper.asm"		; ID: #60
+		include "api/getCurrentPaper.asm"		; ID: #61
+		include "api/long2str.asm"			; ID: #62
+		include "api/getCurrentDate.asm"		; ID: #63
+		include "api/getCurrentTime.asm"		; ID: #64
+		include "api/getMonthNameByNumber.asm"		; ID: #65
+		include "api/getDayNameByNumber.asm"		; ID: #66
 
 
+;---------------------------------------
+fatDriver	ld	(fdSetHL+1),hl
+		ld	(fdSetBC+1),bc
+		push	af
+		ld	a,(_PAGE0)
+		ld	(fde+1),a
+		ld	a,#0f
+		call	_setRamPage00
+		ld	(_PAGE0),a
+		pop	af
+
+		ld	hl,fdRet
+		push	hl					; точка куда мы должны вернутся
+		ld	hl,fStart
+		ld	c,a
+		ld	b,0
+		add	hl,bc
+		push	hl					; точку куда мы должны прыгнуть
+fdSetHL		ld	hl,#0000
+fdSetBC		ld	bc,#0000
+		ret						; уходим JP
+
+fdRet		push	af,bc
+fde		ld	a,#00
+		call	_setRamPage00
+		ld	(_PAGE0),a
+		pop	bc,af
+		ret
 ;---------------------------------------
 storeRam0	push	af
 		ld	a,(_PAGE0)				; Сохряняем какая была до этого открыта страница
@@ -595,13 +659,13 @@ _getMouseTxtPos	ld	a,getMouseX				; HL
 
 ;---------------
 _invertMousePos	push	hl,de
-		ld	de,(_scrollOffset)
+		ld	de,(scrollOffset)
 		ld	a,d
 		cp	#1e					; уже отображено 30 строк?
 		jr	c,_impSkip
 		
 		xor	a
-		ld	bc,#1d00				;30-1
+ 		ld	bc,#1e00				;30
 	
 		ex	de,hl
 		sbc	hl,bc
@@ -1049,9 +1113,10 @@ _checkKeyShiftR	ld	hl,keyStatus + #59
 
 
 ;---------------------------------------
-callDma		ex	af,af'
-		ld	a,_DMAPL
-		jp	wcKernel
+; DMAPL
+; callDma		ex	af,af'
+;  		ld	a,_DMAPL
+;  		jp	wcKernel
 
 ;---------------------------------------
 openStream	ld	d,#00				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)

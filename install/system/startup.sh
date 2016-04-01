@@ -5,6 +5,8 @@ echo \x10\x0dType \x14 help \x14 to display list of commands          ﬂ€‹‹€ﬂ  ﬂ‹
 echo \x10\x10
 loadfont -s /system/res/fonts/8x8/default.fnt
 ;keyscan
+;nvram -d
+;nvram -s #0c,#03
 ;nvram -s #f0,#02 -g #f0 -g #f0 -g #f0 -g #f0
 ;sh /demo/bramble/run.sh
 ;loadpt3 -a /music/ay/mmcm.pt3

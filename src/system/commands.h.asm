@@ -30,9 +30,13 @@ cmdTable
 ;--- J ---
 ;--- K ---
 ;--- L ---
+	db	"ll"
+	db	"*"
+	dw	_ll
+
 	db	"ls"
 	db	"*"
-	dw	_dir
+	dw	_ls
 
 	db	"locale"
 	db	"*"
