@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; type - show txt file application
 ;--------------------------------------		
@@ -48,6 +48,9 @@ typeFileCheck	ld	a,#00
 
 		ld	de,typeBuffer
 		ld	b,typeBufferSize
+		ld	c,#00
+		ld	a,appBank
+		ex	af,af'
 		ld	a,loadFileParts
 		call	cliKernel
 		cp	#ff
@@ -148,8 +151,8 @@ setScrollEnable	ld	b,#01					; разрешить scroll
 		call	cliKernel
 		ret
 ;-------
-typeVersionMsg	db	"Type (Displays the contents of a text file) v0.06",#00
-typeCopyRMsg	db	"2013,2015 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+typeVersionMsg	db	"Type (Displays the contents of a text file) v0.08",#00
+typeCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
 
 typeUsageMsg	db	15,5,"Usage: type [switches] filename.txt",#0d
 		db	16,16,"  -s ",15,15,"\tYe! old classic ",243,"scroll?",242," from zx basic. Show limited amount of strings",#0d
@@ -159,11 +162,6 @@ typeUsageMsg	db	15,5,"Usage: type [switches] filename.txt",#0d
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#00
 wrongSizeMsg	db	"Error: Wrong file size.",#0d,#00
-
-typeBuffer	ds	typeBufferSize*512,#00
-		db	#00,#00
-typeBufferEnd	db	#0d,#00
-		ds	10, #00
 
 ;---------------------------------------------
 ; Key's table for params
@@ -181,6 +179,14 @@ keyTable	db	"-s"
 		dw	typeVer
 ;--- table end marker ---
 		db	#00
+
+;---------------------------------------------
+		align 2
+
+typeBuffer	ds	typeBufferSize*512,#00
+		db	#00,#00
+typeBufferEnd	db	#0d,#00
+		ds	10, #00
 appEnd	nop
 
 		SAVEBIN "install/bin/type", appStart, appEnd-appStart

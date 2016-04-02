@@ -14,6 +14,7 @@ _sh		ex	de,hl					; hl params
  		call	storeShPath
 
 		ld	de,scriptAddr
+		ld	c,scriptBank
 		ld	a,#01					; загрузка без восстановления пути
 		ex	af,af'
 		call	_loadFile

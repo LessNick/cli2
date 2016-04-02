@@ -76,7 +76,7 @@ _initSystem_00b
 
 _initSystem_00c	call	_loadCursorsRes				; Загрузить /system/res/cursors/default.cur
 
-		call	_scopeBinary				; Собрать список доступных комманд из /bin/*
+		call	scopeBinary				; Собрать список доступных комманд из /bin/*
 		cp	#ff
 		jr	nz,tryStartUp
 		

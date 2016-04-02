@@ -13,7 +13,7 @@
 ;---------------------------------------
 _setMouseCursor	ex	af,af'					; in A' - тип курсора (на самом деле номер фазы)	
 ;---------------------------------------
-setCursorPhase	push	hl,de
+setCursorPhase	push	hl,de,bc
 
 		push	af					; in A - номер фазы
 
@@ -47,6 +47,6 @@ setCursorPhase	push	hl,de
 		or	c
 		ld	(cursorSBitmapY),a
 
-		pop	de,hl
+		pop	bc,de,hl
 		ret
 ;---------------------------------------

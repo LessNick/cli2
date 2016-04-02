@@ -7,12 +7,15 @@
 ; Загрузить файл по указанному адресу
 ;  i: HL - адрес строки именем файла (или путём до него)
 ;     DE - адрес загрузки файла
+;      C - банк памяти для загрузки файла
 ;     A' = #00 - восстановить путь после загрузки файла
 ;          #01 - остаться на новом пути откуда загружен файл
 ;  o: A = #ff ошибка, A' = код ошибки
 ;     BC - размер загруженного файла
 ;---------------------------------------
-_loadFile	xor	a
+_loadFile	ld	a,c
+		ld	(loadBank+1),a
+		xor	a
 		ld	(checkLimit+1),a
 		ex	af,af'
 		cp	#01
@@ -69,6 +72,7 @@ loadFile_01	call	setFileBegin
 		ld	b,c
 
 		pop	hl
+loadBank	ld	c,#00
 		call	load512bytes
 
 		xor	a
@@ -221,12 +225,12 @@ entrySkip	cp	#00
 ;---------------
 eSearch		ld	hl,entryForSearch
 ;---------------
-searchEntry	ld	a,_FENTRY
-		jp	wcKernel
+searchEntry	ld	a,fFentry
+		jp	fatDriver
 
 ;---------------
-setFileBegin	ld	a,_GFILE
-		jp	wcKernel
+setFileBegin	ld	a,fSeek0
+		jp	fatDriver
 
 ;---------------
 storeFileLen	ld	(fileLength),hl

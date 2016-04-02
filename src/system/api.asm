@@ -290,8 +290,7 @@ _reserved	ret
 		include "api/checkCallKeys.asm"			; ID: #22
 		include "api/loadFile.asm"			; ID: #23
 		include "api/loadFileLimit.asm"			; ID: #24
-		include "api/loadFileParts.asm"			; ID: #25
-		include "api/loadNextPart.asm"			; ID: #26
+		include "api/loadFileParts.asm"			; ID: #25, ID: #26
 		include "api/saveFile.asm"			; ID: #27
 		include "api/saveFileParts.asm"			; ID: #28
 		include "api/saveNextPart.asm"			; ID: #29
@@ -409,7 +408,7 @@ storeRam3	push	af
 		ret
 
 ;---------------
-setRamPage3	add	32
+setRamPage3	;add	32
 		ld	(_PAGE3),a
 setRamPage33	ld	bc,tsRAMPage3
 		out	(c),a
@@ -694,8 +693,12 @@ _impSkip	ld	bc,#80					; HL - аддр
 		ret
 
 ;---------------------------------------
-_loadCursorsRes	ld	hl,cursorsPath
+_loadCursorsRes	ld	a,bufferBank
+		call	_setRamPage0
+
+		ld	hl,cursorsPath
 		ld	de,bufferAddr
+		ld	c,bufferBank
 		push	de
 		call	_loadFile
 
@@ -792,7 +795,7 @@ lcr_skip	ld	bc,248
 
 		ld	bc,tsSGPage				; Указываем страницу для спрайтов
 		ld	a,sprBank
-		add	a,#20
+; 		add	a,#20
 		out	(c),a
 
 		call	reStoreRam3				; Восстанавливаем банку которая была до вызова
@@ -877,17 +880,7 @@ _clearBuffer	ld	hl,bufferAddr
 
 ;---------------------------------------
 _cliInitDev	call	_initPath
-
-		ld	a,(bootDevide)
-		ld	b,a					; загрузочное устройство
-		call	openStream
-		ret	z					; если устройство найдено
-
-		ld	a,"?"
-		ld	(pathString),a
-
-		ld	a,#ff					; error
-		ret
+		jp	pathToRoot
 
 ;---------------------------------------
 _storeHomePath	push	hl,de,bc
@@ -955,6 +948,7 @@ _loadDrivers	ld	hl,driversPath
 loadDmaPath	call	storeRam3
 		call	setRamPage3
 
+		ld	c,a
 		ld	de,#c000
 		call	_loadFile
 		jp	reStoreRam3
@@ -999,11 +993,11 @@ disableDrivers	ld	a,#00
 		jp	reStoreRam3				; Восстанавливаем банку установленную до вызова
 		
 ;---------------------------------------
-_getKey		xor	a				; сбрасываем учёш клавиши shift
+_getKey		xor	a					; сбрасываем учёш клавиши shift
 		ld	(checkShiftKey),a
 		call	_getKeyWithShift
 		push	af
-		ld	a,#01				; восстанавливаем учёш клавиши shift
+		ld	a,#01					; восстанавливаем учёш клавиши shift
 		ld	(checkShiftKey),a
 		pop	af
 		ret
@@ -1090,44 +1084,12 @@ _checkKeyShiftR	ld	hl,keyStatus + #59
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;---------------------------------------
-; DMAPL
-; callDma		ex	af,af'
-;  		ld	a,_DMAPL
-;  		jp	wcKernel
-
-;---------------------------------------
-openStream	ld	d,#00				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
-		ld	a,_STREAM
-		jp	wcKernel
-
 ;---------------------------------------
 load512bytes	ld	a,1
 		call	setCursorPhase
-		ld	a,_LOAD512
-		call	wcKernel
+		ld	a,fLoad512
+		call	fatDriver
+
 		push	af
 		xor	a
 		call	setCursorPhase
@@ -1135,13 +1097,11 @@ load512bytes	ld	a,1
 		ret
 
 ;---------------------------------------
-setDirBegin	ld	a,_GDIR
-		jp	wcKernel
+setDirBegin	ld	a,fSetDir
+		jp	fatDriver
 
 ;---------------------------------------
-pathToRoot	ld	d,#ff				; окрываем поток с устройством (#00 = инициализация, #ff = сброс в root)
-		ld	bc,#ffff			; устройство (#ffff = не создавать заново, использовать текущий поток)
-		ld	a,_STREAM
-		jp	wcKernel
+pathToRoot	ld	a,fSetRoot
+		jp	fatDriver
 
 ;---------------------------------------

@@ -51,6 +51,7 @@ dirReadAgain	call	clearBuffer
 		di
 
 		ld	hl,bufferAddr
+		ld	c,bufferBank
 		ld	b,#01						; 1 block 512b
 		call	load512bytes
 

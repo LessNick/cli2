@@ -42,6 +42,7 @@ loadApp		ld	a,appBank
 ; 		ld	hl,appAddr-4
 ; 		push	hl
 		ld	hl,appAddr
+		ld	c,appBank
 		call	load512bytes
 
 ; 		pop	hl
@@ -71,6 +72,9 @@ loadApp		ld	a,appBank
 		ld	de,appAddr
 		ld	bc,#3fff-4
 		ldir
+
+		ld	a,bufferBank			; перед запуском App, на всякий случай включаем с #0000 банку буффера
+		call	_setRamPage0
 
 appParams	ld	hl,#0000
 		call	_restoreHomePath

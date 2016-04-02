@@ -78,7 +78,8 @@ musFileName	ld	de,#0000				; Имя файла
 		call	musPrtFilename				; вывод надписи «пытаемся загрузить»
 		pop	hl
 		
-		ld	de,musBuffer
+zzz		ld	de,musBuffer
+		ld	c,appBank
 		xor	a
 		ex	af,af'					; загрузка с сохранением пути
 		ld	a,loadFile				; Загружаем файл в буфер
@@ -309,8 +310,10 @@ keyTable	db	"-a"
 ;---------------------------------------------
 appEnd		nop
 
+		align 2						; !!! FIX адреса загрузки кратного 2м !!!
+
 musBuffer	nop
 
-; 		DISPLAY "setLoop",/A,setLoop
+		DISPLAY "zzz",/A,zzz
 
 		SAVEBIN "install/bin/loadmus", appStart, appEnd-appStart

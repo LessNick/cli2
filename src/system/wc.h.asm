@@ -293,10 +293,9 @@ _STREAM		equ	#39	; работа с потоками
 		;equ	#3a	; устаревшая точка вызова !!!
 
 _FENTRY		equ	#3b	; поиск файла/каталога в активной директории
-				; i:HL - flag(1),name(1-12),#00
+				; i:HL - flag(1),name(1-255),#00
 				; 		 flag:#00 - file
 				;		      #10 - dir
-				;		 name:"NAME.TXT","DIR"...
 				; o: Z - entry not found
 				;    NZ - CALL GFILE/GDIR for activating file/dir
 				;    [DE,HL] - file length

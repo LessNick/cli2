@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; SXG file loader
 ;---------------------------------------
@@ -65,6 +65,9 @@ sxgContinue	ex	de,hl
 
 		ld	de,sxgBuffer
 		ld	b,sxgBufferSize
+		ld	c,#00
+		ld	a,appBank
+		ex	af,af'
 		ld	a,loadFileParts				; Загружаем первую часть в буфер
 		call	cliKernel
 		cp	#ff					; Если на выходе #ff = ошибка
@@ -414,6 +417,7 @@ sxgMoveNow	push	af
 		jp	viewerModeLoop
 ;---------------------------------------------
 setVBank	ld	a,#10					; #10-#1F - страницы из 2го видео буфера
+		add	#20
 		ex	af,af'
 		ld	a,setRamPage0
 		jp	cliKernel
@@ -628,8 +632,8 @@ imageHeight	dw	#0000
 countWidth	dw	#0000
 countHeight	dw	#0000
 
-sxgVersionMsg	db	"SXG (Spectrum eXtended Graphics) file loader v0.06",#00
-sxgCopyRMsg	db	"2013,2015 ",127," Breeze\\\\Fishbone Crew",#00
+sxgVersionMsg	db	"SXG (Spectrum eXtended Graphics) file loader v0.08",#00
+sxgCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#00
 		
 sxgUsageMsg	db	#0d,15,5,"Usage: loadsxg [switches] filename.sxg",#0d
 		db	16,16,"  -vm ",15,15,"\tviewer mode. activate viewer mode after image has loaded",#0d

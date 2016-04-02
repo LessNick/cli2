@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2015 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; load palette command
 ;---------------------------------------
@@ -46,7 +46,8 @@ appStart
 
 		ld	de,palBuffer
 		ld	b,palBufferSize
-		ld	a,loadFileParts				; Загружаем первую часть в буфер
+		ld	c,appBank
+		ld	a,loadFile				; Загружаем в буфер
 		call	cliKernel
 
 		cp	#ff
@@ -182,8 +183,8 @@ palInfo		ld	hl,palVersionMsg
 		jp	loadPalExit
 
 ;---------------------------------------------
-palVersionMsg	db	"Load palette v0.08",#00
-palCopyRMsg	db	"2013,2015 ",127," Breeze\\\\Fishbone Crew",#00
+palVersionMsg	db	"Load palette v0.10",#00
+palCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#00
 		
 palUsageMsg	db	#0d,15,5,"Usage: loadpal [switches] filename.pal",#0d
 		db	16,16,"  -g n",15,15,"\tgraphics palettes. Load palette for graphics screen N (default 1)"
@@ -204,6 +205,8 @@ keyTable	db	"-g"
 ;--- table end marker ---
 		db	#00
 
+		align 2						; !!! FIX адреса загрузки кратного 2м !!!
+		
 palBuffer	ds	palBufferSize,#00
 
 appEnd	nop

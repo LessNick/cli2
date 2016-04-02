@@ -23,8 +23,8 @@
 	DEVICE ZXSPECTRUM128
 
 ; 	define buildLoader				; Сборка загрузчика системы (плагин для WC)
-	define buildSexyBoot				; Сборка загрузчика системы boot.$c
-; 	define buildKernel				; Сборка всей системы
+; 	define buildSexyBoot				; Сборка загрузчика системы boot.$c
+	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
@@ -44,9 +44,9 @@
 ; 	define buildMkdir				; Сборка команды mkdir
 ; 	define buildScreenFX				; Сборка приложения screenFX
 ;  	define buildDate				; Сборка приложения date
+; 	define buildTestSave				; Сборка тестового приложения testsave
 
 ; 	define buildBoing				; Сборка тестовой демки boing
-; 	define buildTestSave				; Сборка тестового приложения testsave
 ; 	define buildTestFile				; Сборка тестового приложения testfile
 ; 	define buildDisk2trd				; Сборка приложения disk2trd
 ;-------------------------------------------------------------------------
@@ -241,4 +241,4 @@
 
 	endif
 	
-; 	DISPLAY "zzz",/A,zzz
+; 	DISPLAY "_clearGfxMemory",/A,_clearGfxMemory

@@ -37,7 +37,8 @@ appStart
 
 		ld	de,fntBuffer
 		ld	b,fntBufferSize
-		ld	a,loadFileParts				; Загружаем первую часть в буфер
+		ld	c,appBank
+		ld	a,loadFile				; Загружаем в буфер
 		call	cliKernel
 
 		cp	#ff

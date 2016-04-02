@@ -5,7 +5,7 @@
 ; Mod file loader
 ;---------------------------------------
 
-modBufferSize	equ	32					; 16*512 = 8192 Размер буфера в блоках по (512кб)
+modBufferSize	equ	32					; 32*512 = 16384 Размер буфера в блоках по (512кб)
 
 		org	#c000-4
 		
@@ -69,7 +69,7 @@ startGS		call	modPrtDetect
 
 		call	modPrtOk
 
-		call	modPrtUsing
+; 		call	modPrtUsing
 
 ; 		ld	a,getPanelStatus			; Провеяем, не с NGS ли карточки пытаются загрузить мод?
 ; 		call	cliKernel
@@ -88,8 +88,11 @@ modFileName	ld	de,#0000				; Имя файла
 		pop	hl
 		ld	de,modBuffer
 		ld	b,modBufferSize
+		ld	c,#00
+		ld	a,bufferBank
+		ex	af,af'
 		ld	a,loadFileParts				; Загружаем первую часть в буфер
-		call	cliKernel
+zzz		call	cliKernel
 		cp	#ff					; Если на выходе #ff = ошибка
 		jp	z,modPrtError
 
@@ -240,8 +243,8 @@ modPrtDetect	ld	hl,loadModMsg_01
 		jp	modPrintStatus
 
 ;---------------------------------------------
-modPrtUsing	ld	hl,loadModMsg_02
-		jp	modPrintStatus
+; modPrtUsing	ld	hl,loadModMsg_02
+; 		jp	modPrintStatus
 
 ;---------------------------------------------
 modPrtFilename	ld	de,loadModMsg_03a
@@ -330,7 +333,7 @@ modUsageMsg	db	15,5,"Usage: loadmod [switches] filename.mod",#0d
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 
 loadModMsg_01	db	"Try to detect General Sound (NeoGS)...",#00
-loadModMsg_02	db	"Check NeoGS SD Card is't used...",#00
+; loadModMsg_02	db	"Check NeoGS SD Card is't used...",#00
 loadModMsg_03	db	"Try to open MOD file ",243
 loadModMsg_03a	ds	80," "
 loadModMsg_03b	db	242,"...",#00
@@ -399,6 +402,6 @@ modBuffer	ds	modBufferSize*512,#00
 modBufferEnd	nop
 
 ; 		DISPLAY "modBufferEnd",/A,modBufferEnd
-; 		DISPLAY "modFileName",/A,modFileName
+		DISPLAY "zzz",/A,zzz
 
 		SAVEBIN "install/bin/loadmod", appStart, appEnd-appStart

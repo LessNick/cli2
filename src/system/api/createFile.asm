@@ -5,14 +5,14 @@
 ; MODULE: #2A createFile
 ;---------------------------------------
 ; Создать файл в активной директории
-; i:HL - имя файла(1-12),#00
+; i:HL - имя файла(1-255),#00
 ;   BC,DE размер файла в байтах
 ;         (bc - младшая часть, de - старшая часть)
 ;---------------------------------------
 _createFile	ld	a,flagFile
-		call	_prepareSaveEntry
+		call	prepareSaveEntry
 
 		ld	hl,entryForSearch
-		ld	a,_MKFILE
-  		jp	wcKernel
+		ld	a,fMkFile
+		jp	fatDriver
 ;---------------------------------------

@@ -14,7 +14,7 @@ mYoffset2	dw	#0000					; Смещение графического экрана 
 mXoffset3	dw	#0000					; Смещение графического экрана 3 по горизонтали
 mYoffset3	dw	#0000					; Смещение графического экрана 3 по веритикали
 
-bootDevide	db	deviceSDZC				; С чего загрузились (SD-карта)
+; bootDevide	db	deviceSDZC				; С чего загрузились (SD-карта)
 
 currentScreen	db	#00					; Активный экран (0 - txt, 1,2,3 - gfx)
 cliVersion	dw	#0012					; v 0.18

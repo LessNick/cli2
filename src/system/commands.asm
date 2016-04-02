@@ -127,7 +127,7 @@ helpExit	ld	hl,helpOneLine
 		jp	_printRestore
 
 ;---------------------------------------
-_scopeBinary	ld	a,scopeBinBank
+scopeBinary	ld	a,scopeBinBank
 		call	setRamPage3
 
 		call	clearScopeBin
@@ -141,100 +141,89 @@ _scopeBinary	ld	a,scopeBinBank
 		cp	#ff				; not found /bin?
 		ret	z
 
-		call	setFileBegin
+		ld	a,fSetDir
+		call	fatDriver
 
-sbReadAgain	call	_clearBuffer
+sbLoop		ld	de,lsBuffer
+		ld	a,fGetNextEntryDir
+		call	fatDriver
+		jr	z,sbEnd				; конец директории
 
-		ld	hl,bufferAddr
-		ld	b,#01				; 1 block 512b
-		call	load512bytes
-
-		ld	hl,bufferAddr
-
-sbLoop		ld	a,(hl)
-		cp	#00
-		jp	z,sbEnd
-
-		push	hl
-		pop	ix
-		bit	3,(ix+11)
-		jr	nz,sbSkip			; если 1, то запись это ID тома
+		ld	hl,lsBuffer+12			; флаги файла
 		
-		bit	4,(ix+11)
-		jr	nz,sbSkip			; если 1, то каталог
-		
+		bit	3,(hl)
+		jr	nz,sbLoop			; если 1, то запись это ID тома
+
+		bit	4,(hl)				; если 1, то каталог
+		jr	nz,sbLoop
+
+		inc	hl				; Начало имени
 		ld	a,(hl)
-		cp	#e5
-		jr	z,sbSkip
+		cp	"."				; Пропустить файлы «.» и «..»
+		jr	z,sbLoop
 
 		push	hl
-		call	sbCopyName
+sbChek0		ld	a,(hl)
+		cp	#00
+		jr	z,sbSkipFile
+		cp	"."
+		jr	z,sbChek1
+		inc	hl
+		jr	sbChek0
+
+sbChek1		inc	hl
+		ld	a,(hl)
+		cp	" "				; 1) три пробела в расширении !
+		jr	nz,sbSkipFile
+
+		inc	hl
+		ld	a,(hl)
+		cp	" "				; 2) три пробела в расширении !
+		jr	nz,sbSkipFile
+
+		inc	hl
+		ld	a,(hl)
+		cp	" "				; 3) три пробела в расширении !
+		jr	nz,sbSkipFile
+
+		inc	hl
+		ld	a,(hl)
+		cp	#00				; И дальше ничего!
+		jr	nz,sbSkipFile
+
 		pop	hl
 
-sbSkip		
-sbCount		ld	a,#00
-		inc	a
-		ld	(sbCount+1),a
-		cp	16					; 16 записей на сектор
-		jr	z,sbLoadNext
-
-		ld	bc,32					; 32 byte = 1 item
+sbCopyName	ld	de,scopeBinAddr
+		push	de
+		ld	b,#08				; Имя файла не длиннее 8 символов
+sbCopyLoop	ld	a,(hl)
+		cp	"."				; Если имя корече 8 символов
+		jr	z,sbCopyEnd
+		ld	(de),a
+		inc	hl
+		inc	de
+		djnz	sbCopyLoop
+		
+sbCopyEnd	pop	hl
+		ld	bc,#08
 		add	hl,bc
-		jp	sbLoop
+		ld	(sbCopyName+1),hl
+		jr	sbLoop
 
-sbLoadNext	xor	a
-		ld	(sbCount+1),a
-		jp 	sbReadAgain
+sbSkipFile	pop	af
+		jr	sbLoop
 
 sbEnd		call	restorePath
 
 		xor	a					; no error
+		ld	hl,(sbCopyName+1)
+		ld	(hl),a
 		ret
-
-sbCopyName	ld	de,scopeBinAddr
-
-		push	hl
-		push	de
-		ld 	de,#08
-		add	hl,de
-		ld	a,(hl)
-		cp	" "
-		jr	nz,sbSkipFile
-		inc	hl
-		ld	a,(hl)
-		cp	" "
-		jr	nz,sbSkipFile
-		inc	hl
-		ld	a,(hl)
-		cp	" "
-		jr	nz,sbSkipFile
-		pop	de
-		pop	hl
-
-		ld	b,8					; 16384 / 8 = 2048 bin files		
-sbCopy		ld	a,(hl)
-		cp	"A"
-		jr	c,sbPaste
-		cp	"Z"
-		jr	nc,sbPaste
-		add	32
-sbPaste		ld	(de),a
-		inc	hl
-		inc	de
-		djnz	sbCopy
-
-		ld	(sbCopyName+1),de
-		ret
-
-sbSkipFile	pop	de
-		pop	hl
-		ret
-
 
 clearScopeBin	ld	hl,scopeBinAddr
 		ld	de,scopeBinAddr+1
 		ld	bc,palAddr-scopeBinAddr-1
-		xor	a
+		ld	a," "
 		ld	(hl),a
 		ldir
 		ret
@@ -249,7 +238,7 @@ store2byte	ld	a,l
 		inc	de
 		ret
 
-_prepareSaveEntry
+prepareSaveEntry
 		push	hl
 		push	de
 		
@@ -269,35 +258,43 @@ _prepareSaveEntry
 
 		pop	hl					; имя
 
-		ld	b,8
-pseLoop_2	ld	a,(hl)
-		cp	#00
-		ret	z
-		cp	"."
-		jr	z,pseDot
-
-		ld	(de),a
-		inc	hl
-		inc	de
-		dec	b
-		jr	pseLoop_2
-
-pseDot		ld	a,b
-		cp	#00
-		jr	z,pseDotSkip
-
-		ld	a," "
-pseDotLoop	ld	(de),a
-		inc	de
-		djnz	pseDotLoop
-
-pseDotSkip	inc	hl
-		ld	a,(hl)
+pseLoop		ld	a,(hl)
 		cp	#00
 		ret	z
 		ld	(de),a
-		inc	de
-		jr	pseDotSkip
+ 		inc	hl
+ 		inc	de
+ 		jr	pseLoop
+
+; 		ld	b,8
+; pseLoop_2	ld	a,(hl)
+; 		cp	#00
+; 		ret	z
+; 		cp	"."
+; 		jr	z,pseDot
+
+; 		ld	(de),a
+; 		inc	hl
+; 		inc	de
+; 		dec	b
+; 		jr	pseLoop_2
+
+; pseDot		ld	a,b
+; 		cp	#00
+; 		jr	z,pseDotSkip
+
+; 		ld	a," "
+; pseDotLoop	ld	(de),a
+; 		inc	de
+; 		djnz	pseDotLoop
+
+; pseDotSkip	inc	hl
+; 		ld	a,(hl)
+; 		cp	#00
+; 		ret	z
+; 		ld	(de),a
+; 		inc	de
+; 		jr	pseDotSkip
 
 ;---------------------------------------
 clearEntryForSearch
@@ -548,7 +545,7 @@ _runApp		call	_run
 		jp	_printErrorString
 
 ;---------------------------------------
-_scopeBinaryCmd	call	_scopeBinary
+_scopeBinaryCmd	call	scopeBinary
 		cp	#ff
 		jr	z,_scopeBinaryErr
 		

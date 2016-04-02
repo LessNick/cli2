@@ -9,6 +9,10 @@
 ; o:NZ - операция не удалась
 ;    Z - директория создана
 ;---------------------------------------
-_createDir	ld	a,_MKDIR
-		jp	wcKernel
+_createDir	ld	a,fMkDir
+		jp	fatDriver
+; 		ld	a,_MKDIR
+; 		jp	wcKernel
+
 ;---------------------------------------
+
