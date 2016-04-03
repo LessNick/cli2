@@ -9,6 +9,8 @@
 ;   C - номер цвета очистки
 ;---------------------------------------
 _clearGfxMemory	ld	a,b					; #10 1й
+		ld	b,a					; сохрняем копию в B, если вызов был на адрес +1
+
 		cp	#00
 		ret	z
 		
@@ -44,8 +46,9 @@ _cgm_skip	ld	h,c
 		pop	af
 
 		push	af
-
 		call	storeRam3
+
+		add	a,#20					; +#20 адресация
 		call	setRamPage3
 
 		ld	(#c000),hl				; заливаем цветом первые 2 пикселя

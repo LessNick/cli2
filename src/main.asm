@@ -241,4 +241,4 @@
 
 	endif
 	
-; 	DISPLAY "_clearGfxMemory",/A,_clearGfxMemory
+; 	DISPLAY "zzz",/A,zzz

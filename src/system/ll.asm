@@ -212,7 +212,7 @@ llShowTime	ld	hl,#0000
 		ld	bc,2
 		ldir
 
-zzz		pop	hl
+		pop	hl
 		ld	a,(hl)
 		and	%11111000					; часы
 		srl	a
