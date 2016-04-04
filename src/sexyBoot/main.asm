@@ -36,10 +36,6 @@ sSexyBoot	ld	sp,#5ffe
 		ld	a,%10000011				; переключаем разрешайку на 320x240 TXT
 		call	setVideoMode
 
-		ld	hl,sBootMsg
-		ld	de,#c000
-		ld	bc,eBootMsg-sBootMsg
-		ldir						; Выводим надпись
 
 		ld	hl,tmpInt
 		ld	(kernelInt),hl
@@ -82,12 +78,67 @@ sSexyBoot	ld	sp,#5ffe
 		
 		call	fStart+fSetRoot				; SET ROOT DIR
 		
+		ld	bc,#fbfe
+		in	a,(c)
+		bit	1,a					; Если удерживается «W» значит надо грузить Wild Commander
+		jr	nz,sbCont
+
+		ld	hl,sBootMsg2
+		ld	de,#c000
+		ld	bc,eBootMsg2-sBootMsg2
+		ldir						; Выводим надпись «загрузка wc.$c»
+
+		ld	hl,wcDir
+		call	fStart+fFentry
+		jp	z,pathNotFound
+
+		call	fStart+fSetDir
+
+		ld	hl,wcName				; ищем файл
+		call	fStart+fFentry
+		jp	z,pathNotFound
+
+		ld	hl,sbWcLdirS
+		ld	de,#4000				; временный адрес для Loader
+		ld	bc,sbWcLdirE-sbWcLdirS
+		ldir
+
+		di
+		xor	a
+		call	setMemBank3
+
+		jp	#4000
+
+sbWcLdirS	ld	c,#05
+		ld	hl,#6000
+		ld	b,#10					; #2000 / 512
+		call	fStart+fLoad512
+
+		ld	c,#02
+		ld	hl,#8000
+		ld	b,#20					; #4000 / 512
+		call	fStart+fLoad512
+
+		ld	c,#00
+		ld	hl,#c000
+		ld	b,#20					; #4000 / 512
+		call	fStart+fLoad512
+
+		jp	#6011
+sbWcLdirE
+
+;------------------------------------------
+sbCont		ld	hl,sBootMsg
+		ld	de,#c000
+		ld	bc,eBootMsg-sBootMsg
+		ldir						; Выводим надпись «загрузка kernel.sys»
 
 		ld	hl,systemDir
 		call	fStart+fFentry
 		jp	z,pathNotFound
 
 		call	fStart+fSetDir
+
 
 		ld	hl,kernelName				; ищем файл
 		call	fStart+fFentry
@@ -287,13 +338,23 @@ kernelName	db 	#00				; #00 - file, #10 - DIR
 		db	"kernel.sys",0
 
 ;---------------------------------------
-defaultPal	include "..\res\pals\default.asm"
-defaultFont	incbin	"..\rc\fonts\8x8\default.bin"
-
-;---------------------------------------
 sBootMsg	db	"[CLi",#FD,"] Try to boot /system/kernel.sys..."
 eBootMsg
+
 ;---------------------------------------
+wcDir	db	#10
+		db	"WC",0
+
+wcName	db 	#00				; #00 - file, #10 - DIR
+		db	"wc.$c",0
+
+;---------------------------------------
+sBootMsg2	db	"[CLi",#FD,"] Try to boot /wc/wc.$c..."
+eBootMsg2
+
+;---------------------------------------
+defaultPal	include "..\res\pals\default.asm"
+defaultFont	incbin	"..\rc\fonts\8x8\default.bin"
 
 
 sDriver		incbin "..\rc\bin\WDFCVBI2.COD"
