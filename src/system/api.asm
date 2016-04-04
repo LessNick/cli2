@@ -358,10 +358,12 @@ _reserved	ret
 ;---------------------------------------
 fatDriver	ld	(fdSetHL+1),hl
 		ld	(fdSetBC+1),bc
+
 		push	af
 		ld	a,(_PAGE0)
 		ld	(fde+1),a
-		ld	a,#0f
+
+		ld	a,fPageDrv
 		call	_setRamPage00
 		ld	(_PAGE0),a
 		pop	af
@@ -430,7 +432,7 @@ _borderIndicate	halt
 _setInterrupt	halt
 		di
 		ld	hl,_cliInt
-		ld	(_WCINT),hl
+		ld	(kernelInt),hl
 		ei
 		ret
 
@@ -508,8 +510,6 @@ restoreP3	ld	a,#00
 		pop	af,bc,de,hl
 		ei
 		ret
-
-_wcIntAddr	jp	#0000
 
 ;---------------------------------------
 _checkMouseClicks
@@ -945,13 +945,9 @@ _loadGli	ld	hl,gliPath
 _loadDrivers	ld	hl,driversPath
 		ld	a,driversBank				; Указываем страницу для загрузки drivers.sys с #c000
 
-loadDmaPath	call	storeRam3
-		call	setRamPage3
-
-		ld	c,a
+loadDmaPath	ld	c,a
 		ld	de,#c000
-		call	_loadFile
-		jp	reStoreRam3
+		jp	_loadFile
 
 ;---------------------------------------
 _driversApi	di

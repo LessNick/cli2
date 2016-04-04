@@ -2,17 +2,7 @@
 ; CLi² (Command Line Interface) main block
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
-; 		org	#be00
-; edit256		ds	128," "				; 128 bytes ascii
-; 		ds	128,#0000			; 128 bytes colors
-		
-; 		org	#bf00
-
-; bufer256	ds	128," "				; 128 bytes ascii
-; 		ds	128,#0000			; 128 bytes colors
-
-; 		org	#8000
-		org	#7000
+		org	kernelAddr
 
 sCliKernel
 		include "cli.asm"
@@ -44,6 +34,8 @@ sCliKernel
 		include "tsconf.h.asm"
 		include "fat.h.asm"
 
+		db	"last kernel string"
+		db	#00,#00,#00
 eCliKernel	nop
 
 	DISPLAY "-------------------------------------"

@@ -116,14 +116,14 @@ keyMap_1B	db	    #00,    aF9,    #00,    aF5,    aF3,    aF1,    aF2,    #00		; 
 ; 		db	 #00,    #00,    #00,    #00,    #00,    #00,    #00,    #00
 
 eKeyMap
-	DISPLAY "sKeyMap = ",/A,sKeyMap
-	DISPLAY "keyMap_E0 = ",/A,keyMap_E0
-	DISPLAY "keyMap_0A = ",/A,keyMap_0A
-	DISPLAY "keyMap_0B = ",/A,keyMap_0B
-	DISPLAY "keyMap_1A = ",/A,keyMap_1A
-	DISPLAY "keyMap_1B = ",/A,keyMap_1B
-	DISPLAY "eKeyMap = ",/A,eKeyMap
-	DISPLAY "default.key size = ",/A,eKeyMap-sKeyMap
+; 	DISPLAY "sKeyMap = ",/A,sKeyMap
+; 	DISPLAY "keyMap_E0 = ",/A,keyMap_E0
+; 	DISPLAY "keyMap_0A = ",/A,keyMap_0A
+; 	DISPLAY "keyMap_0B = ",/A,keyMap_0B
+; 	DISPLAY "keyMap_1A = ",/A,keyMap_1A
+; 	DISPLAY "keyMap_1B = ",/A,keyMap_1B
+; 	DISPLAY "eKeyMap = ",/A,eKeyMap
+; 	DISPLAY "default.key size = ",/A,eKeyMap-sKeyMap
 
 	SAVEBIN "install/system/res/keymaps/default.key", sKeyMap, eKeyMap-sKeyMap
 

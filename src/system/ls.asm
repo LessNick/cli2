@@ -25,7 +25,10 @@ _ls		ex	de,hl
 
 		jp	restorePath
 
-lsShow		ld	de,lsBuffer
+lsShow		ld	a,fSetDir
+		call	fatDriver
+
+lsLoop		ld	de,lsBuffer
 		ld	a,fGetNextEntryDir
 		call	fatDriver
 		jp	z,_printRestore					; Конец директории
@@ -44,14 +47,14 @@ lsShow		ld	de,lsBuffer
 		
 		ld	a,40
 		ld	(printX),a
-		jr	lsShow
+		jr	lsLoop
 
 lsMore2		call	_printRestore
-		jr	lsShow
+		jr	lsLoop
 
 
 lsNextLine	call	_printRestore
-		jr	lsShow
+		jr	lsLoop
 ;---------------
 lsGetColor	bit	4,(hl)
 		jr	z,lsColor_1

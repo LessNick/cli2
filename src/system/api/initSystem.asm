@@ -19,13 +19,11 @@ _initSystem	xor	a
 
 		call	_switchTxtMode
 
-
 		call	_clearTxtMemory
 
 		call	_nvRamOpen				; Разрешаем доступ к nvram
 
-		call	_ps2Init
-; 		call	_ps2ResetKeyboard			; Инициализация клавиатуры
+		call	_ps2Init				; Инициализация клавиатуры
 
 		call	_printInit
 
@@ -41,7 +39,6 @@ _initSystem	xor	a
 		ld	a,#03
 		call	_clearGfxMemory+1			; Очищаем графическую область 3
 		
-; 		jp	$
 
 		call	_cliInitDev				; Подготовка к работе SD-карты
 		cp	#ff

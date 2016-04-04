@@ -22,7 +22,6 @@
 
 	DEVICE ZXSPECTRUM128
 
-; 	define buildLoader				; Сборка загрузчика системы (плагин для WC)
 ; 	define buildSexyBoot				; Сборка загрузчика системы boot.$c
 	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
@@ -49,6 +48,8 @@
 ; 	define buildBoing				; Сборка тестовой демки boing
 ; 	define buildTestFile				; Сборка тестового приложения testfile
 ; 	define buildDisk2trd				; Сборка приложения disk2trd
+
+; 	define buildLoader				; Сборка загрузчика системы (плагин для WC)
 ;-------------------------------------------------------------------------
 	ifdef buildLoader	
 	; CLi² Loader
@@ -241,4 +242,4 @@
 
 	endif
 	
-; 	DISPLAY "zzz",/A,zzz
+; 	DISPLAY "_clearTxtMemory",/A,_clearTxtMemory

@@ -14,10 +14,8 @@ mYoffset2	dw	#0000					; Смещение графического экрана 
 mXoffset3	dw	#0000					; Смещение графического экрана 3 по горизонтали
 mYoffset3	dw	#0000					; Смещение графического экрана 3 по веритикали
 
-; bootDevide	db	deviceSDZC				; С чего загрузились (SD-карта)
-
 currentScreen	db	#00					; Активный экран (0 - txt, 1,2,3 - gfx)
-cliVersion	dw	#0012					; v 0.18
+cliVersion	db	20,0					; v 0.20
 
 ; 0=black, 1=navy, 2=amiga pink, 3=light violet, 4=green, 5=dark teal, 6=orange,  7=light beige, 
 ; 8=silver, 9=blue, 10=red, 11=dark pink, 12=lime, 13=teal, 14=light yellow, 15=white 
@@ -35,11 +33,11 @@ colorOk		db	12					; 5й - цвет сообщения об успехе
 colorHelp	db	13					; 6й - цвет сообщения подсказки
 
 colorDir	db	15					; 7й - цвет аттрибута - директория
-colorFile	db	8					; 8й - цвет аттрибута - файл
-colorRO		db	1					; 9й - цвет аттрибута - только для чтения
+colorFile	db	3					; 8й - цвет аттрибута - файл
+colorRO		db	2					; 9й - цвет аттрибута - только для чтения
 colorHidden	db	13					;10й - цвет аттрибута - скрытый
-colorSystem	db	2					;11й - цвет аттрибута - системный
-colorArch	db	3					;12й - цвет аттрибута - архивный
+colorSystem	db	6					;11й - цвет аттрибута - системный
+colorArch	db	12					;12й - цвет аттрибута - архивный
 
 colorAppName	db	2					;13й - цвет вывода названия приложения
 colorCopyright	db	3					;14й - цвет вывода информации о владельце (©)

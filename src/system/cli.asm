@@ -8,23 +8,24 @@ cliApi		jp	_cliApi					; #7003: Точка входа для вызова фун
 driversApi	jp	_driversApi				; #7006: Точка входа для вызова функций драйверов
 gliApi		jp	_gliApi					; #7009: Точка входа для вызова функций графической библиотеки
 
-_start		ld	a,#00					; Проверка при первом старте (холодном) необходимо загрузить недостающие компоненты
+_start		ld	a,kernelBank				; Банка где расположено само ядро системы
+		ld	(_PAGE2),a
+
+coldStart	ld	a,#00					; Проверка при первом старте (холодном) необходимо загрузить недостающие компоненты
 		cp	#01
 		jr	z,warmStart
 
 		halt
 		di
-		
-		ld	a,initSystem				; Начальная инициализация системы и загрузка всех компонентов
-		call	_cliApi
+
+		call	_initSystem
 
 		ld	a,#01					; Все компоненты успешно загружены и последующий вызов не требуется
-		ld	(_start+1),a
+		ld	(coldStart+1),a
 
 		jr	contStart
 
-warmStart	ld	a,reInitSystem
-		call	_cliApi
+warmStart	call	_reInitSystem
 
 contStart	ld	hl,promptMsg				; приглашение 1>
 		call	printEStr

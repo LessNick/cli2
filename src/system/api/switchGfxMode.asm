@@ -53,7 +53,6 @@ _switchGfxMode1	ld	a,(pGfxScreen)				; переключаем разрешайк
 _switchGfxEnd	push	hl
 		ld	a,b
 		ld	(currentScreen),a
-		inc	a
 		call	setVideoBuffer
 
 _switchGfxEnd_1	ld	a,#00
