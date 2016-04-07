@@ -2,7 +2,7 @@
 ; CLi² (Command Line Interface) main block
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
-		org	kernelAddr
+		org	kernelStart
 
 sCliKernel
 		include "cli.asm"
@@ -30,7 +30,7 @@ sCliKernel
 		include "commands.h.asm"
 		include "operators.h.asm"
 		
-		include "wc.h.asm"
+; 		include "wc.h.asm"
 		include "tsconf.h.asm"
 		include "fat.h.asm"
 

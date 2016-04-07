@@ -14,7 +14,7 @@ defaultColor	equ	%01011111
 
 		org	#6000
 
-sSexyBoot	ld	sp,#5ffe
+sSexyBoot	ld	sp,kernelStack				; #5ffe
 		xor	a
 		out	(254),a
 
@@ -44,10 +44,12 @@ sSexyBoot	ld	sp,#5ffe
 		ld	(kernelInt+2),hl
 
 		di
-		ld	a,#5b
+		ld	a,high kernelInt			; #5b
 		ld	i,a
 		im	2
 		ei
+
+		halt
 
 		ld	bc,tsMemConfig
 		ld	a,%00001110				; [3]: Установить в #0000 страницу ОЗУ(1) или ПЗУ(0)
@@ -142,7 +144,7 @@ sbCont		ld	hl,sBootMsg
 
 		ld	hl,kernelName				; ищем файл
 		call	fStart+fFentry
-		jr	z,pathNotFound
+		jp	z,pathNotFound
 
 		ld	(sbCopySize+1),hl
 
@@ -169,15 +171,26 @@ sbKernelSize	ld	b,#00					; размер kernel для загрузки в бл�
 		ld	a,kernelBank+1
 		call	setMemBank3
 
-		ld	hl,#8000
+		ld	hl,sbLdirS
+		ld	de,#4000
+		ld	bc,sbLdirE-sbLdirS
+		ldir
+
+		di
+		jp	#4000
+
+
+sbLdirS		ld	hl,#8000
 		ld	de,kernelAddr
 sbCopySize	ld	bc,#0000
 		ldir
 
 		ld	a,#24				; ???
-		call	setMemBank3
+		ld	bc,tsRAMPage3
+		out	(c),a
 
-		jp	#7000
+		jp	kernelAddr
+sbLdirE
 
 tmpInt		ei
 		ret

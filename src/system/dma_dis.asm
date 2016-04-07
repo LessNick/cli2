@@ -133,19 +133,16 @@ _6F06		bit	7,a
 ;---------------
 _6F0F		and	#0F
 		add	a,#61
-; 		exx
-; 		ld	hl,_7F0E		;
-; 		add	a,(hl)
-; 		exx
 		ret
 ;---------------
 _6F1A		ld	a,b
 		and	#03
 		exx
-		ld	h,#60
-		ld	l,a
+		ld	hl,cPage0
+		ld	c,a
+		ld	b,0
+		add	hl,bc
 		ld	a,(hl)
 		exx
 		ret
 ;---------------
-; _7F0E		db	#00			; PPFR

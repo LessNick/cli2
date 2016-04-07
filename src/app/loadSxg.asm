@@ -348,9 +348,7 @@ loadSxgEnd	ex	af,af'
 		cp	eFileEnd
 		jr	nz,loadSxgLoop
 
-loadSxgStop	ld	a,restoreWcBank
-		call	cliKernel
-
+loadSxgStop	
 ;---------------------------------------------	
 setViewerMode	ld	a,#00
 		cp	#01

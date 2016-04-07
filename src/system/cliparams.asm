@@ -2,7 +2,7 @@
 ; CLi² (Command Line Interface) parameters
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
-storeIx		db	#00					; Значение IX для WildCommander
+
 loadFileBlocks	dw	#0000					; Размер загружаемого файла в блоках
 
 mXoffset0	dw	#0000					; Смещение графического экрана 0 по горизонтали

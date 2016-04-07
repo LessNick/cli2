@@ -11,7 +11,6 @@ _reInitSystem	call	_switchTxtMode
 		call	_clearIBuffer
 		call	_printInit
 		call	_editInit
-		halt
 		call	_setInterrupt
 		xor	a
 		ld	(disableDrivers+1),a

@@ -148,7 +148,7 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_setRamPage0Ext			; #40
 		dec	a
-		jp	z,_restoreWcBank			; #41
+		jp	z,_reserved				; #41		!!! RESERVED !!!
 
 		dec	a
 		jp	z,_moveScreenInit			; #42
@@ -315,7 +315,7 @@ _reserved	ret
 		include "api/eatSpaces.asm"			; ID: #3E
 		include "api/setAppCallBack.asm"		; ID: #3F
 		include "api/setRamPage0Ext.asm"		; ID: #40
-		include "api/restoreWcBank.asm"			; ID: #41
+								; ID: #41 - reserved
 		include "api/moveScreenInit.asm"		; ID: #42
 		include "api/moveScreenUp.asm"			; ID: #43
 		include "api/moveScreenDown.asm"		; ID: #44
@@ -360,12 +360,12 @@ fatDriver	ld	(fdSetHL+1),hl
 		ld	(fdSetBC+1),bc
 
 		push	af
-		ld	a,(_PAGE0)
+		ld	a,(cPage0)
 		ld	(fde+1),a
 
 		ld	a,fPageDrv
+		ld	(cPage0),a
 		call	_setRamPage00
-		ld	(_PAGE0),a
 		pop	af
 
 		ld	hl,fdRet
@@ -381,13 +381,13 @@ fdSetBC		ld	bc,#0000
 
 fdRet		push	af,bc
 fde		ld	a,#00
-		call	_setRamPage00
-		ld	(_PAGE0),a
+		ld	(cPage0),a				; Обязательно сначала сохранить, затем вызвать !!!
+		call	_setRamPage00				; Иначе если придёт прерывание, выставится не верная банка !!!
 		pop	bc,af
 		ret
 ;---------------------------------------
 storeRam0	push	af
-		ld	a,(_PAGE0)				; Сохряняем какая была до этого открыта страница
+		ld	a,(cPage0)				; Сохряняем какая была до этого открыта страница
 		ld	(rsr0+1),a
 		pop	af
 		ret
@@ -395,8 +395,9 @@ storeRam0	push	af
 ;---------------
 reStoreRam0	push	bc,af
 rsr0		ld	a,#00
-		ld	(_PAGE0),a				; Восстанавливаем банку
-		ld	bc,tsRAMPage0
+								; Восстанавливаем банку
+		ld	(cPage0),a				; Обязательно сначала сохранить, затем вызвать !!!
+		call	_setRamPage00				; Иначе если придёт прерывание, выставится не верная банка !!!
 ;---------------
 setRam		out	(c),a
 		pop	bc,af
@@ -404,21 +405,20 @@ setRam		out	(c),a
 
 ;---------------------------------------
 storeRam3	push	af
-		ld	a,(_PAGE3)				; Сохряняем какая была до этого открыта страница
+		ld	a,(cPage3)				; Сохряняем какая была до этого открыта страница
 		ld	(rsr3+1),a
 		pop	af
 		ret
 
 ;---------------
-setRamPage3	;add	32
-		ld	(_PAGE3),a
+setRamPage3	ld	(cPage3),a
 setRamPage33	ld	bc,tsRAMPage3
 		out	(c),a
 		ret
 ;---------------
 reStoreRam3	push	af,bc
 rsr3		ld	a,#00
-		ld	(_PAGE3),a				; Восстанавливаем банку
+		ld	(cPage3),a				; Восстанавливаем банку
 		ld	bc,tsRAMPage3
 		jr	setRam
 ;---------------------------------------
@@ -429,11 +429,11 @@ _borderIndicate	halt
 		ret
 
 ;---------------------------------------
-_setInterrupt	halt
-		di
+_setInterrupt	di
 		ld	hl,_cliInt
 		ld	(kernelInt),hl
 		ei
+		halt
 		ret
 
 ;---------------------------------------
@@ -451,9 +451,9 @@ _cliInt		push	hl,de,bc,af				;==================================================
 		ld	a,(rsr3+1)
 		ld	(restore3+1),a
 
-		ld	a,(_PAGE0)
+		ld	a,(cPage0)
 		ld	(restoreP0+1),a
-		ld	a,(_PAGE3)
+		ld	a,(cPage3)
 		ld	(restoreP3+1),a
 
 disableKeyboard	ld	a,#00
@@ -497,11 +497,11 @@ restore3	ld	a,#00
 		ld	(rsr3+1),a
 
 restoreP0	ld	a,#00
-		ld	(_PAGE0),a
+		ld	(cPage0),a
 		call	_setRamPage00
 
 restoreP3	ld	a,#00
-		ld	(_PAGE3),a
+		ld	(cPage3),a
 		call	setRamPage33
 
 		pop	af,bc,de,hl		
@@ -519,7 +519,8 @@ _checkMouseClicks
 		ret	z
 
 		ld	a,getMouseButtons
-		call	cliDrivers
+; 		call	cliDrivers
+		call	_driversApi0
 
 		bit	0,a					; левая кнопка
 		jp	z,_cmc_02				; отпустили?
@@ -636,14 +637,16 @@ _cmc_03		ld	de,#0000				; нажали и держат
 
 ;---------------
 _getMouseTxtPos	ld	a,getMouseX				; HL
-		call	cliDrivers
+; 		call	cliDrivers
+		call	_driversApi0
 		
 		ld	de,#0004
 		call	_divide16_16				; bc
 		push	bc
 
 		ld	a,getMouseY				; HL
-		call	cliDrivers
+; 		call	cliDrivers
+		call	_driversApi0
 		ld	de,#0008
 		call	_divide16_16				; bc
 
@@ -951,7 +954,11 @@ loadDmaPath	ld	c,a
 
 ;---------------------------------------
 _driversApi	di
-		push	af,bc
+		call	_driversApi0
+		ei	
+		ret
+			
+_driversApi0	push	af,bc
 		ld	a,#01
 		ld	(disableDrivers+1),a
 
@@ -969,9 +976,7 @@ _driversApi	di
 		xor	a
 		ld	(disableDrivers+1),a
 		pop	af
-		ei	
 		ret
-
 ;---------------------------------------
 updateDrivers
 disableDrivers	ld	a,#00

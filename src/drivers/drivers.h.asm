@@ -2,7 +2,7 @@
 ; CLi² (Command Line Interface) Drivers Header
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
-cliDrivers		equ	#7006			; Точка входа в Drivers
+cliDrivers		equ	kernelStart+#06		; Точка входа в Drivers
 
 initDrivers		equ	#00			; Начальная инициализация драйверов
 reInitDrivers		equ	#01			; Переинициализация драйверов (вторичный «тёплый» пуск)

@@ -3,19 +3,27 @@
 ; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 
-		jp	_start					; #7000: Первая точка входа
-cliApi		jp	_cliApi					; #7003: Точка входа для вызова функций API
-driversApi	jp	_driversApi				; #7006: Точка входа для вызова функций драйверов
-gliApi		jp	_gliApi					; #7009: Точка входа для вызова функций графической библиотеки
+		jp	_start					; +#00: Первая точка входа
+cliApi		jp	_cliApi					; +#03: Точка входа для вызова функций API
+driversApi	jp	_driversApi				; +#06: Точка входа для вызова функций драйверов
+gliApi		jp	_gliApi					; +#09: Точка входа для вызова функций графической библиотеки
 
-_start		ld	a,kernelBank				; Банка где расположено само ядро системы
-		ld	(_PAGE2),a
+_start		ld	a,#F1					; Банка c #0000
+		ld	(cPage0),a
+
+		ld	a,#05					; Банка c #4000
+		ld	(cPage1),a
+
+		ld	a,kernelBank				; Банка c #8000
+		ld	(cPage2),a
+
+		ld	a,#24					; Банка c #C000
+		ld	(cPage3),a
 
 coldStart	ld	a,#00					; Проверка при первом старте (холодном) необходимо загрузить недостающие компоненты
 		cp	#01
 		jr	z,warmStart
 
-		halt
 		di
 
 		call	_initSystem

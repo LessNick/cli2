@@ -111,10 +111,10 @@ svm 		ld	a,mouseInit
 
 ;---------------------------------------
 updateCursor	ld	a,getMouseX
-		call	_driversApi
+		call	_driversApi0
 		ex	de,hl
 		ld	a,getMouseY
-		call	_driversApi
+		call	_driversApi0
 
 updateCursor2	ld	a,e
 		ld	(cursorSFileX),a
