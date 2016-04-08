@@ -16,13 +16,15 @@ _ll		ex	de,hl
 		call	_changeDir
 		
 		cp	#ff
-		jr	nz,llShow
+		jr	nz,_ll0
 		
 		ld	hl,dirNotFoundMsg
 		ld	b,#ff
 		call	_printErrorString
 		xor	a
+		jp	restorePath
 
+_ll0		call	llShow
 		jp	restorePath
 
 llShow		ld	a,fSetDir

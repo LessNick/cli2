@@ -90,14 +90,10 @@ helpLast	ld	hl,helpOneLine
 helpLoop2	ld	a,(hl)
 		cp	#00
 		jr	z,helpExit
+
 		ld	b,8
 helpCopy	ld	a,(hl)
-		cp	"A"
-		jr	c,helpPaste
-		cp	"Z"
-		jr	nc,helpPaste
-		add	32
-helpPaste	ld	(de),a
+		ld	(de),a
 		inc	hl
 		inc	de
 		djnz	helpCopy
@@ -266,36 +262,6 @@ pseLoop		ld	a,(hl)
  		inc	de
  		jr	pseLoop
 
-; 		ld	b,8
-; pseLoop_2	ld	a,(hl)
-; 		cp	#00
-; 		ret	z
-; 		cp	"."
-; 		jr	z,pseDot
-
-; 		ld	(de),a
-; 		inc	hl
-; 		inc	de
-; 		dec	b
-; 		jr	pseLoop_2
-
-; pseDot		ld	a,b
-; 		cp	#00
-; 		jr	z,pseDotSkip
-
-; 		ld	a," "
-; pseDotLoop	ld	(de),a
-; 		inc	de
-; 		djnz	pseDotLoop
-
-; pseDotSkip	inc	hl
-; 		ld	a,(hl)
-; 		cp	#00
-; 		ret	z
-; 		ld	(de),a
-; 		inc	de
-; 		jr	pseDotSkip
-
 ;---------------------------------------
 clearEntryForSearch
 		push	hl,de,bc,af
@@ -453,9 +419,6 @@ cdExitOk	ld	hl,pathString
 		ret
 
 resetToRoot	inc	hl
-; 		ld	a,(lsPathCount)
-; 		cp	#00
-; 		ret	z					; alredy root
 		push	hl
 		call	pathToRoot
 		xor	a

@@ -242,4 +242,4 @@
 
 	endif
 	
-; 	DISPLAY "loadSxgLoop",/A,loadSxgLoop
+; 	DISPLAY "prepareEntry",/A,prepareEntry

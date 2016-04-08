@@ -215,11 +215,6 @@ entrySkip	cp	#00
 		ret	z
 		cp	"/"
 		ret	z
-		cp	97					; a
-		jr	c,entryLoop
-		cp	123					; }
-		jr	nc,entryLoop
-		sub	#20
 		jr	entryLoop
 
 ;---------------
