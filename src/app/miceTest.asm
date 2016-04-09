@@ -11,8 +11,6 @@
 		include "system/errorcodes.asm"			; коды ошибок
 		include "drivers/drivers.h.asm"			; Список комманд Drivers API
 
-		include "system/tsconf.h.asm"			; Временно
-		include "system/wc.h.asm"			; Временно
 appStart	
 		db	#7f,"CLA"				; Command Line Application
 
@@ -233,11 +231,6 @@ miceStop	ld	a,editInit
 		ld	a,printString
 		call	cliKernel
 
-		ld	bc,tsConfig				; Выключаем отображение спрайта
-			  ;76543210
-		ld	a,%00000000				; bit 7 - S_EN Sprite Layers Enable
-		out	(c),a
-
 		ld	a,printRestore
 		jp	cliKernel
 ;---------------------------------------------
@@ -255,46 +248,46 @@ miceTestVer	ld	hl,miceVersionMsg
 		jp	cliKernel
 		
 ;---------------------------------------------
-miceVersionMsg	db	"Kempstone mouse test v0.14",#00
-miceCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+miceVersionMsg	db	"Kempstone mouse test v0.16",#00
+miceCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-miceRunMsg	db	15,6
+miceRunMsg	db	15,csHelp
 		db	"(\\\\/)",#0d
 		db	" \\\\/\\\\",#0d
 		db	" /__)",#0d
 		db	"   (_  Click, Scroll & Move your mouse...",#0d,#0d
-		db	15,17
-		db	#da
-		ds	13,#c4
+		db	16,cLemonCream
+		db	psTL
+		ds	13,psMH
 		db	" Raw Data "
-		ds	14,#c4
-		db	#bf
-		db	15,12
-		db	#da
-		ds	10,#c4
+		ds	14,psMH
+		db	psTR
+		db	16,cLightPurplePink
+		db	psTL
+		ds	10,psMH
 		db	" Real Data "
-		ds	10,#c4
+		ds	10,psMH
 		db	#bf
-		db	15,5,#da
+		db	16,cOrangeDawn,psTL
 		db	"Timer"
-		db	#bf,#0d
-		db	16,16
+		db	psTR,#0d
+		db	16,cRestore
 		db	#00
 
-miceExitMsg	db	#0d,#0d,15,5,"Exit.",#0d
-		db	16,16
+miceExitMsg	db	#0d,#0d,15,csOk,"Exit.",#0d
+		db	16,cRestore
 		db	#00
 
-micePosMsg	db	15,5," X=",16,16,"+"
+micePosMsg	db	15,csOk," X=",16,cRestore,"+"
 rawXMsg		db	"---[---]"
 
-		db	15,17,", ",15,5,"Y=",16,16,"+"
+		db	15,csFrames,", ",15,5,"Y=",16,cRestore,"+"
 rawYMsg		db	"---[---]"
 
-		db	15,17,", ",15,5,"W=",16,16,"+"
+		db	15,csFrames,", ",15,5,"W=",16,cRestore,"+"
 rawWMsg		db	"---[---]"
 
-		db	15,15,"  ["
+		db	15,csInfo,"  ["
 		db	15
 leftButtonMsg	db	15,"L"
 		db	15
@@ -302,16 +295,16 @@ middleButtonMsg	db	15,"M"
 		db	15
 rightButtonMsg	db	15,"B"
 
-		db	15,15,"] ",15,5,"X=",16,16
+		db	15,15,"] ",15,5,"X=",16,cRestore
 posXMsg		db	"-----"
 
-		db	15,17,", ",15,5,"Y=",16,16
+		db	15,csFrames,", ",15,5,"Y=",16,cRestore
 posYMsg		db	"-----"
 
-		db	15,17,", ",15,5,"W=",16,16
+		db	15,csFrames,", ",15,5,"W=",16,cRestore
 posWMsg		db	"-----"
 		
-		db	15,17,"  ",16,16
+		db	15,csFrames,"  ",16,cRestore
 timeCountMsg	db	"-----"
 		db	#00
 ;---------------------------------------------

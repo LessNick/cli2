@@ -68,6 +68,8 @@ printSExit	ld	hl,bufer256
 		ld	bc,#0000
 		call	bufferUpdate				; забирается буфер
 		call	checkUpdate
+		ld	a,(printX)
+		ld	c,a
 		ld	a,(strLen)
 		ret
 
@@ -391,6 +393,17 @@ codeAt_0	ld	a,c
 		jp	printSLoop
 
 ;---------------
+codeSkip	ld	c,a					; пропустить 'A' символов по X
+		ld	a,(printX)
+		add	a,c
+		cp	79
+		jp	nc,prepareNext
+		ld	(printX),a
+		ld	a,(strLen)
+		add	a,c
+		ld	(strLen),a
+		ret
+;---------------
 codeESC		inc	hl
 		ld	a,(hl)
 codeESC_0	cp	"\\"					; управляющий ESC: BackSlash \
@@ -429,8 +442,12 @@ getHexNumber	push	hl
 
 ;---------------
 printChar	ld	hl,bufer256				; печать символа
-		ld	de,(printX)
+		push	af
+		ld	a,(printX)
+		ld	d,#00
+		ld	e,a
 		add	hl,de
+		pop	af
 		ld	(hl),a
 		
 		ld	a,(currentColor)			; печать аттрибутов
@@ -439,4 +456,5 @@ printChar	ld	hl,bufer256				; печать символа
 		ld	(hl),a
 
 		ret
+
 ;---------------------------------------

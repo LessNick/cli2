@@ -69,15 +69,6 @@ startGS		call	modPrtDetect
 
 		call	modPrtOk
 
-; 		call	modPrtUsing
-
-; 		ld	a,getPanelStatus			; Провеяем, не с NGS ли карточки пытаются загрузить мод?
-; 		call	cliKernel
-; 		cp	#02					; Если на выходе #02 - ошибка
-; 		jp	z,modPrtError				; TODO: Сделать буфер больше и грузить сразу весь мод в память!
-
-; 		call	modPrtOk
-
 modFileName	ld	de,#0000				; Имя файла
 
 		ld	a,eatSpaces
@@ -243,10 +234,6 @@ modPrtDetect	ld	hl,loadModMsg_01
 		jp	modPrintStatus
 
 ;---------------------------------------------
-; modPrtUsing	ld	hl,loadModMsg_02
-; 		jp	modPrintStatus
-
-;---------------------------------------------
 modPrtFilename	ld	de,loadModMsg_03a
 		call	modPrtFilename0
 
@@ -315,37 +302,36 @@ fileNotSet	ld	hl,noFileMsg
 
 ;---------------------------------------------
 modVersionMsg	db	"MOD file loader for (Neo)GS Card v0.20",#00
-modCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+modCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 		
-modUsageMsg	db	15,5,"Usage: loadmod [switches] filename.mod",#0d
-		db	16,16,"  -a ",15,15,"\tautoplay. allow to automatically play the file after upload",#0d
-		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
-		db	16,16,"  -p ",15,15,"\tplay current mod (if already loaded)",#0d
-		db	16,16,"  -st ",15,15,"\tstop play.",#0d
-		db	16,16,"  -c ",15,15,"\tcontinue play.",#0d
-		db	16,16,"  -fo ",15,15,"\tfadeout volume & stop.",#0d
-		db	16,16,"  -r ",15,15,"\treset. warm reset (Neo)GS Card.",#0d
-		db	16,16,"  -cr ",15,15,"\tcold reset (Neo)GS Card.",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
-		db	16,16,"  -h ",15,15,"\thelp. show this info",#0d
-		db	16,16,#0d,#00
+modUsageMsg	db	15,csOk,"Usage: loadmod [switches] filename.mod",#0d
+		db	16,cRestore,"  -a ",15,csInfo,"\tautoplay. allow to automatically play the file after upload",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tsilent mode. additional information is not displayed",#0d
+		db	16,cRestore,"  -p ",15,csInfo,"\tplay current mod (if already loaded)",#0d
+		db	16,cRestore,"  -st ",15,csInfo,"\tstop play.",#0d
+		db	16,cRestore,"  -c ",15,csInfo,"\tcontinue play.",#0d
+		db	16,cRestore,"  -fo ",15,csInfo,"\tfadeout volume & stop.",#0d
+		db	16,cRestore,"  -r ",15,csInfo,"\treset. warm reset (Neo)GS Card.",#0d
+		db	16,cRestore,"  -cr ",15,csInfo,"\tcold reset (Neo)GS Card.",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info",#0d
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 
-loadModMsg_01	db	"Try to detect General Sound (NeoGS)...",#00
-; loadModMsg_02	db	"Check NeoGS SD Card is't used...",#00
-loadModMsg_03	db	"Try to open MOD file ",243
+loadModMsg_01	db	"Try to detect General Sound (NeoGS)",pEllipsis,#00
+loadModMsg_03	db	"Try to open ",pQuoteOpen
 loadModMsg_03a	ds	80," "
-loadModMsg_03b	db	242,"...",#00
-loadModMsg_04	db	"Loading module...",#00
-loadModMsg_05	db	"Autoplay start...",#00
+loadModMsg_03b	db	pQuoteClose,pEllipsis,#00
+loadModMsg_04	db	"Loading module",pEllipsis,#00
+loadModMsg_05	db	"Autoplay start",pEllipsis,#00
 
-modTryPlay	db	"Try to start playing...",#00
-modTryStop	db	"Try to stop playing...",#00
-modTryCont	db	"Try to continue playing...",#00
-modTryReset	db	"Try to reset (Neo)GS Card...",#00
-modTryColdReset	db	"Try to cold reset (Neo)GS Card...",#00
-modTryFadeOut	db	"Try to fadeout volume...",#00
+modTryPlay	db	"Try to start playing",pEllipsis,#00
+modTryStop	db	"Try to stop playing",pEllipsis,#00
+modTryCont	db	"Try to continue playing",pEllipsis,#00
+modTryReset	db	"Try to reset (Neo)GS Card",pEllipsis,#00
+modTryColdReset	db	"Try to cold reset (Neo)GS Card",pEllipsis,#00
+modTryFadeOut	db	"Try to fadeout volume",pEllipsis,#00
 
 ;---------------------------------------------
 ; Key's table for params
@@ -402,6 +388,6 @@ modBuffer	ds	modBufferSize*512,#00
 modBufferEnd	nop
 
 ; 		DISPLAY "modBufferEnd",/A,modBufferEnd
-		DISPLAY "zzz",/A,zzz
+; 		DISPLAY "zzz",/A,zzz
 
 		SAVEBIN "install/bin/loadmod", appStart, appEnd-appStart

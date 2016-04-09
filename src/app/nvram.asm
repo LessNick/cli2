@@ -259,23 +259,23 @@ wrongParams	ld	hl,wrongParamsMsg
 
 ;---------------------------------------------
 nvramVersionMsg	db	"NVRAM (CMOS) Info & tool v0.04",#00
-nvramCopyRMsg	db	"2013,2015 ",127," Breeze\\\\Fishbone Crew",#00
+nvramCopyRMsg	db	"2013,2015 ",pCopy," Breeze\\\\Fishbone Crew",#00
 		
-nvramUsageMsg	db	#0d,15,5,"Usage: nvram switches",#0d
-		db	16,16,"  -d ",15,15,"\t\tdump. show nvram dump",#0d
-		db	16,16,"  -g #nn",15,15,"\tget value. read value from nvram's cell at #nn (hex)",#0d
-		db	16,16,"  -s #nn,#vv ",15,15,"\tset value. write value #vv (hex) to nvram's cell at #nn(hex)",#0d
-		db	16,16,"  -c ",15,15,"\t\tclear. set all values of nvram to #00",#0d
-		db	16,16,"  -v ",15,15,"\t\tversion. show application's version and copyrights",#0d
-		db	16,16,"  -h ",15,15,"\t\thelp. show this info"
-		db	16,16,#0d,#00
+nvramUsageMsg	db	#0d,15,csOk,"Usage: nvram switches",#0d
+		db	16,cRestore,"  -d ",15,csInfo,"\t\tdump. show nvram dump",#0d
+		db	16,cRestore,"  -g #nn",15,csInfo,"\tget value. read value from nvram's cell at #nn (hex)",#0d
+		db	16,cRestore,"  -s #nn,#vv ",15,csInfo,"\tset value. write value #vv (hex) to nvram's cell at #nn(hex)",#0d
+		db	16,cRestore,"  -c ",15,csInfo,"\t\tclear. set all values of nvram to #00",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\t\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\t\thelp. show this info"
+		db	16,cRestore,#0d,#00
 
-nvramHeader	db	#0d,15,5," Addr ",15,17,"|",15,5,"  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F ",15,17,"|",15,5," 0123456789ABCDEF",#00
-nvramLine	db	15,17,#0d,"---------------------------------------------------------------------------",#00
+nvramHeader	db	#0d,15,5," Addr ",15,csFrames,"|",15,csOk,"  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F ",15,csFrames,"|",15,csOk," 0123456789ABCDEF",#00
+nvramLine	db	15,csFrames,#0d,"---------------------------------------------------------------------------",#00
 
 nvramData	db	#0d,16,16," 00"
-nvramAddr	db	"00 ",15,17,"| ",16,16
-nvramDump	db	"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ",15,17,"| ",16,16
+nvramAddr	db	"00 ",15,csFrames,"| ",16,cRestore
+nvramDump	db	"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ",15,csFrames,"| ",16,cRestore
 nvramAscii	dup	16
 		db	"\\x5c\\x20"
 		edup

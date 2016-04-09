@@ -152,13 +152,13 @@ setScrollEnable	ld	b,#01					; разрешить scroll
 		ret
 ;-------
 typeVersionMsg	db	"Type (Displays the contents of a text file) v0.08",#00
-typeCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+typeCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-typeUsageMsg	db	15,5,"Usage: type [switches] filename.txt",#0d
-		db	16,16,"  -s ",15,15,"\tYe! old classic ",243,"scroll?",242," from zx basic. Show limited amount of strings",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
- 		db	16,16,"  -h ",15,15,"\thelp. show this info",#0d
-		db	16,16,#0d,#00
+typeUsageMsg	db	15,csOk,"Usage: type [switches] filename.txt",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tYe! old classic ",pQuoteOpen,"scroll?",pQuoteClose," from zx basic. Show limited amount of strings",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info",#0d
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#00
 wrongSizeMsg	db	"Error: Wrong file size.",#0d,#00

@@ -10,37 +10,37 @@ cmdTable
 ;--- C ---
 	db	"cd"
 	db	"*"
-	dw	_changeDirCmd
+	dw	changeDirCmd
 
 	db	"cls"				; -g очистить графический экран
 	db	"*"
-	dw	_clearScreen
+	dw	clearScreen
 ;--- D ---
 	db	"dir"
 	db	"*"
-	dw	_dir
+	dw	ll
 ;--- E ---
 ;--- F ---
 ;--- G ---
 ;--- H ---
 	db	"help"
 	db	"*"
-	dw	_showHelp
+	dw	showHelp
 ;--- I ---
 ;--- J ---
 ;--- K ---
 ;--- L ---
 	db	"ll"
 	db	"*"
-	dw	_ll
+	dw	ll
 
 	db	"ls"
 	db	"*"
-	dw	_ls
+	dw	ls
 
 	db	"locale"
 	db	"*"
-	dw	_locale
+	dw	locale
 
 ;--- M ---
 ;--- N ---
@@ -48,21 +48,21 @@ cmdTable
 ;--- P ---
 	db	"pwd"
 	db	"*"
-	dw	_pathWorkDir
+	dw	pathWorkDir
 ;--- Q ---
 ;--- R ---
 	db	"rehash"
 	db	"*"
-	dw	_scopeBinaryCmd
+	dw	scopeBinaryCmd
 
 ;--- S ---
 	db	"screen"
 	db	"*"
-	dw	_switchScreen
+	dw	switchScreen
 
 	db	"sh"
 	db	"*"
-	dw	_sh
+	dw	sh
 ;--- T ---
 ;--- U ---
 ;--- V ---

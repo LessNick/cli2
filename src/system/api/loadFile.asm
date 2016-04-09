@@ -128,7 +128,7 @@ restorePath	ld	de,pathBString
 restorePath_1	push	af
 		ex	af,af'
 		push	af
-		call	_changeDir
+		call	changeDir
 		pop	af
 		ex	af,af'
 		pop	af
@@ -169,7 +169,7 @@ pathCd		ld	hl,#0000
 		ld	de,rootPath
 		
 pathCd_00	push	hl
-		call	_changeDir
+		call	changeDir
 		pop	hl
 
 		ld	a,"/"

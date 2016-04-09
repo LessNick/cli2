@@ -16,7 +16,7 @@ printCloseBracket
 		jp	_printString
 ;---------------
 printOpenBracket
-		ld	a,68					; 11 позиций до правой границы экрна
+		ld	a,statusPos				; 11 позиций до правой границы экрна
 		ld	(printX),a
 		ld	hl,iOpenBracketMsg
 		jp	_printString

@@ -48,8 +48,6 @@ checkFileName	ld	hl,filename
 		call	cliKernel
 		jr	nz,fileExist
 
-
-
 		ld	hl,filename
 		ld	bc,#0010		; младшая часть
 		ld	de,#0000		; старшая часть
@@ -70,7 +68,7 @@ checkFileName	ld	hl,filename
 		jp	cliKernel
 
 ;---------------
-writeContent	;ld	hl,fileContent
+writeContent	ld	hl,fileContent
 		;ld	a,			; ???
 		;ld	b,#01			; размер в блоках по 512b
 		;call	cliKernel		
@@ -115,21 +113,23 @@ appInfo		ld	hl,appUsageMsg
 filename	ds	12,0
 		db	#00
 ;---------------
-appVersionMsg	db	"Test Save (create file & write content) v0.02",#00
-appCopyRMsg	db	"2014,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appVersionMsg	db	"Test Save (create file & write content) v0.04",#00
+appCopyRMsg	db	"2014,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: testsave filename",#0d
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: testsave filename",#0d
+		db	16,cRestore,#0d,#00
 
-errorMsg	db	16,10,"Error: Can't create file ",243,#00
-errorMsg_	db	242,16,16,#0d,#00
+errorMsg	db	16,cRed,"Error: Can't create file ",pQuoteOpen,#00
+errorMsg_	db	pQuoteClose,16,cRestore,#0d,#00
 
-errorMsg2	db	16,10,"Error: Directory ",243,#00
-errorMsg2_	db	242," already exist.", 16,16,#0d,#00
+errorMsg2	db	16,10,"Error: Directory ",pQuoteOpen,#00
+errorMsg2_	db	pQuoteClose," already exist.", 16,cRestore,#0d,#00
 
-errorMsg3	db	16,10,"Error: File ",243,#00
+errorMsg3	db	16,cRed,"Error: File ",243,#00
 
-fileContent	db	"0123456789ABCDEF"
+		align 2						; !!! FIX адреса записи кратного 2м !!!
+
+fileContent	db	"This is test file content!"
 		ds	512,0
 appEnd	nop
 

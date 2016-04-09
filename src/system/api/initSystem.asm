@@ -85,12 +85,6 @@ _initSystem_03	call	_printBootError
 		ld	hl,kernelPanicMgs
 		call	_printWarningString
 		jp	$
-		
-; 		ld	a,#00
-; tmpLoop		ld	bc,tsRAMPage3
-; 		out	(c),a
-; 		inc	a
-; 		jp	tmpLoop
 
 _printBootError	push	hl
 		ld	hl,bootErrorMgs
@@ -107,7 +101,7 @@ tryStartUp	call	_reInitSystem
 
 		halt
 		ld	de,startUpPath				; запуск скрипта /system/startup.sh
-		call	_sh
+		call	sh
 		cp	#ff
 		ret	nz
 		ex	af,af'

@@ -105,22 +105,20 @@ dirname		ds	12,0
 		db	#00
 ;---------------
 appVersionMsg	db	"MKdir (create directory) v0.02",#00
-appCopyRMsg	db	"2014,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2014,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: mkdir dirname",#0d
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: mkdir dirname",#0d
+		db	16,cRestore,#0d,#00
 
-errorMsg	db	16,10,"Error: Can't create directory ",243,#00
-errorMsg_	db	242,16,16,#0d,#00
+errorMsg	db	16,cRed,"Error: Can't create directory ",pQuoteOpen,#00
+errorMsg_	db	pQuoteClose,16,cRestore,#0d,#00
 
-errorMsg2	db	16,10,"Error: Directory ",243,#00
-errorMsg2_	db	242," already exist.", 16,16,#0d,#00
+errorMsg2	db	16,cRed,"Error: Directory ",pQuoteOpen,#00
+errorMsg2_	db	pQuoteClose," already exist.", 16,cRestore,#0d,#00
 
-errorMsg3	db	16,10,"Error: File ",243,#00
+errorMsg3	db	16,cRed,"Error: File ",pQuoteOpen,#00
 
 appEnd	nop
+; 		DISPLAY "checkDirName",/A,checkDirName
 
 		SAVEBIN "install/bin/mkdir", appStart, appEnd-appStart
-
-		DISPLAY "checkDirName",/A,checkDirName
-		

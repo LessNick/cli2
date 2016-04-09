@@ -4,7 +4,7 @@
 ;---------------------------------------
 ; sh command
 ;---------------------------------------
-_sh		ex	de,hl					; hl params
+sh		ex	de,hl					; hl params
 		ld	a,(hl)
 		cp	#00
 		jp	z,_printErrParams			; exit: error params
@@ -129,7 +129,7 @@ storeShExit	pop	af,bc,de,hl
 restoreShPath	ex	af,af'
 		push	af
 		ld	de,pathShString
-		call	_changeDir
+		call	changeDir
 		pop	af
 		ex	af,af'
 		ret

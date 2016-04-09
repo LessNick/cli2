@@ -37,8 +37,6 @@ appStart
 
 		ld	de,fntBuffer
 		ld	b,fntBufferSize
-; 		ld	c,appBank
-; 		ld	a,loadFile				; Загружаем в буфер
 		ld	a,appBank
 		ex	af,af'
 		ld	a,loadFileParts				; Загружаем в буфер
@@ -420,15 +418,15 @@ wrongFile	ld	hl,wrongFileMsg
 		ld	a,#ff					; error
 		ret
 ;---------------------------------------------
-fontVersionMsg	db	"Font loader for CLI2 v0.12",#00
-fontCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+fontVersionMsg	db	"Font loader for CLI2 v0.14",#00
+fontCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 		
 fontUsageMsg	db	"Usage: loadfont [switches] filename.fnt",#0d
-		db	16,16,"  -g ",15,15,"\tgraphics mode. load fonts into graphics memory (default console)",#0d
-		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
-		db	16,16,"  -h ",15,15,"\thelp. show this info",#0d
-		db	16,16,#0d,#00
+		db	16,cRestore,"  -g ",15,csInfo,"\tgraphics mode. load fonts into graphics memory (default console)",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tsilent mode. additional information is not displayed",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info",#0d
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#00
 wrongSizeMsg	db	"Error: Wrong file size.",#0d,#00
@@ -436,29 +434,29 @@ wrongFileMsg	db	"Error: Incorrect file format.",#0d,#0d,#00
 wrongVerMsg	db	#0d,"Error: Unsupported font format. (Supported only b/w 1bit, monospaced, 8x8px )"
 		db	#0d,"       If you want load font for graphics mode, use -g key",#0d,#0d,#00
 
-fntFormatMsg	db	" ",249," Font format: FNT detected!",#0d,#00
-fntVerMsg	db	" ",249," FNT header version: ",#00
-fntPackMsg	db	" ",249," Pack type: ",#00
+fntFormatMsg	db	" ",pMarker," Font format: FNT detected!",#0d,#00
+fntVerMsg	db	" ",pMarker," FNT header version: ",#00
+fntPackMsg	db	" ",pMarker," Pack type: ",#00
 fntNumberMsg	db	"--",#0d,#00
-fntStyleMsg	db	" ",249," Font style: ",#00
+fntStyleMsg	db	" ",pMarker," Font style: ",#00
 fntStyleMsgN	db	"normal ",#00
 fntStyleMsgB	db	"bold ",#00
 fntStyleMsgI	db	"italic ",#00
 fntStyleMsgU	db	"unknown ",#00
 fntStyleMsgM	db	"monospaced",#0d,#00
 fntStyleMsgP	db	"proportional",#0d,#00
-fntTypeMsg	db	" ",249," Font type: ",#00
+fntTypeMsg	db	" ",pMarker," Font type: ",#00
 fntType1Msg	db	"1 bit (b/w font)",#0d,#00
 fntType4Msg	db	"4 bit (16 colors font)",#0d,#00
 fntType8Msg	db	"8 bit (256 colors font)",#0d,#00
 fntTypeWMsg	db	"wrong format",#0d,#00
-fntWidthMsg	db	" ",249," Font width: ",#00
-fntHeightMsg	db	" ",249," Font height: ",#00
+fntWidthMsg	db	" ",pMarker," Font width: ",#00
+fntHeightMsg	db	" ",pMarker," Font height: ",#00
 fntBigNumberMsg	db	"----- px",#0d,#00
-fntNameMsg	db	" ",249," Font name: ",243,#00
-fntAuthorMsg	db	" ",249," Font author: ",243,#00
-fntDizMsg	db	" ",249," Font diz: ",243,#00
-fntEndMsg	db	242,#0d,#00
+fntNameMsg	db	" ",pMarker," Font name: ",pQuoteOpen,#00
+fntAuthorMsg	db	" ",pMarker," Font author: ",pQuoteOpen,#00
+fntDizMsg	db	" ",pMarker," Font diz: ",pQuoteOpen,#00
+fntEndMsg	db	pQuoteClose,#0d,#00
 
 ;---------------------------------------------
 ; Key's table for params

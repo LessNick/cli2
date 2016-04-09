@@ -140,7 +140,7 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_parseLine				; #3C
 		dec	a
-		jp	z,_reserved				; #3D		!!! RESERVED !!!
+		jp	z,_printSymbolRepeat			; #3D
 		dec	a
 		jp	z,_eatSpaces				; #3E
 		dec	a
@@ -148,7 +148,7 @@ _cliApi		cp	#00
 		dec	a
 		jp	z,_setRamPage0Ext			; #40
 		dec	a
-		jp	z,_reserved				; #41		!!! RESERVED !!!
+		jp	z,_getRamAlloc				; #41
 
 		dec	a
 		jp	z,_moveScreenInit			; #42
@@ -311,11 +311,11 @@ _reserved	ret
 		include "api/mult16x8.asm"			; ID: #3A
 		include "api/divide16_16.asm"			; ID: #3B
 		include "api/parseLine.asm"			; ID: #3C
-								; ID: #3D - reserved
+		include "api/printSymbolRepeat.asm"		; ID: #3D
 		include "api/eatSpaces.asm"			; ID: #3E
 		include "api/setAppCallBack.asm"		; ID: #3F
 		include "api/setRamPage0Ext.asm"		; ID: #40
-								; ID: #41 - reserved
+		include "api/getRamAlloc.asm"			; ID: #41
 		include "api/moveScreenInit.asm"		; ID: #42
 		include "api/moveScreenUp.asm"			; ID: #43
 		include "api/moveScreenDown.asm"		; ID: #44

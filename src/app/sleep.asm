@@ -85,11 +85,11 @@ setSilentMode	ld	a,#01
 		ret
 ;---------------
 appVersionMsg	db	"Sleep v0.04",#00
-appCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: Sleep [switches] seconds",#0d
-		db	16,16,"  -s ",15,15,"\tsilent mode. information is not displayed",#0d
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: Sleep [switches] seconds",#0d
+		db	16,cRestore,"  -s ",15,15,"\tsilent mode. information is not displayed",#0d
+		db	16,cRestore,#0d,#00
 ;---------------------------------------------
 ; Key's table for params
 ;---------------------------------------------

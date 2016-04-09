@@ -20,7 +20,7 @@ gkws		cp	#ff				; Выход если ничего не нажато
 
 		ld	a,l
 		cp	#00				; Выход если пусто
-		jr	z,returnEmptyAscii		
+		jp	z,returnEmptyAscii
 
 		cp	#f0				; Если #f0 — клавишу отпустили = выход
 		jp	z,getAsciiCode_02
@@ -52,7 +52,7 @@ gkE0_00		cp	#68
 		ld	a,keymapBank
 		call	setRamPage3
 		pop	af
-		jr	getAsciiCode_0C
+		jr	getAsciiCode_NN
 
 ;---------------
 getAsciiCode	push	af
@@ -67,33 +67,46 @@ getAsciiCode	push	af
 		ld	a,(keyLayoutSwitch)		; Проверить активную раскладку
 		cp	#00				; 0 - EN, 1 - RU
 		jr	z,gAC_EN
+;---------------
+gAC_RU		call	_checkKeyAltR			; Проверить нажат ли alt gray
+		jr	nz,getAsciiCode_1C		; Если да, то таблица keyMap_0C
 
-gAC_RU		ld	a,(checkShiftKey)
+		ld	a,(checkShiftKey)
 		cp	#00
-		jr	z,getAsciiCode_0B
+		jr	z,getAsciiCode_1A
+
 		call	_checkKeyShift			; Проверить нажат ли shift
-		jr	z,getAsciiCode_0B		; Если нет, то таблица keyMap_1A
+		jr	z,getAsciiCode_1A		; Если нет, то таблица keyMap_1A
 		
 		ld	de,keyMap_1B			; в противном случае keyMap_1B
-		jr	getAsciiCode_0A+3
+		jr	getAsciiCode_N
 
-getAsciiCode_0B	ld	de,keyMap_1A
-		jr	getAsciiCode_0A+3
+getAsciiCode_1C	ld	de,keyMap_1C
+		jr	getAsciiCode_N
 
-gAC_EN		ld	a,(checkShiftKey)
+getAsciiCode_1A	ld	de,keyMap_1A
+		jr	getAsciiCode_N
+;---------------
+gAC_EN		call	_checkKeyAltR			; Проверить нажат ли alt gray
+		jr	nz,getAsciiCode_0C		; Если да, то таблица keyMap_0C
+
+		ld	a,(checkShiftKey)
 		cp	#00
 		jr	z,getAsciiCode_0A
+
 		call	_checkKeyShift			; Проверить нажат ли shift
 		jr	z,getAsciiCode_0A		; Если нет, то таблица keyMap_0A
 		
 		ld	de,keyMap_0B			; в противном случае keyMap_0B
-		jr	getAsciiCode_0A+3
+		jr	getAsciiCode_N
+
+getAsciiCode_0C	ld	de,keyMap_0C
+		jr	getAsciiCode_N
 
 getAsciiCode_0A	ld	de,keyMap_0A
-		
-		pop	hl
+getAsciiCode_N	pop	hl
 
-getAsciiCode_0C	add	hl,de
+getAsciiCode_NN	add	hl,de
 		ld	a,(hl)
 
 		push	af

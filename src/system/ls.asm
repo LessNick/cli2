@@ -4,7 +4,7 @@
 ;---------------------------------------------
 ; ls - show directory content
 ;---------------------------------------------
-_ls		ex	de,hl
+ls		ex	de,hl
 		
 		ld	a,(hl)
 		cp	#00
@@ -13,10 +13,10 @@ _ls		ex	de,hl
 		push	hl
 		call	storePath
 		pop	de
-		call	_changeDir
+		call	changeDir
 		
 		cp	#ff
-		jr	nz,_ls0
+		jr	nz,ls0
 		
 		ld	hl,dirNotFoundMsg
 		ld	b,#ff
@@ -24,7 +24,7 @@ _ls		ex	de,hl
 		xor	a
 		jp	restorePath
 
-_ls0		call	lsShow
+ls0		call	lsShow
 		jp	restorePath
 
 lsShow		ld	a,fSetDir

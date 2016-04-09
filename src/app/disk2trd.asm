@@ -46,13 +46,13 @@ appHelp		ld	hl,appUsageMsg
 		ret
 ;---------------------------------------------
 appVersionMsg	db	"Dump TR-DOS Disk to TRD Image v 0.01",#00
-appCopyRMsg	db	"2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2014 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	#0d,15,5,"Usage: disk2trd [switches] filename.sxg",#0d
-		db	16,16,"  -i ",15,15,"\tinfo. Show disk information",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
- 		db	16,16,"  -h ",15,15,"\thelp. show this info"
-		db	16,16,#0d,#00
+appUsageMsg	db	#0d,15,csOk,"Usage: disk2trd [switches] filename.sxg",#0d
+		db	16,cRestore,"  -i ",15,csInfo,"\tinfo. Show disk information",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info"
+		db	16,cRestore,#0d,#00
 ;---------------------------------------------
 ; Key's table for params
 ;---------------------------------------------

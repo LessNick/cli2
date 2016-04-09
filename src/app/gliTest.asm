@@ -43,7 +43,7 @@ appStart
 		jp	cliKernel
 	
 ;---------------------------------------
-versionMsg	db	16,16
+versionMsg	db	16,cRestore
 		db	"Current version of Graphics Library is "
 majorMsg	db	"--."
 minorMsg	db	"--"

@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2014 © breeze/fishbone crew
+; 2014,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; testfile - тестовое приложение для проверки наличия файла/директории
 ;--------------------------------------		
@@ -100,19 +100,19 @@ appInfo		ld	hl,appUsageMsg
 filename	ds	12,0
 		db	#00
 ;---------------
-appVersionMsg	db	"Test File (check is file or dir exist) v0.01",#00
-appCopyRMsg	db	"2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appVersionMsg	db	"Test File (check is file or dir exist) v0.02",#00
+appCopyRMsg	db	"2014,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: testfile filename",#0d
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: testfile filename",#0d
+		db	16,cRestore,#0d,#00
 
-dirMsg		db	"Directory ",243,#00
-dirMsg0		db	242," not found.", 16,16,#0d,#00
-dirMsg1		db	242," already exist.", 16,16,#0d,#00
+dirMsg		db	"Directory ",pQuoteOpen,#00
+dirMsg0		db	pQuoteClose," not found.", 16,cRestore,#0d,#00
+dirMsg1		db	pQuoteClose," already exist.", 16,cRestore,#0d,#00
 
-fileMsg		db	"File ",243,#00
-fileMsg0	db	242," not found.", 16,16,#0d,#00
-fileMsg1	db	242," already exist.", 16,16,#0d,#00
+fileMsg		db	"File ",pQuoteOpen,#00
+fileMsg0	db	pQuoteClose," not found.", 16,cRestore,#0d,#00
+fileMsg1	db	pQuoteClose," already exist.", 16,cRestore,#0d,#00
 
 appEnd	nop
 

@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2013,2014 © breeze/fishbone crew
+; 2013,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; keyboard scancode application
 ;---------------------------------------
@@ -91,9 +91,9 @@ appNext_01	push	de,hl
 
 		jr	appLoop
 
-versionMsg	db	16,2,"PS/2 keyboard scancode v0.02",#0d
-		db	16,3,"2013,2014 ",127," Breeze\\\\FBn",#0d,#0d
-		db	16,16,"Press ",20," any key ",20," for get scan code. Press ",20," ESC ",20," twice for exit.",#0d,#0d
+versionMsg	db	16,cAmigaPink,"PS/2 keyboard scancode v0.04",#0d
+		db	16,cLightViolet,"2013,2016 ",pCopy," Breeze\\\\FBn",#0d,#0d
+		db	16,cRestore,"Press ",20," any key ",20," for get scan code. Press ",20," ESC ",20," twice for exit.",#0d,#0d
 		db	#00
 
 keyCode1	db	"#-- "

@@ -1,6 +1,6 @@
 ;---------------------------------------
 ; CLi² (Command Line Interface)
-; 2014 © breeze/fishbone crew
+; 2014,2016 © breeze/fishbone crew
 ;---------------------------------------
 ; Hello World Example
 ;---------------------------------------
@@ -105,28 +105,28 @@ appRun		ld	hl,appRunMsg				; Выводим приложение заверши�
 appPrint	ld	a,printString				; Обычная печать строки
 		jp	cliKernel
 ;---------------------------------------------
-appVersionMsg	db	"Hello World Application v 0.01",#00
+appVersionMsg	db	"Hello World Application v 0.02",#00
 
-appCopyRMsg	db	"2014 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2014,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appQuetionMsg	db	15,6
+appQuetionMsg	db	15,csHelp
 		db	"This is first test question:",#0d
-		db	16,16
+		db	16,cRestore
 		db	#00
 
 appQuetionMsg_	db	"Continue run application (Yes/No)?",#00
 
-appQuetionMsg2	db	15,6,#0d
+appQuetionMsg2	db	15,csHelp,#0d
 		db	"This is second test question:",#0d
-		db	16,16
+		db	16,cRestore
 		db	#00
 		
 appQuetionMsg2_	db	"Application error (Retry/Ignore/Abort)?",#00
 
-appRunMsg	db	15,6,#0d
+appRunMsg	db	15,csHelp,#0d
 		db	"Press ALT+F1...F4 to change screen. Press Esc to exit.",#0d,#0d
 		db	"Running...",#0d,#0d
-		db	16,16
+		db	16,cRestore
 		db	#00
 
 appYesMsg	db	"Selected: Yes. Continue.",#0d
@@ -144,11 +144,11 @@ appIgnoreMsg	db	"Selected: Ignore. Continue.",#0d
 appAbortMsg	db	"Selected: Abort. Aborting.",#0d
 		db	#00
 
-appExitMsg	db	15,5,"Exit.",#0d
-		db	16,16
+appExitMsg	db	15,csOk,"Exit.",#0d
+		db	16,cRestore
 		db	#00
 
-appInfoMsg	db	15,7,"Screen changed to "
+appInfoMsg	db	15,csDir,"Screen changed to "
 appInfoMsgN	db	"   "
 		db	#0d,#00
 ;---------------------------------------------

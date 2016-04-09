@@ -343,13 +343,13 @@ wrongParams	ld	hl,wrongParamsMsg
 		ret
 ;---------------
 appVersionMsg	db	"ScreenFX (some screen effects) v0.04",#00
-appCopyRMsg	db	"2014,2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2014,2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: screenfx switches",#0d
-		db	16,16,"  -s n",15,15,"\tscreen number. set work screen (default 1)",#0d
-		db	16,16,"  -fi ",15,15,"\tswitch to current screen and show it with fade in effect",#0d
-		db	16,16,"  -fo ",15,15,"\tswitch to current screen and hide it with fade out effect"
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: screenfx switches",#0d
+		db	16,cRestore,"  -s  n",15,csInfo,"\tscreen number. set work screen (default 1)",#0d
+		db	16,cRestore,"  -fi ",15,csInfo,"\tswitch to current screen and show it with fade in effect",#0d
+		db	16,cRestore,"  -fo ",15,csInfo,"\tswitch to current screen and hide it with fade out effect"
+		db	16,cRestore,#0d,#00
 
 wrongParamsMsg	db	"Error: Wrong parametrs.",#0d,#0d,#00
 

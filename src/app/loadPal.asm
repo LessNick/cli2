@@ -184,11 +184,11 @@ palInfo		ld	hl,palVersionMsg
 
 ;---------------------------------------------
 palVersionMsg	db	"Load palette v0.10",#00
-palCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#00
+palCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#00
 		
-palUsageMsg	db	#0d,15,5,"Usage: loadpal [switches] filename.pal",#0d
-		db	16,16,"  -g n",15,15,"\tgraphics palettes. Load palette for graphics screen N (default 1)"
-		db	16,16,#0d,#00
+palUsageMsg	db	#0d,15,csOk,"Usage: loadpal [switches] filename.pal",#0d
+		db	16,cRestore,"  -g n",15,csInfo,"\tgraphics palettes. Load palette for graphics screen N (default 1)"
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 wrongSizeMsg	db	"Error: Wrong file size.",#0d,#0d,#00

@@ -17,7 +17,6 @@ sCliKernel
 		
 		include "commands.asm"
 		include "operators.asm"
-		include "dir.asm"
 		include "ls.asm"
 		include "ll.asm"
 		include "run.asm"
@@ -30,7 +29,6 @@ sCliKernel
 		include "commands.h.asm"
 		include "operators.h.asm"
 		
-; 		include "wc.h.asm"
 		include "tsconf.h.asm"
 		include "fat.h.asm"
 

@@ -167,11 +167,11 @@ appHelp		ld	hl,appUsageMsg
 		ret
 ;---------------
 appVersionMsg	db	"Show/Hide mouse Cursor v0.01",#00
-appCopyRMsg	db	"2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+appCopyRMsg	db	"2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 
-appUsageMsg	db	15,5,"Usage: Cursor [switches] show/hide",#0d
-		db	16,16,"  -s ",15,15,"\tscreen number. Default is 1",#0d
-		db	16,16,#0d,#00
+appUsageMsg	db	15,csOk,"Usage: Cursor [switches] show/hide",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tscreen number. Default is 1",#0d
+		db	16,cRestore,#0d,#00
 ;---------------------------------------------
 ; Key's table for params
 ;---------------------------------------------
@@ -181,6 +181,6 @@ keyTable
 		dw	setScreen
 
 appEnd	nop
-		DISPLAY "setScreen",/A,setScreen
+; 		DISPLAY "setScreen",/A,setScreen
 
 		SAVEBIN "install/bin/cursor", appStart, appEnd-appStart

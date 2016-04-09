@@ -78,7 +78,7 @@ musFileName	ld	de,#0000				; Имя файла
 		call	musPrtFilename				; вывод надписи «пытаемся загрузить»
 		pop	hl
 		
-zzz		ld	de,musBuffer
+		ld	de,musBuffer
 		ld	c,appBank
 		xor	a
 		ex	af,af'					; загрузка с сохранением пути
@@ -247,31 +247,31 @@ fileNotSet	ld	hl,noFileMsg
 		jp	cliKernel
 ;---------------------------------------------
 musVersionMsg	db	"Music loader for AY8910/12, YM2203 & TS Sound Chip v0.06",#00
-musCopyRMsg	db	"2016 ",127," Breeze\\\\Fishbone Crew",#0d,#00
+musCopyRMsg	db	"2016 ",pCopy," Breeze\\\\Fishbone Crew",#0d,#00
 		
-musUsageMsg	db	15,5,"Usage: loadmus [switches] filename.(pt3|pt2|mtc|tfc|ts)",#0d
-		db	16,16,"  -a ",15,15,"\tautoplay. allow to automatically play the file after upload",#0d
-		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
-		db	16,16,"  -p ",15,15,"\tplay current music (if already loaded)",#0d
-		db	16,16,"  -st ",15,15,"\tstop play.",#0d
-		db	16,16,"  -c ",15,15,"\tcontinue play.",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
-		db	16,16,"  -h ",15,15,"\thelp. show this info",#0d
-		db	16,16,#0d,#00
+musUsageMsg	db	15,csOk,"Usage: loadmus [switches] filename.(pt3|pt2|mtc|tfc|ts)",#0d
+		db	16,cRestore,"  -a ",15,csInfo,"\tautoplay. allow to automatically play the file after upload",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tsilent mode. additional information is not displayed",#0d
+		db	16,cRestore,"  -p ",15,csInfo,"\tplay current music (if already loaded)",#0d
+		db	16,cRestore,"  -st ",15,csInfo,"\tstop play.",#0d
+		db	16,cRestore,"  -c ",15,csInfo,"\tcontinue play.",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info",#0d
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 
-loadmusMsg_03	db	"Try to open file ",243
+loadmusMsg_03	db	"Try to open file ",pQuoteOpen
 loadmusMsg_03a	ds	80," "
-loadmusMsg_03b	db	242,"...",#00
-loadmusMsg_04	db	"Loading module...",#00
-loadmusMsg_05	db	"Autoplay start...",#00
+loadmusMsg_03b	db	pQuoteClose,pEllipsis,#00
+loadmusMsg_04	db	"Loading module",pEllipsis,#00
+loadmusMsg_05	db	"Autoplay start",pEllipsis,#00
 
-musTryInit	db	"Try to initialize sound chip...",#00
-musTryDetect	db	"Try to detect supported music format...",#00
-musTryPlay	db	"Try to start playing...",#00
-musTryStop	db	"Try to stop playing...",#00
-musTryCont	db	"Try to continue playing...",#00
+musTryInit	db	"Try to initialize sound chip",pEllipsis,#00
+musTryDetect	db	"Try to detect supported music format",pEllipsis,#00
+musTryPlay	db	"Try to start playing",pEllipsis,#00
+musTryStop	db	"Try to stop playing",pEllipsis,#00
+musTryCont	db	"Try to continue playing",pEllipsis,#00
 
 ;---------------------------------------------
 ; Key's table for params
@@ -314,6 +314,6 @@ appEnd		nop
 
 musBuffer	nop
 
-		DISPLAY "zzz",/A,zzz
+; 		DISPLAY "zzz",/A,zzz
 
 		SAVEBIN "install/bin/loadmus", appStart, appEnd-appStart

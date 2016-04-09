@@ -631,42 +631,42 @@ countWidth	dw	#0000
 countHeight	dw	#0000
 
 sxgVersionMsg	db	"SXG (Spectrum eXtended Graphics) file loader v0.08",#00
-sxgCopyRMsg	db	"2013,2016 ",127," Breeze\\\\Fishbone Crew",#00
+sxgCopyRMsg	db	"2013,2016 ",pCopy," Breeze\\\\Fishbone Crew",#00
 		
-sxgUsageMsg	db	#0d,15,5,"Usage: loadsxg [switches] filename.sxg",#0d
-		db	16,16,"  -vm ",15,15,"\tviewer mode. activate viewer mode after image has loaded",#0d
-		db	16,16,"  -sp n",15,15,"\tspeed. set move speed in viewer mode (default 2px)",#0d
-		db	16,16,"  -g n",15,15,"\tgraphics screen. select screen to load (default 1)",#0d
-		db	16,16,"  -v ",15,15,"\tversion. show application's version and copyrights",#0d
-		db	16,16,"  -cx ",15,15,"\talign centers vertically (if width less than 360)",#0d
-		db	16,16,"  -cy ",15,15,"\talign centers horizontally (if heigth less than 288)",#0d
-		db	16,16,"  -s ",15,15,"\tsilent mode. additional information is not displayed",#0d
- 		db	16,16,"  -h ",15,15,"\thelp. show this info"
-		db	16,16,#0d,#00
+sxgUsageMsg	db	#0d,15,csOk,"Usage: loadsxg [switches] filename.sxg",#0d
+		db	16,cRestore,"  -vm ",15,csInfo,"\tviewer mode. activate viewer mode after image has loaded",#0d
+		db	16,cRestore,"  -sp n",15,csInfo,"\tspeed. set move speed in viewer mode (default 2px)",#0d
+		db	16,cRestore,"  -g n",15,csInfo,"\tgraphics screen. select screen to load (default 1)",#0d
+		db	16,cRestore,"  -v ",15,csInfo,"\tversion. show application's version and copyrights",#0d
+		db	16,cRestore,"  -cx ",15,csInfo,"\talign centers vertically (if width less than 360)",#0d
+		db	16,cRestore,"  -cy ",15,csInfo,"\talign centers horizontally (if heigth less than 288)",#0d
+		db	16,cRestore,"  -s ",15,csInfo,"\tsilent mode. additional information is not displayed",#0d
+		db	16,cRestore,"  -h ",15,csInfo,"\thelp. show this info"
+		db	16,cRestore,#0d,#00
 
 noFileMsg	db	"Error: Incorrect file name.",#0d,#0d,#00
 wrongFileMsg	db	"Error: Incorrect file format.",#0d,#0d,#00
 
-viewerModeMsg	db	"Viewer mode. Use ",24,25,26,27," to navigate. Press ",20, " ESC ",20," to exit.",#0d,#0d,#00
+viewerModeMsg	db	"Viewer mode. Use ",pLeft,pRight,pUp,pDown," to navigate. Press ",20, " ESC ",20," to exit.",#0d,#0d,#00
 wrongParamsMsg	db	"Error: Wrong parametrs.",#0d,#0d,#00
 
-sxgFormatMsg	db	" ",249," Image format: SXG detected!",#0d,#00
-sxgVerMsg	db	" ",249," SXG Header Version: ",#00
-sxgBgMsg	db	" ",249," BackGround color: ",#00
-sxgPackMsg	db	" ",249," Pack Type: ",#00
+sxgFormatMsg	db	" ",pMarker," Image format: SXG detected!",#0d,#00
+sxgVerMsg	db	" ",pMarker," SXG Header Version: ",#00
+sxgBgMsg	db	" ",pMarker," BackGround color: ",#00
+sxgPackMsg	db	" ",pMarker," Pack Type: ",#00
 sxgNumberMsg	db	"--",#0d,#00
-sxgTypeMsg	db	" ",249," Image type: ",#00
+sxgTypeMsg	db	" ",pMarker," Image type: ",#00
 sxgTypeZXMsg	db	"SCR (6912)",#0d,#00
 sxgType16Msg	db	"16 colors",#0d,#00
 sxgType256Msg	db	"256 colors",#0d,#00
-sxgTypeWrongMsg	db	16,10,"Unknown!",16,16,#0d,#00
-sxgWidthMsg	db	" ",249," Image width: ",#00
+sxgTypeWrongMsg	db	16,cRed,"Unknown!",16,cRestore,#0d,#00
+sxgWidthMsg	db	" ",pMarker," Image width: ",#00
 sxgWidthMsg0	db	"-----px",#0d,#00
-sxgHeigthMsg	db	" ",249," Image heigth: ",#00
+sxgHeigthMsg	db	" ",pMarker," Image heigth: ",#00
 sxgHeigthMsg0	db	"-----px",#0d,#00
-sxgScreenMsg	db	" ",249," Screen selected: "
+sxgScreenMsg	db	" ",pMarker," Screen selected: "
 sxgScreenMsg0	db	"01",#0d,#00
-sxgLoadingMsg	db	#0d,"Loading...",#0d,#00
+sxgLoadingMsg	db	#0d,"Loading",pEllipsis,#0d,#00
 
 ;---------------------------------------------
 ; Key's table for params
@@ -714,6 +714,6 @@ sxgBuffer	nop
 
 ; 		DISPLAY "loadSxgLoop",/A,loadSxgLoop
 ; 		DISPLAY "skipImageDec",/A,skipImageDec
-; 		DISPLAY "skipIncBank",/A,skipIncBank
+; 		DISPLAY "sxgShowInfo",/A,sxgShowInfo
 
 		SAVEBIN "install/bin/loadsxg", appStart, appEnd-appStart

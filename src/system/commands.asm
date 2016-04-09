@@ -10,117 +10,136 @@
 ; Out:a,#ff = command not found
 ;     a,#00 - command found, hl - addr params start
 ;---------------------------------------
-_showHelp	ld	hl,helpMsg
+showHelp
+;---------------
+; Внутренние команды
+;---------------
+		ld	hl,helpMsg
 		call	_printOkString
 		ld	hl,helpMsg1
 		call	_printOkString
 
 		ld	hl,cmdTable
+		call	showEmbedded
 
-newLine		ld	de,helpOneLine
-		ld	c,0
-helpAgain	ld	b,10
-
-helpLoop	ld	a,(hl)
-		cp	#00
-		jr	z,helpLast
-
-		cp	"*"
-		jr	nz,helpSkip
-
-		inc	hl
-		inc	hl
-		inc	hl
-
-helpSpace	ld	a," "
-		ld	(de),a
-		inc	de
-		djnz	helpSpace
-
-		inc	c
-		ld	a,c
-		cp	8
-		jr	nz,helpAgain
-
-		push	hl,de,bc
-		
-		ld	hl,helpOneLine
+		ld	hl,returnMsg
 		call	_printString
 
-		call	clearOneLine
+		ld	hl,helpMsg2
+		call	_printOkString
+		ld	hl,helpMsg1
+		call	_printOkString
 
-		pop	bc,de,hl
-		jr	newLine
+		ld	a,cLemonCream
+		call	setInk
 
-helpSkip	ld	(de),a
-		inc	de
-		inc	hl
-		dec	b
-		jr	helpLoop
+		ld	hl,opTable
+		call	showEmbedded
 
-clearOneLine	ld	hl,helpOneLine
-		ld	de,helpOneLine+1
-		ld	bc,10*8-1
-		ld	a," "
-		ld	(hl),a
-		ldir
-		ret
-
-helpLast	ld	hl,helpOneLine
-		call	_printString
-
-;---------------
 		ld	hl,returnMsg
 		call	_printString
 		ld	hl,helpMsg
 		call	_printOkString
-		ld	hl,helpMsg2
+		ld	hl,helpMsg3
 		call	_printOkString
+
+		call	showExternal
+		ld	hl,returnMsg
+		jp	_printString
+;---------------
+showEmbedded
+shLoop_0	ld	de,tmpPrintStr
+		push	hl
+		push	de
+
+		inc	de
+		ld	hl,tmpPrintStr
+		ld	bc,254
+		xor	a
+		ld	(hl),a
+		ldir
+
+		pop	de
+		pop	hl
+
+		ld	c,#00				; длина команды
+shLoop_1	ld	a,(hl)
+		cp	"*"
+		jr	z,shPrint_0
+		ld	(de),a
+		inc	c
+		inc	hl
+		inc	de
+		jr	shLoop_1
+
+shPrint_0	push	hl,bc
+		ld	hl,tmpPrintStr
+		call	_printString
+		pop	bc
+		ld	a,c
+		cp	13
+		jr	nc,shSkip_0
+		ld	a,13
+		sbc	c
+		call	codeSkip
+
+shSkip_0	pop	hl
+
+		inc	hl				; +*
+
+		inc	hl
+		inc	hl				; +addr
+
+		ld	a,(hl)
+		cp	#00				; конец таблицы
+		jr	nz,shLoop_0
+
+		ld	hl,returnMsg
+		jp	_printString
+
+;---------------
+showExternal	call	storeRam3
 
 		ld	a,scopeBinBank
 		call	setRamPage3
 
-		call	clearOneLine
-
 		ld	hl,scopeBinAddr
-		ld	de,helpOneLine
-		xor	a
-		ld	(helpCount+1),a
+seLoop_0	ld	de,tmpPrintStr
+		push	hl
+		push	de
 
-helpLoop2	ld	a,(hl)
+		inc	de
+		ld	hl,tmpPrintStr
+		ld	bc,254
+		xor	a
+		ld	(hl),a
+		ldir
+
+		pop	de
+		pop	hl
+
+		ld	a,(hl)
 		cp	#00
-		jr	z,helpExit
+		jp	z,seEnd
 
-		ld	b,8
-helpCopy	ld	a,(hl)
-		ld	(de),a
-		inc	hl
-		inc	de
-		djnz	helpCopy
-		
-helpCount	ld	a,#00
-		inc	a
-		ld	(helpCount+1),a
-		cp	8
-		jr	nz,helpSkip2
-		xor	a
-		ld	(helpCount+1),a
-		push	hl,de
-		ld	hl,helpOneLine
+		ld	bc,8
+		ldir
+
+		push	hl
+		ld	hl,tmpPrintStr
 		call	_printString
-		call	clearOneLine
-		pop	de,hl
-		ld	de,helpOneLine
-		jr	helpLoop2
+		ld	a,c
+		cp	#00
+		jr	z,seSkip_0
+		ld	a,1+3				; 8 + 2 + 3 = 13
+		call	codeSkip
+seSkip_0	pop	hl
+		jr	seLoop_0
 
-helpSkip2	inc	de
-		inc	de
-		jr	helpLoop2
-
-
-helpExit	ld	hl,helpOneLine
+seEnd		ld	hl,returnMsg
 		call	_printString
-		jp	_printRestore
+
+		jp	reStoreRam3
 
 ;---------------------------------------
 scopeBinary	ld	a,scopeBinBank
@@ -133,7 +152,7 @@ scopeBinary	ld	a,scopeBinBank
 		ld	(sbCopyName+1),de
 
 		ld	de,binPath
-		call	_changeDir
+		call	changeDir
 		cp	#ff				; not found /bin?
 		ret	z
 
@@ -275,7 +294,7 @@ clearEntryForSearch
 		ret
 
 ;---------------------------------------
-_changeDirCmd	call	_changeDir
+changeDirCmd	call	changeDir
 		cp	#ff
 		ret	nz
 		ld	hl,dirNotFoundMsg
@@ -283,7 +302,7 @@ _changeDirCmd	call	_changeDir
 		jp	_printErrorString
 
 ;---------------------------------------
-_changeDir	ex	de,hl					; hl params
+changeDir	ex	de,hl					; hl params
 		ld	a,(hl)
 		cp	"/"
 		call	z,resetToRoot
@@ -446,7 +465,7 @@ _initPath	ld	hl,pathString
 		ret
 
 ;---------------------------------------
-_clearScreen	ex	de,hl
+clearScreen	ex	de,hl
 		ld	a,(hl)
 		cp	#00
 		jr	z,clearTxtScreen
@@ -478,12 +497,12 @@ clearTxtScreen	xor	a
 		jp	PR_POZ
 
 ;---------------------------------------
-_pathWorkDir	ld	hl,pathString
+pathWorkDir	ld	hl,pathString
 		call	_printString
 		jp	printReturn
 
 ;---------------------------------------
-_switchScreen	ex	de,hl
+switchScreen	ex	de,hl
 		call	_str2int
 		ld	a,h
 		cp	#00
@@ -508,22 +527,22 @@ _runApp		call	_run
 		jp	_printErrorString
 
 ;---------------------------------------
-_scopeBinaryCmd	call	scopeBinary
+scopeBinaryCmd	call	scopeBinary
 		cp	#ff
-		jr	z,_scopeBinaryErr
+		jr	z,scopeBinaryErr
 		
 		ld	hl,okBinMgs
 		jp	_printOkString
 
-_scopeBinaryErr	ld	hl,errorBinMgs
+scopeBinaryErr	ld	hl,errorBinMgs
 		ld	b,#ff
 		jp	_printErrorString
 
 ;---------------------------------------
-_locale		ex	de,hl
+locale		ex	de,hl
 		ld	a,(hl)
 		cp	#00
-		jr	z,_showLocale
+		jr	z,showLocale
 
 		ld	de,sysLocale
 		call	upperCase
@@ -535,7 +554,7 @@ _locale		ex	de,hl
 		ld	(de),a
 		ret
 
-_showLocale	call	_getLocale
+showLocale	call	_getLocale
 		push	hl
 		ld	a,h
 		call	printSChar

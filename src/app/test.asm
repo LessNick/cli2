@@ -38,10 +38,10 @@ appLoop		push	af
 		xor	a					; no error, clean exit!
 		ret
 	
-testMsg		db	16,16,"this is test for the long line with number #"
+testMsg		db	16,cRestore,"this is test for the long line with number #"
 testNumber	db	"00 and ",16
 testColor	db	#00,"color #"
-testColorN	db	"00",#0d,16,16
+testColorN	db	"00",#0d,16,cRestore
 		db	#00
 
 appEnd	nop

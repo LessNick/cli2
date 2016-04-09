@@ -1,11 +1,6 @@
 ;---------------------------------------------
 ; PS/2 Keyboard driver
 ;---------------------------------------------
-
-
-
-		
-;---------------------------------------
 _ps2PrepareScanCode
 		call	ps2SetKeyStatus
 		ld	a,(ps2Status)				; Вызывается каждое прерывание
@@ -142,14 +137,6 @@ ps2RepeatDisable push	af
 		call	_ps2Init_00
 		pop	af
 		ret
-
-;---------------
-
-
-;---------------	
-
-
-
 ;---------------
 ps2SetKeyStatus	ld	hl,(ps2ScanCode)				
  		ld	de,(ps2ScanCode+2)

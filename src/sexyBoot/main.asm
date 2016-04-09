@@ -155,7 +155,9 @@ sbCont		ld	hl,sBootMsg
 		inc	c
 sbSkip		ld	a,c
 		srl	a					; /2 512б блоки
-		ld	(sbKernelSize+1),a
+		jr	nc,sbSkip2
+		inc	a					; если не кратное 2
+sbSkip2		ld	(sbKernelSize+1),a
 
 		ld	a,kernelBank
 		call	setMemBank2
