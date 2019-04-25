@@ -1,4 +1,4 @@
-;Understand, Correct, Improve           ___
+﻿;Understand, Correct, Improve           ___
 ;________/| _________________/\__/\____/  /_____
 ;\  ____/ |/   __/  /  / __ /  \/  \  \  /   __/
 ;|   __/  /\__   \    /  __ \      /     \  _/ \
@@ -23,7 +23,7 @@
 	DEVICE ZXSPECTRUM128
 
 ; 	define buildSexyBoot				; Сборка загрузчика системы boot.$c
-; 	define buildKernel				; Сборка всей системы
+	define buildKernel				; Сборка всей системы
 ; 	define buildRes					; Сборка файлов ресурсов (Pal, Cur, Fnt, keymap)
 ; 	define buildTest				; Сборка тестового приложения test
 ; 	define buildEcho				; Сборка команды echo
@@ -43,7 +43,7 @@
 ; 	define buildMkdir				; Сборка команды mkdir
 ; 	define buildScreenFX				; Сборка приложения screenFX
 ;  	define buildDate				; Сборка приложения date
-	define buildTestSave				; Сборка тестового приложения testsave
+; 	define buildTestSave				; Сборка тестового приложения testsave
 
 ; 	define buildBoing				; Сборка тестовой демки boing
 ; 	define buildTestFile				; Сборка тестового приложения testfile
@@ -245,3 +245,5 @@
 ; 	DISPLAY "showHelp",/A,showHelp
 ; 	DISPLAY "shPrint_0",/A,shPrint_0
 ; 	DISPLAY "_printStatusString",/A,_printStatusString
+
+;	LABELSLIST "e:/Emu/pentevo/Unreal.dev/user.l"
